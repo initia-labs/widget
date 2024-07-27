@@ -1,0 +1,7 @@
+.placeholder {
+  background-color: var(--gray-6);
+}
+
+.circle {
+  border-radius: 50%;
+}

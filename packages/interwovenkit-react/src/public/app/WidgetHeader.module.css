@@ -1,0 +1,66 @@
+.header {
+  display: flex;
+  align-items: stretch;
+  height: 52px;
+
+  background-color: var(--gray-8);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+
+  border-right: 1px solid var(--border);
+  padding: 0 16px;
+}
+
+.copy {
+  flex: 1;
+  gap: 4px;
+
+  color: var(--gray-1);
+  font-size: 12px;
+  font-weight: 500;
+
+  .name {
+    display: block;
+  }
+
+  .address {
+    display: none;
+  }
+
+  .icon {
+    color: var(--dimmed);
+
+    transition: color var(--transition) ease;
+  }
+
+  &:hover,
+  &.copied {
+    .name {
+      display: none;
+    }
+
+    .address {
+      display: block;
+    }
+
+    .icon {
+      color: var(--gray-1);
+    }
+  }
+}
+
+.disconnect {
+  border-left: 1px solid var(--border);
+  padding: 0 16px;
+  color: var(--gray-4);
+
+  transition: color var(--transition) ease;
+
+  &:hover {
+    color: var(--gray-1);
+  }
+}

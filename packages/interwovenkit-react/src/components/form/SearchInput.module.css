@@ -1,0 +1,28 @@
+.root {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  padding: 0 var(--padding);
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.input {
+  border: 0;
+  background-color: transparent;
+  padding: 0;
+}
+
+.clear {
+  color: var(--gray-4);
+
+  transition: color var(--transition) ease;
+
+  &:hover {
+    color: var(--gray-1);
+  }
+}

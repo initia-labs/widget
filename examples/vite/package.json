@@ -1,0 +1,32 @@
+{
+  "name": "@example/vite",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --config vite.config.hmr.ts",
+    "build": "vite build",
+    "watch": "vite",
+    "typecheck": "tsc",
+    "lint": "eslint src --fix"
+  },
+  "dependencies": {
+    "@initia/interwovenkit-react": "workspace:^",
+    "@tanstack/react-query": "^5",
+    "cosmjs-types": "^0",
+    "ethers": "^6",
+    "jotai": "^2",
+    "react": "^19",
+    "react-dom": "^19",
+    "react-hook-form": "^7",
+    "react-router": "^7",
+    "wagmi": "^2"
+  },
+  "devDependencies": {
+    "@tsconfig/vite-react": "^6",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react-swc": "^3",
+    "eslint": "^9",
+    "typescript": "^5",
+    "vite": "^6"
+  }
+}

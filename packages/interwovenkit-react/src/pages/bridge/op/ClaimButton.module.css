@@ -1,0 +1,21 @@
+.button {
+  border-radius: calc(infinity * 1px);
+  border: 1px solid var(--gray-6);
+  font-size: 12px;
+  font-weight: 600;
+  height: 38px;
+  padding: 0 24px;
+
+  transition: border-color var(--transition) ease;
+
+  &:hover {
+    border-color: var(--gray-0);
+  }
+}
+
+.claimed {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--success);
+}

@@ -1,0 +1,25 @@
+{
+  "scripts": {
+    "dev": "pnpm --filter vite dev",
+    "watch": "pnpm --filter vite watch",
+    "build": "pnpm --filter interwovenkit-react build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "postinstall": "simple-git-hooks"
+  },
+  "devDependencies": {
+    "@initia/eslint-config-react-app": "^1",
+    "eslint": "^9",
+    "lint-staged": "^16",
+    "prettier": "^3",
+    "simple-git-hooks": "^2"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged --concurrent false"
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown",
+    "**/*.{ts,tsx}": "eslint --fix --max-warnings=0"
+  }
+}

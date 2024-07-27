@@ -1,0 +1,48 @@
+.nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 28px;
+
+  .item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    background-color: rgba(81, 220, 251, 0.1); /* FIXME: rgba(var(--info), 0.1) */
+    border-radius: 8px;
+    color: var(--info);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px;
+
+    transition: background-color var(--transition) ease;
+
+    &:hover {
+      background-color: rgba(81, 220, 251, 0.15); /* FIXME: rgba(var(--info), 0.15) */
+    }
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 10px;
+}
+
+.tab {
+  color: var(--gray-4);
+  font-size: 18px;
+  font-weight: 600;
+
+  transition: color var(--transition) ease;
+
+  &:hover {
+    color: var(--gray-2);
+  }
+
+  &[data-state="active"] {
+    color: var(--gray-0);
+  }
+}

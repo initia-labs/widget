@@ -1,0 +1,5 @@
+.list {
+  margin: 0 calc(-1 * var(--padding));
+  padding-top: 24px;
+  overflow: hidden;
+}

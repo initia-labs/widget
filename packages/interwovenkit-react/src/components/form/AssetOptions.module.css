@@ -1,0 +1,61 @@
+.container {
+  display: grid;
+  overflow: hidden;
+}
+
+.list {
+  flex: 1;
+  display: grid;
+  overflow-y: auto;
+}
+
+.item {
+  gap: 8px;
+
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px var(--padding);
+
+  transition: background-color var(--transition) ease;
+
+  &:hover {
+    background-color: var(--border);
+  }
+
+  &:last-of-type {
+    border-bottom: 0;
+  }
+}
+
+.logo {
+  flex: none;
+}
+
+.info {
+  flex: 1;
+  display: grid;
+}
+
+.symbol {
+  font-weight: 600;
+}
+
+.name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.balance {
+  flex: none;
+  display: grid;
+  font-family: var(--monospace);
+  text-align: right;
+}
+
+.name,
+.value {
+  color: var(--dimmed);
+  font-size: 12px;
+}
