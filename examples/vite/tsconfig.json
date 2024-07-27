@@ -1,0 +1,10 @@
+{
+  "extends": "@tsconfig/vite-react/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@initia/widget-react": ["../../packages/widget-react/src"],
+      "@/*": ["../../packages/widget-react/src/*"]
+    }
+  }
+}

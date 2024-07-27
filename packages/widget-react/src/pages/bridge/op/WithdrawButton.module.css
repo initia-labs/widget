@@ -1,0 +1,22 @@
+.withdraw {
+  border-radius: 20px;
+  border: 1px solid var(--gray-6);
+  font-size: 12px;
+  font-weight: 600;
+  height: 40px;
+  padding: 0 24px;
+
+  &:hover {
+    border-color: var(--gray-0);
+  }
+}
+
+.claimed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .icon {
+    color: var(--success);
+  }
+}

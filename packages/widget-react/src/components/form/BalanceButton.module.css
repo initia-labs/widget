@@ -1,0 +1,21 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  color: var(--dimmed);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.balance {
+  font-family: var(--monospace);
+}
+
+.button {
+  color: var(--gray-1);
+
+  &:hover {
+    color: var(--gray-0);
+  }
+}

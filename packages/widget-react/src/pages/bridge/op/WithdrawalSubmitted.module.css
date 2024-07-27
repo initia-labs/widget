@@ -1,0 +1,9 @@
+.submitted {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icon {
+  color: var(--gray-2);
+}

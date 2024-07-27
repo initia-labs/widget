@@ -1,0 +1,107 @@
+.link {
+  display: grid;
+  gap: 20px;
+
+  color: inherit;
+  padding: var(--padding);
+  padding-top: 16px;
+  text-decoration: none;
+
+  &:hover {
+    background-color: var(--gray-8);
+    color: inherit;
+  }
+}
+
+.header {
+  display: grid;
+  gap: 8px;
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .success {
+    color: var(--success);
+  }
+
+  .error {
+    color: var(--error);
+  }
+
+  .badge {
+    background-color: var(--gray-6);
+    border-radius: 4px;
+    color: var(--gray-0);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: var(--gray-2);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    :last-of-type {
+      color: var(--gray-1);
+      font-family: var(--monospace);
+    }
+  }
+
+  .divider {
+    background-color: var(--gray-5);
+    width: 1px;
+    height: 8px;
+  }
+}
+
+.route {
+  display: grid;
+  gap: 4px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  .amount {
+    font-family: var(--monospace);
+  }
+}
+
+.chain {
+  color: var(--gray-2);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.arrow {
+  display: flex;
+  justify-content: center;
+
+  color: var(--dimmed);
+  width: 32px;
+}

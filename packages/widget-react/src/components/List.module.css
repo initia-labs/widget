@@ -1,0 +1,15 @@
+.list {
+  display: grid;
+}
+
+.item {
+  justify-content: flex-start;
+  gap: 8px;
+
+  border-bottom: 1px solid var(--border);
+  padding: 12px var(--padding);
+
+  &:hover {
+    background-color: var(--gray-8);
+  }
+}

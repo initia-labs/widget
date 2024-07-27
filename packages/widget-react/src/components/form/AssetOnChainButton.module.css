@@ -1,0 +1,58 @@
+.root {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 28px;
+
+  max-width: 100%;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.logo {
+  flex: none;
+  position: relative;
+
+  .chain {
+    position: absolute;
+    bottom: 0;
+    right: -6px;
+
+    border-radius: 50%;
+    border: 1px solid var(--bg);
+  }
+}
+
+.details {
+  flex: 1;
+  overflow: hidden;
+}
+
+.symbol {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chain {
+  color: var(--dimmed);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  flex: none;
+  color: var(--gray-4);
+
+  .root:hover & {
+    color: var(--gray-1);
+  }
+}

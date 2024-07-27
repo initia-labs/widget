@@ -1,0 +1,30 @@
+.trigger {
+  gap: 4px;
+  font-family: var(--monospace);
+
+  .icon {
+    color: var(--dimmed);
+  }
+
+  &:hover .icon {
+    color: var(--gray-1);
+  }
+}
+
+.content {
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  z-index: var(--z-index);
+}
+
+.item {
+  color: var(--gray-1);
+  cursor: pointer;
+  font-family: var(--monospace);
+  font-size: 12px;
+  font-weight: 500;
+
+  &:hover {
+    color: white;
+  }
+}

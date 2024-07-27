@@ -1,0 +1,15 @@
+.footer {
+  display: grid;
+  gap: 16px;
+
+  padding-top: 20px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+
+  button {
+    flex: 1;
+  }
+}

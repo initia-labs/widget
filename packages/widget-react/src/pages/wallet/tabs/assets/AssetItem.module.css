@@ -1,0 +1,58 @@
+.asset {
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: var(--gray-6);
+  border-radius: 50%;
+  color: var(--gray-3);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.token {
+  flex: 1;
+  font-weight: 600;
+
+  .name {
+    font-size: 10px;
+  }
+}
+
+.balance {
+  font-family: var(--monospace);
+  font-weight: 500;
+  text-align: right;
+
+  .amount {
+    font-weight: 500;
+  }
+
+  .value {
+    font-size: 11px;
+  }
+}
+
+/* upper */
+.symbol,
+.amount {
+  font-size: 14px;
+}
+
+/* lower */
+.name,
+.value {
+  color: var(--dimmed);
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

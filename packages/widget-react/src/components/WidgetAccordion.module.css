@@ -1,0 +1,71 @@
+.root {
+  --accordion-border: var(--gray-7);
+  --accordion-border-radius: 12px;
+  --accordion-padding: 12px 16px;
+
+  display: grid;
+  gap: 8px;
+}
+
+.item {
+  border-radius: var(--accordion-border-radius);
+  overflow: hidden;
+
+  &[data-state="open"] .chevron {
+    transform: rotate(180deg);
+  }
+}
+
+.trigger {
+  gap: 4px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background-color: var(--accordion-border);
+  font-size: 13px;
+  font-weight: 500;
+  padding: var(--accordion-padding);
+  transition: border-radius 150ms ease-in-out;
+  width: 100%;
+
+  &:hover {
+    background-color: var(--gray-6);
+  }
+}
+
+.content {
+  background-color: var(--gray-8);
+  border: 1px solid var(--accordion-border);
+  border-top-color: var(--gray-6);
+  border-bottom-left-radius: var(--accordion-border-radius);
+  border-bottom-right-radius: var(--accordion-border-radius);
+  overflow: hidden;
+
+  will-change: height;
+  &[data-state="open"] {
+    animation: slideDown 150ms cubic-bezier(0.87, 0, 0.13, 1);
+  }
+  &[data-state="closed"] {
+    animation: slideUp 150ms cubic-bezier(0.87, 0, 0.13, 1);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}

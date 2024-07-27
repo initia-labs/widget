@@ -1,0 +1,25 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  border-bottom: 1px solid var(--border);
+  padding: 16px var(--padding);
+}
+
+.back {
+  color: var(--gray-4);
+  padding: 8px;
+  margin: -8px;
+
+  &:hover {
+    color: var(--gray-1);
+  }
+}
+
+.title {
+  flex: 1;
+  color: var(--gray-1);
+  font-size: 14px;
+  font-weight: 600;
+}

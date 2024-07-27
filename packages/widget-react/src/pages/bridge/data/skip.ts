@@ -1,0 +1,21 @@
+import ky from "ky"
+import { useMemo } from "react"
+import { createQueryKeys } from "@lukemorales/query-key-factory"
+import { useConfig } from "@/data/config"
+import type { FormValues } from "./form"
+
+export const skipQueryKeys = createQueryKeys("initia-widget:skip", {
+  chains: null,
+  assets: (chainId: string) => [chainId],
+  asset: (chainId: string, denom: string) => [chainId, denom],
+  balances: (address: string, chainId: string) => [address, chainId],
+  balance: (address: string, chainId: string, denom: string) => [address, chainId, denom],
+  route: (values: FormValues, isOpWithdraw?: boolean) => [values, isOpWithdraw],
+  txTrack: (chainId: string, txHash?: string) => [chainId, txHash],
+  txStatus: (chainId: string, txHash?: string, isLz?: boolean) => [chainId, txHash, isLz],
+})
+
+export function useSkip() {
+  const { routerApiUrl } = useConfig()
+  return useMemo(() => ky.create({ prefixUrl: routerApiUrl }), [routerApiUrl])
+}
