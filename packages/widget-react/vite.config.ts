@@ -13,12 +13,16 @@ function emitCssAsJsString(): Plugin {
       const outDir = path.resolve(__dirname, "dist")
       const cssPath = path.join(outDir, "styles.css")
       const jsPath = path.join(outDir, "styles.js")
+      const dtsPath = path.join(outDir, "styles.d.ts")
 
       if (fs.existsSync(cssPath)) {
         const cssContent = fs.readFileSync(cssPath, "utf-8")
         const jsModule = `export default ${JSON.stringify(cssContent)};`
         fs.writeFileSync(jsPath, jsModule)
-        console.log("✅ Generated styles.js with exported CSS string.")
+        console.log("✅ Generated styles.js")
+        const dtsContent = "declare const styles: string\nexport default styles\n"
+        fs.writeFileSync(dtsPath, dtsContent)
+        console.log("✅ Generated styles.d.ts")
       } else {
         console.error("❌ styles.css not found.")
       }
