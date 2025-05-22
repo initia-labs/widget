@@ -29,14 +29,21 @@
     gap: 2px;
   }
 
+  .balance {
+    flex: none;
+  }
+
   .value {
-    display: flex;
-    justify-content: flex-end;
+    flex: 1;
 
     color: var(--gray-2);
     font-family: var(--monospace);
     font-size: 13px;
     font-weight: 600;
+    text-align: right;
+
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
   .error {

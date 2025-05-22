@@ -13,8 +13,15 @@ const ReadOnly = ({ children }: { children: string }) => {
 }
 
 const QuantityInput = () => {
-  const { control } = useFormContext()
-  return <NumericInput name="quantity" control={control} className={styles.input} />
+  const { control, formState } = useFormContext()
+  return (
+    <NumericInput
+      name="quantity"
+      control={control}
+      className={styles.input}
+      error={!!formState.errors.quantity?.message}
+    />
+  )
 }
 
 QuantityInput.ReadOnly = ReadOnly

@@ -2,6 +2,7 @@ import { useSetAtom } from "jotai"
 import { useNavigate } from "@/lib/router"
 import { txResultAtom, useTxResult } from "@/data/tx"
 import Scrollable from "@/components/Scrollable"
+import Video from "@/components/Video"
 import ExplorerLink from "@/components/ExplorerLink"
 import Footer from "@/components/Footer"
 import Button from "@/components/Button"
@@ -28,20 +29,8 @@ const TxResult = () => {
   return (
     <Scrollable className={styles.result}>
       <div className={styles.inner}>
-        <video
-          className={styles.video}
-          width={52}
-          height={52}
-          autoPlay
-          playsInline
-          muted
-          preload="auto"
-        >
-          <source src={`https://assets.initia.xyz/videos/${videoName}.webm`} type="video/webm" />
-        </video>
-
+        <Video name={videoName} />
         <h1 className={styles.title}>{title}</h1>
-
         {content}
       </div>
 

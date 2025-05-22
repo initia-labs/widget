@@ -64,4 +64,9 @@
   &:disabled {
     color: var(--gray-4);
   }
+
+  &.unpadded {
+    width: 24px;
+    padding: 0;
+  }
 }

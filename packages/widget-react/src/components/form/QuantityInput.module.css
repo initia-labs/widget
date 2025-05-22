@@ -12,6 +12,7 @@
   text-align: right;
 
   overflow-x: auto;
+  overflow-y: hidden;
 
   &::placeholder,
   &.placeholder {

@@ -2,9 +2,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 28px;
+  gap: 4px;
 
-  max-width: 100%;
+  width: 156px;
 }
 
 .content {

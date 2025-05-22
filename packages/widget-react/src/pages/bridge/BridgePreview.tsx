@@ -1,6 +1,7 @@
 import type { TxJson } from "@skip-go/client"
 import { useNavigate } from "@/lib/router"
 import Page from "@/components/Page"
+import Video from "@/components/Video"
 import Button from "@/components/Button"
 import Footer from "@/components/Footer"
 import FormHelp from "@/components/form/FormHelp"
@@ -11,6 +12,7 @@ import FooterWithMsgs from "./FooterWithMsgs"
 import FooterWithSignedOpHook from "./FooterWithSignedOpHook"
 import FooterWithErc20Approval from "./FooterWithErc20Approval"
 import BridgePreviewFooter from "./BridgePreviewFooter"
+import styles from "./BridgePreview.module.css"
 
 const BridgePreview = () => {
   const navigate = useNavigate()
@@ -31,10 +33,8 @@ const BridgePreview = () => {
         <Footer
           extra={
             <FormHelp.Stack>
-              {error ? (
+              {isSuccess ? null : error ? (
                 <FormHelp level="error">{error.message}</FormHelp>
-              ) : isSuccess ? (
-                <FormHelp level="success">Transaction completed</FormHelp>
               ) : (
                 <FormHelp level="info">
                   It’s safe to leave this page. Your transaction will continue, and you can track
@@ -70,7 +70,15 @@ const BridgePreview = () => {
       <FooterWithAddressList>
         {(addressList) => (
           <>
+            {txStatus?.state === "STATE_COMPLETED_SUCCESS" && (
+              <>
+                <Video name="Success" />
+                <p className={styles.title}>Transaction completed</p>
+              </>
+            )}
+
             <BridgePreviewRoute addressList={addressList} trackedTxHash={trackedTxHash} />
+
             {tx ? (
               <FooterWithErc20Approval tx={tx}>{renderFooter(tx)}</FooterWithErc20Approval>
             ) : (

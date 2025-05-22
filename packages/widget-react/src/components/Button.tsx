@@ -31,8 +31,14 @@ const OutlineButton = ({ className, ...props }: Props) => {
   return <WhiteButton {...props} className={clsx(styles.outline, className)} />
 }
 
-const SmallButton = ({ className, ...attrs }: ButtonHTMLAttributes<HTMLButtonElement>) => {
-  return <button {...attrs} className={clsx(styles.small, className)} />
+interface SmallButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  unpadded?: boolean
+}
+
+const SmallButton = ({ className, unpadded, ...attrs }: SmallButtonProps) => {
+  return (
+    <button {...attrs} className={clsx(styles.small, { [styles.unpadded]: unpadded }, className)} />
+  )
 }
 
 const Button = {

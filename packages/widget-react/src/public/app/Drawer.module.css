@@ -24,17 +24,22 @@
   }
 
   @media (max-width: 576px) {
-    background-color: rgba(255, 255, 255, 0.05);
-
-    top: var(--offset);
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 0;
     width: 100%;
-    height: calc(100vh - var(--offset));
+    height: 100vh;
 
     svg {
       transform: rotate(90deg);
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.8);
     }
   }
 }
@@ -51,12 +56,12 @@
   z-index: var(--z-index);
 
   @media (max-width: 576px) {
-    top: calc(var(--offset) + 54px);
+    top: 54px;
     left: 0;
     right: 0;
     bottom: 0;
     width: 100%;
-    height: calc(100vh - var(--offset) - 54px);
+    height: calc(100vh - 54px);
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
