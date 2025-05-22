@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import { IconSearch } from "@initia/icons-react"
+import { IconCloseCircleFilled, IconSearch } from "@initia/icons-react"
 import { useAutoFocus } from "./hooks"
 import styles from "./SearchInput.module.css"
 
@@ -12,7 +12,7 @@ interface Props {
 
 const SearchInput = ({ value, onChange, placeholder = "Search", className }: Props) => {
   return (
-    <div className={clsx(styles.wrapper, className)}>
+    <div className={clsx(styles.root, className)}>
       <label htmlFor="search" className={styles.label}>
         <IconSearch size={16} />
       </label>
@@ -26,6 +26,12 @@ const SearchInput = ({ value, onChange, placeholder = "Search", className }: Pro
         placeholder={placeholder}
         ref={useAutoFocus()}
       />
+
+      {value && (
+        <button className={styles.clear} onClick={() => onChange("")}>
+          <IconCloseCircleFilled size={20} />
+        </button>
+      )}
     </div>
   )
 }

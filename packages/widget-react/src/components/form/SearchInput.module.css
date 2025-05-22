@@ -1,4 +1,4 @@
-.wrapper {
+.root {
   display: flex;
   gap: 8px;
   border-bottom: 1px solid var(--border);
@@ -15,4 +15,12 @@
   border: 0;
   background-color: transparent;
   padding: 0;
+}
+
+.clear {
+  color: var(--gray-4);
+
+  &:hover {
+    color: var(--gray-1);
+  }
 }
