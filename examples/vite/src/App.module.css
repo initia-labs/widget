@@ -13,10 +13,14 @@
 }
 
 .title {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
   font-size: 2rem;
+  font-weight: bold;
 }
 
-.title[data-testnet] {
+.title[data-testnet="true"] {
   color: #f59e0b;
 }
 
