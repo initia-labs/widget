@@ -20,7 +20,8 @@
     "build": "vite build",
     "typecheck": "tsc",
     "lint": "eslint src --fix",
-    "test": "vitest run"
+    "test": "vitest run",
+    "release": "standard-version"
   },
   "peerDependencies": {
     "@cosmjs/amino": "^0",
@@ -106,6 +107,7 @@
     "react-intersection-observer": "^9",
     "react-merge-refs": "^3",
     "react-use": "^17",
+    "standard-version": "^9",
     "typescript": "^5",
     "vite": "^6",
     "vite-plugin-dts": "^4",

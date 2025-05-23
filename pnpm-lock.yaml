@@ -23,9 +23,6 @@ importers:
       simple-git-hooks:
         specifier: ^2
         version: 2.13.0
-      standard-version:
-        specifier: ^9
-        version: 9.5.0
 
   examples/nextjs:
     dependencies:
@@ -268,6 +265,9 @@ importers:
       react-use:
         specifier: ^17
         version: 17.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      standard-version:
+        specifier: ^9
+        version: 9.5.0
       typescript:
         specifier: ^5
         version: 5.8.3
