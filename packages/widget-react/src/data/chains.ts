@@ -3,7 +3,7 @@ import { descend, path, uniq } from "ramda"
 import { useAtom } from "jotai"
 import { atomWithStorage } from "jotai/utils"
 import { useCallback } from "react"
-import { useSuspenseQuery } from "@tanstack/react-query"
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { createQueryKeys } from "@lukemorales/query-key-factory"
 import type { Chain, SecureEndpoint } from "@initia/initia-registry-types"
 import { LocalStorageKey } from "./constants"
@@ -13,6 +13,7 @@ import { useAsset } from "./assets"
 
 export const chainQueryKeys = createQueryKeys("initia-widget:chain", {
   list: (registryUrl: string) => [registryUrl],
+  prices: (chainId: string) => [chainId],
   gasPrices: (chain: NormalizedChain) => [chain],
 })
 
@@ -80,6 +81,18 @@ export function useLayer1() {
   const chain = chains.find((chain) => chain.metadata?.is_l1)
   if (!chain) throw new Error("Layer 1 not found")
   return chain
+}
+
+export function usePricesQuery(chainId: string) {
+  return useQuery({
+    queryKey: chainQueryKeys.prices(chainId).queryKey,
+    queryFn: () =>
+      ky
+        .create({ prefixUrl: "https://celatone-api-prod.alleslabs.dev" })
+        .get(`v1/initia/${chainId}/assets`, { searchParams: { with_prices: true } })
+        .json<{ id: string; price: number }[]>(),
+    staleTime: STALE_TIMES.SECOND,
+  })
 }
 
 export function useManageChains() {

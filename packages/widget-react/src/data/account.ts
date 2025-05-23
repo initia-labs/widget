@@ -2,20 +2,19 @@ import ky from "ky"
 import { descend, sortWith } from "ramda"
 import BigNumber from "bignumber.js"
 import type { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin"
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import { createQueryKeys } from "@lukemorales/query-key-factory"
 import { createUsernameClient } from "@/public/utils"
 import { useInitiaAddress } from "@/public/data/hooks"
 import { useConfig } from "./config"
 import { STALE_TIMES } from "./http"
-import { useLayer1, type NormalizedChain } from "./chains"
+import { useLayer1, usePricesQuery, type NormalizedChain } from "./chains"
 import { useAssets, useFindAsset, useGetLayer1Denom } from "./assets"
 
 export const accountQueryKeys = createQueryKeys("initia-widget:account", {
   username: (restUrl: string, address: string) => [restUrl, address],
   address: (restUrl: string, username: string) => [restUrl, username],
   balances: (restUrl: string, address: string) => [restUrl, address],
-  prices: (chainId: string) => [chainId],
   txs: (indexerUrl: string, address: string) => [indexerUrl, address],
 })
 
@@ -39,18 +38,6 @@ export function useBalances(chain: NormalizedChain) {
     staleTime: STALE_TIMES.SECOND,
   })
   return data
-}
-
-export function usePricesQuery(chainId: string) {
-  return useQuery({
-    queryKey: accountQueryKeys.prices(chainId).queryKey,
-    queryFn: () =>
-      ky
-        .create({ prefixUrl: "https://celatone-api-prod.alleslabs.dev" })
-        .get(`v1/initia/${chainId}/assets`, { searchParams: { with_prices: true } })
-        .json<{ id: string; price: number }[]>(),
-    staleTime: STALE_TIMES.SECOND,
-  })
 }
 
 export function useSortedBalancesWithValue(chain: NormalizedChain) {

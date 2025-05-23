@@ -3,8 +3,8 @@ import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 import { useMutation } from "@tanstack/react-query"
 import { useFormContext } from "react-hook-form"
 import { useLocationState } from "@/lib/router"
-import { useChain } from "@/data/chains"
-import { Address, formatAmount, toAmount, toQuantity } from "@/public/utils"
+import { useChain, usePricesQuery } from "@/data/chains"
+import { Address, formatAmount, formatNumber, toAmount, toQuantity } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { useAsset } from "@/data/assets"
 import { useBalances } from "@/data/account"
@@ -34,8 +34,10 @@ export const SendFields = () => {
   const chain = useChain(chainId)
   const balances = useBalances(chain)
   const asset = useAsset(denom, chain)
+  const { data: prices } = usePricesQuery(chain.chainId)
   const { decimals } = asset
-  const balance = balances.find((coin) => coin.denom === watch("denom"))?.amount ?? "0"
+  const balance = balances.find((coin) => coin.denom === denom)?.amount ?? "0"
+  const price = prices?.find(({ id }) => id === denom)?.price
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: ({ chainId, denom, quantity, recipient, memo }: FormValues) => {
@@ -84,6 +86,7 @@ export const SendFields = () => {
                 {formatAmount(balance, { decimals })}
               </BalanceButton>
             }
+            value={!quantity ? "0" : !price ? "-" : formatNumber(BigNumber(quantity).times(price))}
             errorMessage={formState.errors.quantity?.message}
           />
 
