@@ -6,7 +6,6 @@ import { toAmount } from "@/public/utils"
 import { normalizeError, STALE_TIMES } from "@/data/http"
 import { useInitiaRegistry, useLayer1 } from "@/data/chains"
 import { skipQueryKeys, useSkip } from "./skip"
-import type { FormValues } from "./form"
 import { useBridgeForm } from "./form"
 import { useChainType, useSkipChain } from "./chains"
 import type { RouterAsset } from "./assets"
@@ -36,11 +35,12 @@ export interface RouterRouteResponseJson extends RouteResponseJson {
 
 export function useRouteQuery(opWithdrawal?: { isOpWithdraw?: boolean; disabled?: boolean }) {
   const { watch } = useBridgeForm()
-  const values = watch()
+  const { quantity, ...values } = watch()
   const skip = useSkip()
 
-  const [debouncedValues, setDebouncedValues] = useState<FormValues>(values)
-  useDebounce(() => setDebouncedValues(values), 300, [values])
+  const [debouncedQuantity, setDebouncedQuantity] = useState(quantity)
+  useDebounce(() => setDebouncedQuantity(quantity), 300, [quantity])
+  const debouncedValues = { quantity: debouncedQuantity, ...values }
 
   const queryClient = useQueryClient()
   return useQuery({
