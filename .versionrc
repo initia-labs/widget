@@ -1,0 +1,8 @@
+{
+  "packageFiles": [
+    "packages/widget-react/package.json"
+  ],
+  "bumpFiles": [
+    "packages/widget-react/package.json"
+  ]
+}
