@@ -1,6 +1,6 @@
 import clsx from "clsx"
 import { useAtomValue } from "jotai"
-import type { PropsWithChildren } from "react"
+import { useContext, type PropsWithChildren } from "react"
 import { createPortal } from "react-dom"
 import { useMedia } from "react-use"
 import type { FallbackProps } from "react-error-boundary"
@@ -15,10 +15,12 @@ import Status from "@/components/Status"
 import Footer from "@/components/Footer"
 import Button from "@/components/Button"
 import { usePortalContainer } from "../portal"
+import { PortalContext } from "./PortalContext"
 import WidgetHeader from "./WidgetHeader"
 import styles from "./Drawer.module.css"
 
 const Drawer = ({ children }: PropsWithChildren) => {
+  const { setContainer } = useContext(PortalContext)
   const { isWidgetOpen, closeWidget } = useWidgetVisibility()
   const txRequest = useAtomValue(txRequestHandlerAtom)
 
@@ -72,6 +74,7 @@ const Drawer = ({ children }: PropsWithChildren) => {
           <animated.div style={style} className={clsx(styles.content, "body")}>
             <WidgetHeader />
             <AsyncBoundary errorFallbackRender={renderFallbackError}>{children}</AsyncBoundary>
+            <div ref={setContainer} />
           </animated.div>
         ) : null,
       )}

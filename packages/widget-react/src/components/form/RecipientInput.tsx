@@ -1,5 +1,6 @@
 import type { Ref } from "react"
 import { useState, useEffect } from "react"
+import { mergeRefs } from "react-merge-refs"
 import { useFormContext } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
 import { Address } from "@/public/utils"
@@ -7,6 +8,7 @@ import { STALE_TIMES } from "@/data/http"
 import { accountQueryKeys, useUsernameClient } from "@/data/account"
 import Footer from "../Footer"
 import Button from "../Button"
+import { useAutoFocus } from "./hooks"
 import InputHelp from "./InputHelp"
 import styles from "./RecipientInput.module.css"
 
@@ -20,8 +22,11 @@ interface Props {
 
 const RecipientInput = (props: Props) => {
   const { mode = "onChange", myAddress, validate = Address.validate, onApply, ref } = props
+  const autoFocusRef = useAutoFocus()
+
   const { getValues, setValue, formState } = useFormContext<{ recipient: string }>()
-  const [inputValue, setInputValue] = useState<string>(getValues("recipient"))
+  const initialValue = mode === "onChange" ? getValues("recipient") : ""
+  const [inputValue, setInputValue] = useState<string>(initialValue)
   const client = useUsernameClient()
 
   const {
@@ -88,7 +93,7 @@ const RecipientInput = (props: Props) => {
         onChange={(e) => setInputValue(e.target.value.trim())}
         placeholder="Address or username"
         autoComplete="off"
-        ref={ref}
+        ref={mode === "onSubmit" ? mergeRefs([ref, autoFocusRef]) : ref}
       />
 
       {renderResult()}

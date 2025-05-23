@@ -11,7 +11,7 @@ function getShadowRoot() {
   return host.shadowRoot || host.attachShadow({ mode: "open" })
 }
 
-// Portal container for rendering Popover and Dialog components.
+// Portal container for rendering Drawer components.
 // In local development, elements are injected diectly into the body.
 // In production, they are injected into a shadow root.
 export function usePortalContainer() {

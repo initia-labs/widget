@@ -1,8 +1,10 @@
+import clsx from "clsx"
 import type { InputHTMLAttributes } from "react"
 import { mergeRefs } from "react-merge-refs"
 import type { Control, FieldValues, Path } from "react-hook-form"
 import { Controller } from "react-hook-form"
 import { useAutoFocus } from "./hooks"
+import styles from "./NumericInput.module.css"
 
 function sanitizeNumericInput(value: string, maxLength: number): string {
   const cleaned = value.replace(/[^0-9.]/g, "")
@@ -17,7 +19,8 @@ interface Props<T extends FieldValues> extends InputHTMLAttributes<HTMLInputElem
   error?: boolean
 }
 
-function NumericInput<T extends FieldValues>({ name, control, dp = 6, error, ...props }: Props<T>) {
+function NumericInput<T extends FieldValues>(props: Props<T>) {
+  const { name, control, dp = 6, error, className, ...attrs } = props
   const autoFocusRef = useAutoFocus()
 
   return (
@@ -26,8 +29,9 @@ function NumericInput<T extends FieldValues>({ name, control, dp = 6, error, ...
       control={control}
       render={({ field }) => (
         <input
-          {...props}
+          {...attrs}
           {...field}
+          className={clsx(styles.input, className)}
           onChange={(e) => field.onChange(sanitizeNumericInput(e.target.value, dp))}
           aria-invalid={error || undefined}
           placeholder="0"

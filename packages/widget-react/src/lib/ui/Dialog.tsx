@@ -7,6 +7,7 @@
 
 import type { PropsWithChildren, ReactNode } from "react"
 import { useContext, useEffect, createContext, useState } from "react"
+import { createPortal } from "react-dom"
 
 interface DialogContextProps {
   isOpen: boolean
@@ -64,13 +65,14 @@ export const DialogTrigger = ({ children, className }: DialogTriggerProps) => {
 }
 
 interface DialogPortalProps {
+  container: Element | DocumentFragment | null
   children: (props: { onClose: () => void }) => ReactNode
 }
 
-export const DialogPortal = ({ children }: DialogPortalProps) => {
+export const DialogPortal = ({ container, children }: DialogPortalProps) => {
   const { isOpen, onClose } = useContext(DialogContext)
   if (!isOpen) return null
-  return children({ onClose })
+  return createPortal(children({ onClose }), container ?? document.body)
 }
 
 interface DialogOverlayProps {

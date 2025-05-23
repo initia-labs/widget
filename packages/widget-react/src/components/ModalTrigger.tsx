@@ -2,6 +2,7 @@ import clsx from "clsx"
 import { useContext, type ReactNode } from "react"
 import { IconClose } from "@initia/icons-react"
 import Dialog from "@/lib/ui/Dialog"
+import { usePortal } from "@/public/app/PortalContext"
 import { fullscreenContext } from "@/public/app/fullscreen"
 import styles from "./ModalTrigger.module.css"
 
@@ -18,7 +19,7 @@ const ModalTrigger = ({ title, content, children: trigger, className }: Props) =
   return (
     <Dialog.Root>
       <Dialog.Trigger className={className}>{trigger}</Dialog.Trigger>
-      <Dialog.Portal>
+      <Dialog.Portal container={usePortal()}>
         {(props) => (
           <>
             <Dialog.Overlay className={clsx(styles.overlay, { [styles.fullscreen]: fullscreen })} />

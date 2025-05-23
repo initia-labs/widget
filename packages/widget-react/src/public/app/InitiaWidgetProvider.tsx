@@ -1,10 +1,11 @@
 import { useEffect, type PropsWithChildren } from "react"
 import { MemoryRouter } from "@/lib/router"
 import type { Config } from "@/data/config"
-import { ConfigContextProvider } from "@/data/config"
+import { ConfigContext } from "@/data/config"
 import { useAddEthereumChain, useDefaultChain, useInitiaRegistry } from "@/data/chains"
 import AsyncBoundary from "@/components/AsyncBoundary"
 import { MAINNET } from "../data/constants"
+import PortalProvider from "./PortalProvider"
 import Drawer from "./Drawer"
 import Routes from "./Routes"
 
@@ -48,21 +49,23 @@ const InitiaWidgetProvider = ({ children, ...config }: PropsWithChildren<Partial
   }
 
   return (
-    <ConfigContextProvider value={{ ...MAINNET, ...config }}>
-      <Fonts />
+    <ConfigContext.Provider value={{ ...MAINNET, ...config }}>
+      <PortalProvider>
+        <Fonts />
 
-      <AsyncBoundary suspenseFallback={null} errorFallbackRender={() => null}>
-        <Prefetch />
-      </AsyncBoundary>
+        <AsyncBoundary suspenseFallback={null} errorFallbackRender={() => null}>
+          <Prefetch />
+        </AsyncBoundary>
 
-      <MemoryRouter>
-        {children}
+        <MemoryRouter>
+          {children}
 
-        <Drawer>
-          <Routes />
-        </Drawer>
-      </MemoryRouter>
-    </ConfigContextProvider>
+          <Drawer>
+            <Routes />
+          </Drawer>
+        </MemoryRouter>
+      </PortalProvider>
+    </ConfigContext.Provider>
   )
 }
 

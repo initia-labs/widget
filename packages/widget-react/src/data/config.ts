@@ -23,10 +23,8 @@ export interface Config {
   theme: "light" | "dark"
 }
 
-const context = createContext<Config>(null!)
-
-export const { Provider: ConfigContextProvider } = context
+export const ConfigContext = createContext<Config>(null!)
 
 export function useConfig() {
-  return useContext(context)
+  return useContext(ConfigContext)
 }

@@ -20,6 +20,9 @@
 
   background-color: var(--gray-7);
   color: var(--dimmed);
+  font-family: var(--monospace);
+  font-size: 14px;
+  font-weight: 500;
 
   &:hover:not(.active) {
     background-color: var(--gray-6);
