@@ -12,7 +12,7 @@ import styles from "./RecipientInput.module.css"
 
 interface Props {
   mode?: "onChange" | "onSubmit" // onSubmit: for Bridge
-  myAddress: string
+  myAddress?: string
   validate?: (address: string) => boolean
   onApply?: () => void
   ref?: Ref<HTMLInputElement>
@@ -75,9 +75,11 @@ const RecipientInput = (props: Props) => {
       <label htmlFor="recipient" className={styles.label}>
         <span>Recipient address</span>
 
-        <Button.Small type="button" onClick={() => setInputValue(myAddress)}>
-          My address
-        </Button.Small>
+        {myAddress && (
+          <Button.Small type="button" onClick={() => setInputValue(myAddress)}>
+            My address
+          </Button.Small>
+        )}
       </label>
 
       <input

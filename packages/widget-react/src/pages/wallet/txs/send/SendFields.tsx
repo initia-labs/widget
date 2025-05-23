@@ -91,7 +91,7 @@ export const SendFields = (asset: NormalizedAsset) => {
 
           <div className={styles.divider} />
 
-          <RecipientInput myAddress={address} />
+          <RecipientInput myAddress={import.meta.env.DEV ? address : undefined} />
 
           <div>
             <label htmlFor="memo">Memo (optional)</label>
