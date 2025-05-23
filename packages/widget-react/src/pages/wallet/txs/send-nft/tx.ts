@@ -1,10 +1,10 @@
 import ky from "ky"
 import { Interface } from "ethers"
 import { toBytes, utf8ToBytes } from "@noble/hashes/utils"
-import { sha3_256 } from "@noble/hashes/sha3"
-import { toBase64, toHex } from "@cosmjs/encoding"
+import { toBase64 } from "@cosmjs/encoding"
 import { Address } from "@/public/utils"
 import type { NormalizedChain } from "@/data/chains"
+import { generateSeededAddress } from "@/data/assets"
 import type { NormalizedCollection, NormalizedNft } from "../../tabs/nft/queries"
 
 async function handleMinimove(
@@ -22,9 +22,7 @@ async function handleMinimove(
   }
 
   // Root creator: return IBC class ID and trace
-  if (
-    createObjectAddress("0x1", toBytes(name)) === objectAddr.replace("0x", "").padStart(64, "0")
-  ) {
+  if (generateSeededAddress("0x1", name) === objectAddr.replace("0x", "").padStart(64, "0")) {
     return {
       class_id: name,
       class_trace: await fetchIbcClassTrace(name, restUrl),
@@ -226,11 +224,4 @@ export function splitIbcChannel(input: string) {
   if (!match) throw new Error("Pattern `channel-{number}/` not found.")
   const [, before, after] = match
   return [before, after]
-}
-
-export function createObjectAddress(creator: string, seed: Uint8Array) {
-  const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe
-  const creatorBytes = Address.toBytes(creator, 32)
-  const bytes = new Uint8Array([...creatorBytes, ...seed, OBJECT_FROM_SEED_ADDRESS_SCHEME])
-  return toHex(sha3_256.create().update(bytes).digest())
 }

@@ -1,11 +1,11 @@
 import BigNumber from "bignumber.js"
-import { formatAmount, formatNumber } from "@/public/utils"
+import { formatAmount, formatNumber, truncate } from "@/public/utils"
 import type { BaseAsset } from "@/components/form/types"
 import Image from "@/components/Image"
 import styles from "./AssetItem.module.css"
 
 const AssetItem = (props: BaseAsset) => {
-  const { symbol, name, logoUrl, decimals, balance = "0", value = 0 } = props
+  const { denom, symbol, name, logoUrl, decimals, balance = "0", value = 0 } = props
 
   return (
     <div className={styles.asset}>
@@ -21,7 +21,7 @@ const AssetItem = (props: BaseAsset) => {
       />
 
       <div className={styles.token}>
-        <div className={styles.symbol}>{symbol}</div>
+        <div className={styles.symbol}>{symbol ?? truncate(denom)}</div>
         {name && <div className={styles.name}>{name}</div>}
       </div>
 

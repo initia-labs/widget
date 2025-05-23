@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { useState } from "react"
 import { formatAmount, formatNumber } from "@/public/utils"
 import Image from "../Image"
@@ -10,9 +11,11 @@ import styles from "./AssetOptions.module.css"
 interface Props {
   assets: BaseAsset[]
   onSelect: (denom: string) => void
+  renderAsset?: (asset: BaseAsset, children: (asset: BaseAsset) => ReactNode) => ReactNode
 }
 
-const AssetOptions = ({ assets, onSelect }: Props) => {
+const AssetOptions = (props: Props) => {
+  const { assets, onSelect, renderAsset = (asset, children) => children(asset) } = props
   const [search, setSearch] = useState("")
   const filteredAssets = filterBySearch(["symbol"], search, assets)
 
@@ -24,24 +27,26 @@ const AssetOptions = ({ assets, onSelect }: Props) => {
         <Status>No assets</Status>
       ) : (
         <div className={styles.list}>
-          {filteredAssets.map(({ denom, logoUrl, symbol, name, balance, decimals, value = 0 }) => (
-            <button
-              type="button"
-              className={styles.item}
-              onClick={() => onSelect(denom)}
-              key={denom}
-            >
-              <Image src={logoUrl} width={32} height={32} className={styles.logo} />
-              <div className={styles.info}>
-                <div>{symbol}</div>
-                <div className={styles.name}>{name}</div>
-              </div>
-              <div className={styles.balance}>
-                {balance && <div>{formatAmount(balance, { decimals })}</div>}
-                {value > 0 && <div className={styles.value}>${formatNumber(value)}</div>}
-              </div>
-            </button>
-          ))}
+          {filteredAssets.map((asset) =>
+            renderAsset(asset, ({ denom, logoUrl, symbol, name, balance, decimals, value = 0 }) => (
+              <button
+                type="button"
+                className={styles.item}
+                onClick={() => onSelect(denom)}
+                key={denom}
+              >
+                <Image src={logoUrl} width={32} height={32} className={styles.logo} />
+                <div className={styles.info}>
+                  <div>{symbol}</div>
+                  <div className={styles.name}>{name}</div>
+                </div>
+                <div className={styles.balance}>
+                  {balance && <div>{formatAmount(balance, { decimals })}</div>}
+                  {value > 0 && <div className={styles.value}>${formatNumber(value)}</div>}
+                </div>
+              </button>
+            )),
+          )}
         </div>
       )}
     </div>

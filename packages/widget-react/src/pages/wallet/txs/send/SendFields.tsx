@@ -6,7 +6,7 @@ import { useLocationState } from "@/lib/router"
 import { useChain, usePricesQuery } from "@/data/chains"
 import { Address, formatAmount, formatNumber, toAmount, toQuantity } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
-import { useAsset } from "@/data/assets"
+import type { NormalizedAsset } from "@/data/assets"
 import { useBalances } from "@/data/account"
 import Page from "@/components/Page"
 import Footer from "@/components/Footer"
@@ -23,7 +23,7 @@ import type { FormValues } from "./Send"
 import SelectChainAsset from "./SelectChainAsset"
 import styles from "./SendFields.module.css"
 
-export const SendFields = () => {
+export const SendFields = (asset: NormalizedAsset) => {
   const state = useLocationState()
 
   const { address, initiaAddress, requestTxBlock } = useInitiaWidget()
@@ -33,7 +33,6 @@ export const SendFields = () => {
 
   const chain = useChain(chainId)
   const balances = useBalances(chain)
-  const asset = useAsset(denom, chain)
   const { data: prices } = usePricesQuery(chain.chainId)
   const { decimals } = asset
   const balance = balances.find((coin) => coin.denom === denom)?.amount ?? "0"
