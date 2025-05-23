@@ -82,7 +82,7 @@ const BridgeAccount = ({ type }: Props) => {
                 retrievable.
               </InputHelp>
               <RecipientInput
-                mode="manual"
+                mode="onSubmit"
                 myAddress={getDefaultRecipientAddress(dstChainId)}
                 validate={(address) => validateRecipientAddress(address, dstChainId)}
                 onApply={onClose}

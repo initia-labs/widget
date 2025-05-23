@@ -10,10 +10,8 @@ import Button from "../Button"
 import InputHelp from "./InputHelp"
 import styles from "./RecipientInput.module.css"
 
-type Mode = "auto" | "manual"
-
 interface Props {
-  mode?: Mode
+  mode?: "onChange" | "onSubmit" // onSubmit: for Bridge
   myAddress: string
   validate?: (address: string) => boolean
   onApply?: () => void
@@ -21,7 +19,7 @@ interface Props {
 }
 
 const RecipientInput = (props: Props) => {
-  const { mode = "auto", myAddress, validate = Address.validate, onApply, ref } = props
+  const { mode = "onChange", myAddress, validate = Address.validate, onApply, ref } = props
   const { getValues, setValue, formState } = useFormContext<{ recipient: string }>()
   const [inputValue, setInputValue] = useState<string>(getValues("recipient"))
   const client = useUsernameClient()
@@ -39,14 +37,14 @@ const RecipientInput = (props: Props) => {
 
   const resolvedAddress = usernameAddress ?? (validate(inputValue) ? inputValue : "")
 
-  // Auto-mode: update form value on every valid input change
+  // onChange: update form value on every valid input change
   useEffect(() => {
-    if (mode !== "auto") return
+    if (mode !== "onChange") return
     if (!inputValue) return
     setValue("recipient", usernameAddress ?? inputValue, { shouldValidate: true })
   }, [inputValue, mode, setValue, usernameAddress])
 
-  // Manual-mode: update form value when button clicked
+  // onSubmit: update form value when button clicked
   const handleApply = () => {
     if (!isLoading && !error) {
       setValue("recipient", resolvedAddress, { shouldValidate: true })
@@ -64,10 +62,10 @@ const RecipientInput = (props: Props) => {
     if (usernameAddress) {
       return <InputHelp level="success">{usernameAddress}</InputHelp>
     }
-    if (mode === "manual" && inputValue && !resolvedAddress) {
+    if (mode === "onSubmit" && inputValue && !resolvedAddress) {
       return <InputHelp level="error">Invalid address</InputHelp>
     }
-    if (mode === "auto") {
+    if (mode === "onChange") {
       return <InputHelp level="error">{formState.errors.recipient?.message}</InputHelp>
     }
   }
@@ -93,7 +91,7 @@ const RecipientInput = (props: Props) => {
 
       {renderResult()}
 
-      {mode === "manual" && (
+      {mode === "onSubmit" && (
         <Footer>
           <Button.White
             type="button"
