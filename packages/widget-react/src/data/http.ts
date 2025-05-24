@@ -1,5 +1,5 @@
 import { HTTPError } from "ky"
-import { includes, pathOr } from "ramda"
+import { includes, path } from "ramda"
 
 export const STALE_TIMES = {
   SECOND: 1000,
@@ -15,7 +15,7 @@ export async function normalizeError(error: unknown): Promise<string> {
     if (includes("application/json", contentType)) {
       try {
         const data = await response.json()
-        return pathOr(JSON.stringify(data), ["message"], data)
+        if (data.message) return data.message
       } catch {
         return error.message
       }
@@ -28,7 +28,11 @@ export async function normalizeError(error: unknown): Promise<string> {
     }
   }
 
-  if (error instanceof Error) return error.message
+  if (error instanceof Error) {
+    const causeMessage = path<string>(["cause", "message"], error)
+    if (causeMessage) return causeMessage
+    return error.message
+  }
 
   return String(error)
 }

@@ -9,7 +9,6 @@ import { useLocationState } from "@/lib/router"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { useConfig } from "@/data/config"
 import { useChain, useLayer1 } from "@/data/chains"
-import { normalizeError } from "@/data/http"
 import { useAutoFocus } from "@/components/form/hooks"
 import ModalTrigger from "@/components/ModalTrigger"
 import RecipientInput from "@/components/form/RecipientInput"
@@ -38,42 +37,38 @@ const SendNftFields = () => {
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: async ({ recipient, dstChainId }: FormValues) => {
-      try {
-        const params = Object.assign(
-          {
-            from_address: initiaAddress,
-            from_chain_id: srcChain.chainId,
-            to_address: Address.toBech32(recipient),
-            to_chain_id: dstChainId,
-            collection_address: collection.object_addr,
-            token_ids: [nft.token_id],
-            object_addresses: [nft.object_addr],
-          },
-          srcChain.chainId !== dstChainId &&
-            (await createNftTransferParams({
-              collection,
-              nft,
-              srcChain,
-              intermediaryChain: layer1,
-            })),
-        )
+      const params = Object.assign(
+        {
+          from_address: initiaAddress,
+          from_chain_id: srcChain.chainId,
+          to_address: Address.toBech32(recipient),
+          to_chain_id: dstChainId,
+          collection_address: collection.object_addr,
+          token_ids: [nft.token_id],
+          object_addresses: [nft.object_addr],
+        },
+        srcChain.chainId !== dstChainId &&
+          (await createNftTransferParams({
+            collection,
+            nft,
+            srcChain,
+            intermediaryChain: layer1,
+          })),
+      )
 
-        const { msgs } = await ky
-          .create({ prefixUrl: routerApiUrl })
-          .post("nft", { json: params })
-          .json<{ msgs: AminoMsg[] }>()
+      const { msgs } = await ky
+        .create({ prefixUrl: routerApiUrl })
+        .post("nft", { json: params })
+        .json<{ msgs: AminoMsg[] }>()
 
-        const messages = msgs.map((msg) => aminoTypes.fromAmino(msg))
+      const messages = msgs.map((msg) => aminoTypes.fromAmino(msg))
 
-        await requestTxBlock({
-          messages,
-          chainId: srcChain.chainId,
-          internal: true,
-          returnPath: "/nfts",
-        })
-      } catch (error) {
-        throw new Error(await normalizeError(error))
-      }
+      await requestTxBlock({
+        messages,
+        chainId: srcChain.chainId,
+        internal: true,
+        returnPath: "/nfts",
+      })
     },
   })
 

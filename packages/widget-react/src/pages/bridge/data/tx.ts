@@ -13,7 +13,7 @@ import { aminoConverters, aminoTypes } from "@initia/amino-converter"
 import { useLocationState } from "@/lib/router"
 import { useInitiaAddress } from "@/public/data/hooks"
 import { LocalStorageKey } from "@/data/constants"
-import { STALE_TIMES } from "@/data/http"
+import { normalizeError, STALE_TIMES } from "@/data/http"
 import { useSignWithEthSecp256k1 } from "@/data/signer"
 import { skipQueryKeys, useSkip } from "./skip"
 import type { FormValues } from "./form"
@@ -117,14 +117,18 @@ export function useTrackTxQuery() {
   return useQuery({
     queryKey: skipQueryKeys.txTrack(srcChainId, txHash).queryKey,
     queryFn: async () => {
-      const response = await skip
-        .post("v2/tx/track", { json: { tx_hash: txHash, chain_id: srcChainId } })
-        .json<TrackResponseJson>()
-      setBridgeHistory((prev = []) => [
-        ...prev,
-        { timestamp: Date.now(), chainId: srcChainId, txHash: response.tx_hash, route, values },
-      ])
-      return response
+      try {
+        const response = await skip
+          .post("v2/tx/track", { json: { tx_hash: txHash, chain_id: srcChainId } })
+          .json<TrackResponseJson>()
+        setBridgeHistory((prev = []) => [
+          ...prev,
+          { timestamp: Date.now(), chainId: srcChainId, txHash: response.tx_hash, route, values },
+        ])
+        return response
+      } catch (error) {
+        throw new Error(await normalizeError(error))
+      }
     },
     select: ({ tx_hash }) => tx_hash,
     enabled: !!txHash,
