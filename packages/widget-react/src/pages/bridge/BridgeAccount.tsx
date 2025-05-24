@@ -30,7 +30,7 @@ const BridgeAccount = ({ type }: Props) => {
   const content = (
     <>
       {type === "src" && connected && <Image src={connected.image} width={18} height={18} />}
-      {address && <span>{truncate(address)}</span>}
+      <span>{address ? truncate(address) : "Recipient"}</span>
       {type === "dst" && <IconEdit size={14} />}
     </>
   )
