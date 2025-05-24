@@ -1,5 +1,4 @@
-import clsx from "clsx"
-import { IconChevronDown } from "@initia/icons-react"
+import { IconChevronDown, IconCopy } from "@initia/icons-react"
 import { formatAmount, truncate } from "@/public/utils"
 import Loader from "@/components/Loader"
 import Image from "@/components/Image"
@@ -57,21 +56,21 @@ const OperationItem = ({ type, amount, denom, chainId, address, ...props }: Prop
             <span>{symbol}</span>
           </div>
 
-          <div className={styles.chain}>on {pretty_name || chain_name}</div>
-        </div>
+          <div className={styles.lower}>
+            <div className={styles.chain}>on {pretty_name || chain_name}</div>
 
-        {address && (
-          <CopyButton value={address}>
-            {({ copy, copied }) => (
-              <button className={styles.address} onClick={copy}>
-                <span className={clsx(styles.original, { [styles.hidden]: copied })}>
-                  {truncate(address)}
-                </span>
-                <span className={clsx(styles.copied, { [styles.visible]: copied })}>Copied!</span>
-              </button>
+            {address && (
+              <CopyButton value={address}>
+                {({ copy, copied }) => (
+                  <button className={styles.address} onClick={copy}>
+                    <span>{copied ? "Copied!" : truncate(address)}</span>
+                    <IconCopy size={11} />
+                  </button>
+                )}
+              </CopyButton>
             )}
-          </CopyButton>
-        )}
+          </div>
+        </div>
       </div>
     </div>
   )
