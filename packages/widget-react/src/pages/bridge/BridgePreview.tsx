@@ -1,6 +1,7 @@
 import type { TxJson } from "@skip-go/client"
 import { useNavigate } from "@/lib/router"
 import Page from "@/components/Page"
+import Scrollable from "@/components/Scrollable"
 import Video from "@/components/Video"
 import Button from "@/components/Button"
 import Footer from "@/components/Footer"
@@ -23,33 +24,53 @@ const BridgePreview = () => {
   const { data: trackedTxHash, error: trackTxError } = useTrackTxQuery()
   const { data: txStatus } = useTxStatusQuery(values.srcChainId, trackedTxHash, route)
 
+  const status = txStatus?.status
+  const isCompleted = status === "STATE_COMPLETED"
+  const isSuccess = txStatus?.state === "STATE_COMPLETED_SUCCESS"
+  const error = txStatus?.error
+
+  if (isCompleted) {
+    return (
+      <Scrollable>
+        {isSuccess ? (
+          <>
+            <Video name="Success" />
+            <p className={styles.title}>Transaction completed</p>
+          </>
+        ) : (
+          <>
+            <Video name="Failure" />
+            <p className={styles.title}>Transaction failed</p>
+          </>
+        )}
+
+        <FooterWithAddressList>
+          {(addressList) => (
+            <>
+              <BridgePreviewRoute addressList={addressList} trackedTxHash={trackedTxHash} />
+
+              <Footer extra={<FormHelp level="error">{error?.message}</FormHelp>}>
+                <Button.White onClick={() => navigate("/bridge")}>Home</Button.White>
+              </Footer>
+            </>
+          )}
+        </FooterWithAddressList>
+      </Scrollable>
+    )
+  }
+
   const renderFooter = (tx: TxJson) => {
     if (txStatus) {
-      const { status, state, error } = txStatus
-      const isCompleted = status === "STATE_COMPLETED"
-      const isSuccess = state === "STATE_COMPLETED_SUCCESS"
-
       return (
         <Footer
           extra={
-            <FormHelp.Stack>
-              {isSuccess ? null : error ? (
-                <FormHelp level="error">{error.message}</FormHelp>
-              ) : (
-                <FormHelp level="info">
-                  It’s safe to leave this page. Your transaction will continue, and you can track
-                  its status later in History.
-                </FormHelp>
-              )}
-            </FormHelp.Stack>
+            <FormHelp level="info">
+              It’s safe to leave this page. Your transaction will continue, and you can track its
+              status later in History.
+            </FormHelp>
           }
         >
-          <Button.White
-            onClick={() => navigate("/bridge")}
-            loading={!isCompleted && "Fetching tx status..."}
-          >
-            Home
-          </Button.White>
+          <Button.White loading="Fetching tx status..." />
         </Footer>
       )
     }
@@ -70,13 +91,6 @@ const BridgePreview = () => {
       <FooterWithAddressList>
         {(addressList) => (
           <>
-            {txStatus?.state === "STATE_COMPLETED_SUCCESS" && (
-              <>
-                <Video name="Success" />
-                <p className={styles.title}>Transaction completed</p>
-              </>
-            )}
-
             <BridgePreviewRoute addressList={addressList} trackedTxHash={trackedTxHash} />
 
             {tx ? (
