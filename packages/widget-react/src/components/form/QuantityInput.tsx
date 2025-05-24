@@ -4,7 +4,7 @@ import { useFormContext } from "react-hook-form"
 import NumericInput from "./NumericInput"
 import styles from "./QuantityInput.module.css"
 
-const ReadOnly = ({ children }: { children: string }) => {
+const QuantityInputReadOnly = ({ children }: { children: string }) => {
   return (
     <p className={clsx(styles.input, { [styles.placeholder]: BigNumber(children).isZero() })}>
       {children}
@@ -24,6 +24,6 @@ const QuantityInput = () => {
   )
 }
 
-QuantityInput.ReadOnly = ReadOnly
+QuantityInput.ReadOnly = QuantityInputReadOnly
 
 export default QuantityInput
