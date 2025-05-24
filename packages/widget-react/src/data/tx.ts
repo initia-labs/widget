@@ -33,6 +33,7 @@ interface TxResult {
   error?: Error
 }
 
+export const TX_APPROVAL_MUTATION_KEY = "approve"
 export const txRequestHandlerAtom = atom<TxRequestHandler>()
 export const txResultAtom = atom<TxResult>()
 

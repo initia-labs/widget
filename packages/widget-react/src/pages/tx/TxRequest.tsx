@@ -13,7 +13,7 @@ import { useBalances } from "@/data/account"
 import { chainQueryKeys, useChain } from "@/data/chains"
 import { useSignWithEthSecp256k1, useOfflineSigner } from "@/data/signer"
 import { STALE_TIMES } from "@/data/http"
-import { useTxRequestHandler } from "@/data/tx"
+import { TX_APPROVAL_MUTATION_KEY, useTxRequestHandler } from "@/data/tx"
 import WidgetAccordion from "@/components/WidgetAccordion"
 import Scrollable from "@/components/Scrollable"
 import FormHelp from "@/components/form/FormHelp"
@@ -88,6 +88,7 @@ const TxRequest = () => {
   const [feeDenom, setFeeDenom] = useState(getInitialFeeDenom)
 
   const { mutate: approve, isPending } = useMutation({
+    mutationKey: [TX_APPROVAL_MUTATION_KEY],
     mutationFn: async () => {
       const fee = feeOptions.find((fee) => fee.amount[0].denom === feeDenom)
       if (!fee) throw new Error("Fee not found")
