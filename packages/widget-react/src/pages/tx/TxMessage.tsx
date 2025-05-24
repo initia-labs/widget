@@ -18,7 +18,7 @@ const TxMessage = ({ value }: EncodeObject) => {
       case "object":
         if (value === null) return "null"
         if (value instanceof Uint8Array) return toBase64(value)
-        if (Array.isArray(value)) return value.map(renderValue).join(", ")
+        if (Array.isArray(value)) return `[${value.map(renderValue).join(",")}]`
         return JSON.stringify(value, (_, value) =>
           typeof value === "bigint" ? value.toString() : value,
         )
