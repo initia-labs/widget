@@ -34,11 +34,11 @@ pnpm add @tanstack/react-query @privy-io/react-auth @privy-io/wagmi wagmi
 Wrap your application with the `InitiaWidgetProvider`.
 
 - **Vite**: [examples/vite/main.tsx](https://github.com/initia-labs/widget/blob/main/examples/vite/main.tsx)
-- **Next.js**: [examples/nextjs/src/app/providers/index.tsx](https://github.com/initia-labs/widget/blob/main/examples/nextjs/src/providers.tsx)
+- **Next.js**: [examples/nextjs/src/app/providers/index.tsx](https://github.com/initia-labs/widget/blob/main/examples/nextjs/src/app/providers.tsx)
 
 ## 2. SSR Support
 
-You no longer need to import any SSR helpers or disable/minify settings:
+You no longer need to import any SSR helpers:
 
 - Remove imports from `@initia/react-wallet-widget/ssr`.
 - No CDN scripts or `swcMinify: false` required.

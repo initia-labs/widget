@@ -11,7 +11,7 @@ import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 import { useConnectWallet, useWallets } from "@privy-io/react-auth"
 import { truncate, useAddress, useInitiaWidget } from "@initia/widget-react"
 
-const App = () => {
+const Example = () => {
   const address = useAddress()
   const { connectWallet } = useConnectWallet()
   const { ready } = useWallets()
@@ -80,34 +80,34 @@ pnpm add @initia/widget-react @tanstack/react-query @privy-io/react-auth @privy-
 
 ### Provider Setup
 
-Wrap your application with the `InitiaWidgetProvider`.
+⚠️ Wrap your application with `PrivyProvider`, `QueryClientProvider`, and `WagmiProvider` as shown in the example below.
 
 - **Vite**: [examples/vite/main.tsx](https://github.com/initia-labs/widget/blob/main/examples/vite/main.tsx)
-- **Next.js**: [examples/nextjs/src/app/providers/index.tsx](https://github.com/initia-labs/widget/blob/main/examples/nextjs/src/providers.tsx)
+- **Next.js**: [examples/nextjs/src/app/providers.tsx](https://github.com/initia-labs/widget/blob/main/examples/nextjs/src/app/providers.tsx)
 
 **Using a registered chain:**
 
 ```tsx
-import React from "react"
-import { createRoot } from "react-dom/client"
+import { useWallets } from "@privy-io/react-auth"
 import { InitiaWidgetProvider } from "@initia/widget-react"
-import App from "./App"
 
-createRoot(document.getElementById("root")).render(
-  <InitiaWidgetProvider defaultChainId="interwoven-1">
-    <App />
-  </InitiaWidgetProvider>,
-)
+const App = () => {
+  const { wallets } = useWallets()
+
+  return (
+    <InitiaWidgetProvider defaultChainId="YOUR_CHAIN_ID" wallet={wallets[0]}>
+      {/* YOUR APP HERE */}
+    </InitiaWidgetProvider>
+  )
+}
 ```
 
 **Using a custom chain configuration:**
 
 ```tsx
-import React from "react"
-import { createRoot } from "react-dom/client"
-import { InitiaWidgetProvider } from "@initia/widget-react"
+import { useWallets } from "@privy-io/react-auth"
 import { ChainSchema } from "@initia/initia-registry-types/zod"
-import App from "./App"
+import { InitiaWidgetProvider } from "@initia/widget-react"
 
 const customChain = ChainSchema.parse({
   chain_id: "YOUR_CHAIN_ID",
@@ -123,11 +123,19 @@ const customChain = ChainSchema.parse({
   network_type: "mainnet",
 })
 
-createRoot(document.getElementById("root")).render(
-  <InitiaWidgetProvider customChain={customChain}>
-    <App />
-  </InitiaWidgetProvider>,
-)
+const App = () => {
+  const { wallets } = useWallets()
+
+  return (
+    <InitiaWidgetProvider
+      defaultChainId="YOUR_CHAIN_ID"
+      customChain={customChain}
+      wallet={wallets[0]}
+    >
+      {/* YOUR APP HERE */}
+    </InitiaWidgetProvider>
+  )
+}
 ```
 
 ## Configuration Interface
@@ -213,20 +221,22 @@ interface TxRequest {
 ## Usage on Testnet
 
 ```tsx
-import React from "react"
-import { createRoot } from "react-dom/client"
-import { TESTNET } from "@initia/widget-react"
-import App from "./App"
+import { TESTNET, useWallets } from "@privy-io/react-auth"
+import { InitiaWidgetProvider } from "@initia/widget-react"
 
-createRoot(document.getElementById("root")).render(
-  <InitiaWidgetProvider {...TESTNET}>
-    <App />
-  </InitiaWidgetProvider>,
-)
+const App = () => {
+  const { wallets } = useWallets()
+
+  return (
+    <InitiaWidgetProvider {...TESTNET} wallet={wallets[0]}>
+      {/* YOUR APP HERE */}
+    </InitiaWidgetProvider>
+  )
+}
 ```
 
 ## Migrating From v1
 
 To migrate from `@initia/react-wallet-widget` v1.x to `@initia/widget-react`, see our official migration guide:
 
-[https://github.com/initia-labs/widget/blob/main/packages/widget-react/MIGRATION.md](https://github.com/initia-labs/widget/blob/main/MIGRATION.md)
+[https://github.com/initia-labs/widget/blob/main/packages/widget-react/MIGRATION.md](https://github.com/initia-labs/widget/blob/main/packages/widget-react/MIGRATION.md)
