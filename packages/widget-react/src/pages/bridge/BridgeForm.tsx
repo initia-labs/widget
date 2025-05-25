@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconChevronRight } from "@initia/icons-react"
-import { useLocationState, useNavigate } from "@/lib/router"
+import { useHistory, useNavigate } from "@/lib/router"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { LocalStorageKey } from "@/data/constants"
 import { quantitySuperRefine } from "@/data/form"
@@ -22,9 +22,9 @@ import { skipQueryKeys } from "./data/skip"
 import BridgeFields from "./BridgeFields"
 
 const BridgeForm = () => {
+  const history = useHistory()
   const navigate = useNavigate()
-  const showBackButton = useLocationState<boolean>()
-  const { openWallet, closeWidget } = useInitiaWidget()
+  const { closeWidget } = useInitiaWidget()
 
   const defaultValues = useDefaultValues()
   const validateRecipientAddress = useValidateAddress()
@@ -103,15 +103,17 @@ const BridgeForm = () => {
     }
   }, [dstAssets, dstChainId, dstDenom, srcAssets, srcChainId, srcDenom])
 
+  const isBridgeWidget = history[0].path === "/bridge"
+
   const renderError = () => {
     return (
       <>
         <Status error>{errorMessage}</Status>
         <Footer>
-          {showBackButton ? (
-            <Button.White onClick={() => navigate(-1)}>Go back</Button.White>
-          ) : (
+          {isBridgeWidget ? (
             <Button.White onClick={closeWidget}>Close</Button.White>
+          ) : (
+            <Button.White onClick={() => navigate(-1)}>Go back</Button.White>
           )}
         </Footer>
       </>
@@ -121,7 +123,9 @@ const BridgeForm = () => {
   return (
     <Page
       title="Bridge/Swap"
-      onGoBack={showBackButton ? openWallet : false}
+      // The previous page might be TxResult.
+      // To avoid unexpected behavior, it explicitly returns to the wallet page.
+      returnTo={isBridgeWidget ? false : "/"}
       extra={
         <>
           <Button.Small onClick={() => navigate("/bridge/history")} unpadded>

@@ -1,25 +1,23 @@
 import type { PropsWithChildren, ReactNode } from "react"
 import { IconBack } from "@initia/icons-react"
-import { useNavigate } from "@/lib/router"
+import { Link } from "@/lib/router"
 import Scrollable from "./Scrollable"
 import styles from "./Page.module.css"
 
 interface Props {
   title: string
-  onGoBack?: (() => void) | false
+  returnTo?: string | false
   extra?: ReactNode
 }
 
-const Page = ({ title, onGoBack, extra, children }: PropsWithChildren<Props>) => {
-  const navigate = useNavigate()
-
+const Page = ({ title, returnTo, extra, children }: PropsWithChildren<Props>) => {
   return (
     <>
       <header className={styles.header}>
-        {typeof onGoBack !== "boolean" && (
-          <button className={styles.back} onClick={onGoBack ?? (() => navigate(-1))}>
+        {returnTo !== false && (
+          <Link to={returnTo ?? -1} className={styles.back}>
             <IconBack size={16} />
-          </button>
+          </Link>
         )}
 
         <h1 className={styles.title}>{title}</h1>

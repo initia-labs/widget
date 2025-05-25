@@ -87,7 +87,7 @@ const BridgePreview = () => {
   }
 
   return (
-    <Page title="Preview route" onGoBack={trackingTxHash ? () => navigate("/bridge") : undefined}>
+    <Page title="Route preview">
       <FooterWithAddressList>
         {(addressList) => (
           <>

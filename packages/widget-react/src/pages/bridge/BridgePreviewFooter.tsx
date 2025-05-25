@@ -25,8 +25,6 @@ const BridgePreviewFooter = ({ tx }: { tx: TxJson }) => {
   const srcChain = useSkipChain(srcChainId)
   const chainType = useChainType(srcChain)
 
-  const onSuccess = (txHash: string) => navigate("/bridge/preview", { route, values, tx, txHash })
-
   const { mutate, isPending, error } = useMutation({
     mutationFn: async () => {
       if ("cosmos_tx" in tx) {
@@ -46,7 +44,9 @@ const BridgePreviewFooter = ({ tx }: { tx: TxJson }) => {
             messages,
             chainId: srcChainId,
             internal: true,
-            callback: onSuccess,
+            // Override the location state with the tx hash.
+            // A tx hash is required to prevent further tx requests.
+            callback: (txHash: string) => navigate(-1, { route, values, tx, txHash }),
             returnPath: "/bridge", // for failed or rejected tx
           })
           return transactionHash
@@ -97,7 +97,11 @@ const BridgePreviewFooter = ({ tx }: { tx: TxJson }) => {
 
       throw new Error("Unsupported chain type")
     },
-    onSuccess,
+    onSuccess: (txHash) => {
+      // Override the location state with the tx hash.
+      // A tx hash is required to prevent further tx requests.
+      navigate(0, { route, values, tx, txHash })
+    },
     onError: (error) => {
       console.trace(error)
     },
@@ -110,7 +114,7 @@ const BridgePreviewFooter = ({ tx }: { tx: TxJson }) => {
   return (
     <Footer>
       <Button.White onClick={() => mutate()} loading={isPending && "Signing transaction..."}>
-        Submit
+        Confirm
       </Button.White>
     </Footer>
   )
