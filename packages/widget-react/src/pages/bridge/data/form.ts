@@ -1,6 +1,7 @@
 import { z } from "zod"
-import { atom, useAtomValue } from "jotai"
+import { pickBy } from "ramda"
 import { useFormContext } from "react-hook-form"
+import { useLocationState } from "@/lib/router"
 import { LocalStorageKey } from "@/data/constants"
 import { useLayer1 } from "@/data/chains"
 
@@ -27,34 +28,47 @@ export function useBridgeForm() {
   return useFormContext<FormValues>()
 }
 
-export const defaultValuesAtom = atom<Partial<FormValues>>()
+export function useDefaultValues(): Partial<FormValues> {
+  const stateDefaultValues = useLocationState<Partial<FormValues>>()
 
-export function useDefaultValues() {
-  const defaultValues = useAtomValue(defaultValuesAtom)
   const isTestnet = useIsTestnet()
 
-  const baseDefaultValues = {
+  const baseDefaultValues: Partial<FormValues> = {
     quantity: "",
-    slippagePercent: localStorage.getItem(LocalStorageKey.SLIPPAGE_PERCENT) || "0.5",
+    slippagePercent: "0.5",
+    sender: "",
+    cosmosWalletName: "",
+    recipient: "",
   }
 
-  const testnetDefaultValues = {
+  const testnetDefaultValues: Partial<FormValues> = {
+    ...baseDefaultValues,
     srcChainId: "initiation-2",
     srcDenom: "uusdc",
     dstChainId: "initiation-2",
     dstDenom: "uinit",
   }
 
-  const mainnetDefaultValues = {
+  const mainnetDefaultValues: Partial<FormValues> = {
+    ...baseDefaultValues,
     srcChainId: "interwoven-1",
     srcDenom: "ibc/6490A7EAB61059BFC1CDDEB05917DD70BDF3A611654162A1A47DB930D40D8AF4",
     dstChainId: "interwoven-1",
     dstDenom: "uinit",
   }
 
+  const localStorageDefaultValues: Partial<FormValues> = pickBy((value) => value !== null, {
+    srcChainId: localStorage.getItem(LocalStorageKey.BRIDGE_SRC_CHAIN_ID),
+    srcDenom: localStorage.getItem(LocalStorageKey.BRIDGE_SRC_DENOM),
+    dstChainId: localStorage.getItem(LocalStorageKey.BRIDGE_DST_CHAIN_ID),
+    dstDenom: localStorage.getItem(LocalStorageKey.BRIDGE_DST_DENOM),
+    quantity: localStorage.getItem(LocalStorageKey.BRIDGE_QUANTITY),
+    slippagePercent: localStorage.getItem(LocalStorageKey.BRIDGE_SLIPPAGE_PERCENT),
+  })
+
   return {
-    ...baseDefaultValues,
     ...(isTestnet ? testnetDefaultValues : mainnetDefaultValues),
-    ...defaultValues,
+    ...localStorageDefaultValues,
+    ...stateDefaultValues,
   }
 }

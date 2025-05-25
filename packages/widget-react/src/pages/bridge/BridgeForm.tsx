@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { IconChevronRight } from "@initia/icons-react"
 import { useLocationState, useNavigate } from "@/lib/router"
 import { useInitiaWidget } from "@/public/data/hooks"
+import { LocalStorageKey } from "@/data/constants"
 import { quantitySuperRefine } from "@/data/form"
 import AsyncBoundary from "@/components/AsyncBoundary"
 import Page from "@/components/Page"
@@ -55,7 +56,24 @@ const BridgeForm = () => {
   })
 
   const { watch, setValue } = form
-  const { srcChainId, dstChainId, srcDenom, dstDenom, recipient } = watch()
+  const { srcChainId, dstChainId, srcDenom, dstDenom, quantity, slippagePercent, recipient } =
+    watch()
+
+  watch((_, { name }) => {
+    if (name === "srcChainId" || name === "srcDenom") {
+      setValue("quantity", "")
+    }
+  })
+
+  // localStorage
+  useEffect(() => {
+    localStorage.setItem(LocalStorageKey.BRIDGE_SRC_CHAIN_ID, srcChainId)
+    localStorage.setItem(LocalStorageKey.BRIDGE_SRC_DENOM, srcDenom)
+    localStorage.setItem(LocalStorageKey.BRIDGE_DST_CHAIN_ID, dstChainId)
+    localStorage.setItem(LocalStorageKey.BRIDGE_DST_DENOM, dstDenom)
+    localStorage.setItem(LocalStorageKey.BRIDGE_QUANTITY, quantity)
+    localStorage.setItem(LocalStorageKey.BRIDGE_SLIPPAGE_PERCENT, slippagePercent)
+  }, [srcChainId, srcDenom, dstChainId, dstDenom, quantity, slippagePercent])
 
   // address
   const getDefaultAddress = useGetDefaultAddress()
@@ -67,9 +85,6 @@ const BridgeForm = () => {
     setValue("cosmosWalletName", undefined)
     setValue("sender", defaultSenderAddress)
   }, [srcChainId, defaultSenderAddress, setValue])
-  useEffect(() => {
-    setValue("quantity", "")
-  }, [srcChainId, srcDenom, setValue])
   useEffect(() => {
     if (isValidRecipient) return
     setValue("recipient", defaultRecipientAddress)

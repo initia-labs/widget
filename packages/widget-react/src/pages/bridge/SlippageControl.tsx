@@ -1,7 +1,6 @@
 import clsx from "clsx"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
-import { LocalStorageKey } from "@/data/constants"
 import Scrollable from "@/components/Scrollable"
 import Footer from "@/components/Footer"
 import Button from "@/components/Button"
@@ -61,7 +60,6 @@ const SlippageControl = ({ afterConfirm }: { afterConfirm: () => void }) => {
   const isError = message?.type === "error"
 
   const onConfirm = ({ value }: FormValues) => {
-    localStorage.setItem(LocalStorageKey.SLIPPAGE_PERCENT, value)
     bridgeForm.setValue("slippagePercent", value)
     afterConfirm()
   }
