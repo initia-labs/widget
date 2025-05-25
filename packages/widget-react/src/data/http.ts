@@ -29,7 +29,10 @@ export async function normalizeError(error: unknown): Promise<string> {
   }
 
   if (error instanceof Error) {
+    if (path(["code"], error) === "ACTION_REJECTED") return "User rejected"
+    const shortMessage = path<string>(["shortMessage"], error)
     const causeMessage = path<string>(["cause", "message"], error)
+    if (shortMessage) return shortMessage
     if (causeMessage) return causeMessage
     return error.message
   }
