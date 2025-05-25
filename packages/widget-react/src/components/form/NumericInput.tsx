@@ -16,11 +16,10 @@ interface Props<T extends FieldValues> extends InputHTMLAttributes<HTMLInputElem
   name: Path<T>
   control: Control<T>
   dp?: number
-  error?: boolean
 }
 
 function NumericInput<T extends FieldValues>(props: Props<T>) {
-  const { name, control, dp = 6, error, className, ...attrs } = props
+  const { name, control, dp = 6, className, ...attrs } = props
   const autoFocusRef = useAutoFocus()
 
   return (
@@ -33,7 +32,6 @@ function NumericInput<T extends FieldValues>(props: Props<T>) {
           {...field}
           className={clsx(styles.input, className)}
           onChange={(e) => field.onChange(sanitizeNumericInput(e.target.value, dp))}
-          aria-invalid={error || undefined}
           placeholder="0"
           inputMode="decimal"
           autoComplete="off"

@@ -101,8 +101,4 @@
     border-color: var(--gray-1);
     outline: none;
   }
-
-  &[aria-invalid] {
-    color: var(--error);
-  }
 }
