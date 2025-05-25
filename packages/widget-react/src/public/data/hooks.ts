@@ -5,7 +5,7 @@ import { useConfig } from "@/data/config"
 import { useWidgetVisibility } from "@/data/ui"
 import { useDefaultChain } from "@/data/chains"
 import { accountQueryKeys, useUsernameClient } from "@/data/account"
-import { useBridge } from "@/pages/bridge/data/form"
+import type { FormValues } from "@/pages/bridge/data/form"
 import { STALE_TIMES } from "@/data/http"
 import { Address } from "../utils"
 
@@ -48,8 +48,15 @@ export function useInitiaWidget() {
   const { wallet } = useConfig()
 
   const { openWidget, closeWidget } = useWidgetVisibility()
-  const openWallet = () => openWidget("/")
-  const bridge = useBridge()
+
+  const openWallet = () => {
+    openWidget("/")
+  }
+
+  const openBridge = (defaultValues?: Partial<FormValues>) => {
+    openWidget("/bridge", defaultValues)
+  }
+
   const tx = useTx()
 
   return {
@@ -60,7 +67,7 @@ export function useInitiaWidget() {
     wallet,
     openWallet,
     closeWidget,
-    ...bridge,
+    openBridge,
     ...tx,
   }
 }

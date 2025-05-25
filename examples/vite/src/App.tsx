@@ -3,6 +3,7 @@ import { useWallets } from "@privy-io/react-auth"
 import { InitiaWidgetProvider, TESTNET } from "@initia/widget-react"
 import Connection from "./Connection"
 import Send from "./Send"
+import Bridge from "./Bridge"
 import styles from "./App.module.css"
 
 const isTestnet = import.meta.env.INITIA_NETWORK_TYPE === "testnet"
@@ -38,6 +39,7 @@ const App = () => {
         </header>
 
         <Send />
+        <Bridge />
       </div>
     </InitiaWidgetProvider>
   )

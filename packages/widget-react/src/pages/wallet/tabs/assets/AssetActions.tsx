@@ -14,7 +14,7 @@ const AssetActions = ({ denom, chain }: { denom: string; chain: NormalizedChain 
   const navigate = useNavigate()
   const { defaultChainId } = useConfig()
   const { address = "", symbol, decimals } = useAsset(denom, chain)
-  const { openBridge, wallet } = useInitiaWidget()
+  const { wallet } = useInitiaWidget()
   const { watchAsset, data } = useWatchAsset()
   const addEthereumChain = useAddEthereumChain(chain)
 
@@ -23,14 +23,13 @@ const AssetActions = ({ denom, chain }: { denom: string; chain: NormalizedChain 
   }
 
   const bridge = () => {
-    const params = {
+    navigate("/bridge", {
       srcChainId: chain.chainId,
       srcDenom: denom,
       dstChainId: chain.chainId,
       dstDenom: denom,
-    }
-    const showBackButton = true
-    openBridge(params, showBackButton)
+      quantity: "",
+    })
   }
 
   if (!wallet) return null

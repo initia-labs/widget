@@ -1,9 +1,8 @@
 import { z } from "zod"
-import { atom, useAtomValue, useSetAtom } from "jotai"
+import { atom, useAtomValue } from "jotai"
 import { useFormContext } from "react-hook-form"
 import { LocalStorageKey } from "@/data/constants"
 import { useLayer1 } from "@/data/chains"
-import { useWidgetVisibility } from "@/data/ui"
 
 export function useIsTestnet() {
   const chain = useLayer1()
@@ -58,14 +57,4 @@ export function useDefaultValues() {
     ...(isTestnet ? testnetDefaultValues : mainnetDefaultValues),
     ...defaultValues,
   }
-}
-
-export function useBridge() {
-  const setDefaultValues = useSetAtom(defaultValuesAtom)
-  const { openWidget } = useWidgetVisibility()
-  const openBridge = (defaultValues?: Partial<FormValues>, showBackButton: boolean = false) => {
-    setDefaultValues(defaultValues)
-    openWidget("/bridge", showBackButton)
-  }
-  return { openBridge }
 }

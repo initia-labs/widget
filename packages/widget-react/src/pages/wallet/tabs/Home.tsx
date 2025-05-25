@@ -1,7 +1,6 @@
 import { Tabs } from "radix-ui"
 import { IconArrowRight, IconSwap } from "@initia/icons-react"
 import { Link, useNavigate, usePath } from "@/lib/router"
-import { useInitiaWidget } from "@/public/data/hooks"
 import Scrollable from "@/components/Scrollable"
 import Assets from "./assets/Assets"
 import Nfts from "./nft/Nfts"
@@ -11,7 +10,6 @@ import styles from "./Home.module.css"
 const Home = () => {
   const navigate = useNavigate()
   const path = usePath()
-  const { openBridge } = useInitiaWidget()
 
   return (
     <Scrollable>
@@ -21,7 +19,7 @@ const Home = () => {
           <span>Send</span>
         </Link>
 
-        <button className={styles.item} onClick={() => openBridge({}, true)}>
+        <button className={styles.item} onClick={() => navigate("/bridge")}>
           <IconSwap size={16} />
           <span>Bridge/Swap</span>
         </button>

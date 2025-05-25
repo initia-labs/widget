@@ -1,15 +1,15 @@
 import { atom, useAtom } from "jotai"
-import { useNavigate } from "@/lib/router"
+import { useReset } from "@/lib/router"
 
 const isWidgetOpenAtom = atom<boolean>(false)
 
 export function useWidgetVisibility() {
-  const navigate = useNavigate()
+  const reset = useReset()
   const [isWidgetOpen, setIsWidgetOpen] = useAtom(isWidgetOpenAtom)
 
-  const openWidget = (path?: string, state?: unknown) => {
+  const openWidget = (path: string, state?: object) => {
     if (path) {
-      navigate(path, state)
+      reset(path, state)
     }
     setIsWidgetOpen(true)
   }
