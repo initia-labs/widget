@@ -16,7 +16,7 @@ export interface TxRequest {
   gasAdjustment?: number
   gas?: number
   fee?: StdFee | null
-  callback?: (txHash: string) => void
+  callback?: ((txHash: string) => void) | null
   internal?: boolean
   returnPath?: string
 }
@@ -79,7 +79,7 @@ export function useTx() {
       gas: rawTxRequest.gas || (await estimateGas(rawTxRequest)),
       gasAdjustment: DEFAULT_GAS_ADJUSTMENT,
       fee: null,
-      callback: () => {},
+      callback: null,
       internal: false,
       returnPath: "/",
     }
@@ -90,13 +90,11 @@ export function useTx() {
       const finalize = (result: TxResult) => {
         if (txRequest.internal) {
           setTxResultAtom(result)
-          navigate("/tx/result")
+          if (result.txHash && txRequest.callback) txRequest.callback(result.txHash)
+          else navigate("/tx/result")
         } else {
           navigate("/blank")
           closeWidget()
-        }
-        if (result.txHash) {
-          txRequest.callback(result.txHash)
         }
         setTxRequestAtom(undefined)
       }

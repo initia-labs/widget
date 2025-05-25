@@ -213,8 +213,6 @@ interface TxRequest {
   gasAdjustment?: number
   gas?: number
   fee?: StdFee | null
-  /** Callback when transaction hash is available. */
-  callback?: (txHash: string) => void
 }
 ```
 
