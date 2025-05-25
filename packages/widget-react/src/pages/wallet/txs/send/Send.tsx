@@ -37,7 +37,7 @@ export const Send = () => {
   const defaultChain = useDefaultChain()
   const defaultAssets = useAssets(defaultChain)
   const [primaryAsset] = defaultAssets
-  const { chain, denom } = state ?? { chain: defaultChain, denom: primaryAsset.denom }
+  const { chain = defaultChain, denom = primaryAsset.denom } = state
   const asset = useAsset(denom, chain)
 
   const findChain = useFindChain()

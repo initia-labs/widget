@@ -3,6 +3,7 @@ import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 import { useMutation } from "@tanstack/react-query"
 import { useFormContext } from "react-hook-form"
 import { useLocationState } from "@/lib/router"
+import type { NormalizedChain } from "@/data/chains"
 import { useChain, usePricesQuery } from "@/data/chains"
 import { Address, formatAmount, formatNumber, toAmount, toQuantity } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
@@ -24,7 +25,7 @@ import SelectChainAsset from "./SelectChainAsset"
 import styles from "./SendFields.module.css"
 
 export const SendFields = (asset: NormalizedAsset) => {
-  const state = useLocationState()
+  const state = useLocationState<{ denom: string; chain: NormalizedChain }>()
 
   const { address, initiaAddress, requestTxBlock } = useInitiaWidget()
 
@@ -70,7 +71,7 @@ export const SendFields = (asset: NormalizedAsset) => {
                     asset={asset}
                     chain={chain}
                     onClick={onOpen}
-                    readOnly={!!state}
+                    readOnly={!!state.denom && !!state.chain}
                   />
                 )}
               </ModalTrigger>

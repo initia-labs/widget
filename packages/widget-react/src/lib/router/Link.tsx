@@ -3,7 +3,7 @@ import { useNavigate } from "./RouterContext"
 
 export interface LinkProp extends ButtonHTMLAttributes<HTMLButtonElement> {
   to: string | number
-  state?: unknown
+  state?: object
 }
 
 const Link = ({ to, state, children, ...attrs }: LinkProp) => {
