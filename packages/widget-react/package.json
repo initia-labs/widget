@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "vite build",
+    "build:fast": "vite build --mode fast",
     "typecheck": "tsc",
     "lint": "eslint src --fix",
     "test": "vitest run",

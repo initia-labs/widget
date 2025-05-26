@@ -30,22 +30,24 @@ function emitCssAsJsString(): Plugin {
   }
 }
 
-export default defineConfig({
-  plugins: [dts({ rollupTypes: true }), react(), emitCssAsJsString()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "src"),
+export default defineConfig(({ mode }) => {
+  return {
+    plugins: [dts({ rollupTypes: mode !== "fast" }), react(), emitCssAsJsString()],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "src"),
+      },
     },
-  },
-  build: {
-    lib: {
-      entry: path.resolve(__dirname, "src/index.ts"),
-      formats: ["es"],
-      fileName: "index",
-      cssFileName: "styles",
+    build: {
+      lib: {
+        entry: path.resolve(__dirname, "src/index.ts"),
+        formats: ["es"],
+        fileName: "index",
+        cssFileName: "styles",
+      },
+      rollupOptions: {
+        external: (id) => !(id.startsWith(".") || id.startsWith("/") || id.startsWith("@/")),
+      },
     },
-    rollupOptions: {
-      external: (id) => !(id.startsWith(".") || id.startsWith("/") || id.startsWith("@/")),
-    },
-  },
+  }
 })

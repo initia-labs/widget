@@ -8,7 +8,7 @@ Clone the repository, install dependencies, and build the package:
 git clone https://github.com/initia-labs/widget.git
 cd widget
 pnpm install
-pnpm build  # Build the package at least once before running in development mode.
+pnpm build:fast  # Build the package at least once before running in development mode.
 ```
 
 Next, switch to the Vite example folder and configure your environment:
