@@ -42,9 +42,13 @@ export function useBalances(chain: NormalizedChain) {
 
 export function useSortedBalancesWithValue(chain: NormalizedChain) {
   const balances = useBalances(chain)
-  const getLayer1Denom = useGetLayer1Denom(chain)
   const assets = useAssets(chain)
   const findAsset = useFindAsset(chain)
+
+  const layer1 = useLayer1()
+  const findLayer1Asset = useFindAsset(layer1)
+  const getLayer1Denom = useGetLayer1Denom(chain)
+
   const { data: prices } = usePricesQuery(chain.chainId)
 
   const isFeeToken = (denom: string) => {
@@ -67,7 +71,7 @@ export function useSortedBalancesWithValue(chain: NormalizedChain) {
     balances
       .filter(({ amount }) => !BigNumber(amount).isZero())
       .map(({ amount: balance, denom }) => {
-        const asset = findAsset(denom)
+        const asset = { ...findLayer1Asset(getLayer1Denom(denom)), ...findAsset(denom) }
         const price = prices?.find(({ id }) => id === asset?.denom)?.price ?? 0
         const value = BigNumber(balance)
           .times(price)
