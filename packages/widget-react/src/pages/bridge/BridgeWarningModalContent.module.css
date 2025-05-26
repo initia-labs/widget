@@ -1,0 +1,46 @@
+.root {
+  padding: 40px var(--padding);
+  text-align: center;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  color: var(--warning);
+
+  .title {
+    font-size: 20px;
+    font-weight: 600;
+  }
+}
+
+.message {
+  color: var(--gray-1);
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 12px;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 20px;
+  padding: 0 24px;
+
+  .ok {
+    gap: 2px;
+    color: var(--gray-2);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .ok:hover {
+    color: var(--gray-0);
+  }
+}

@@ -7,7 +7,7 @@ import { fullscreenContext } from "@/public/app/fullscreen"
 import styles from "./ModalTrigger.module.css"
 
 interface Props {
-  title: string
+  title?: string
   content: ReactNode | ((props: { onClose: () => void }) => ReactNode)
   children: ReactNode | ((props: { onOpen: () => void }) => ReactNode)
   className?: string
@@ -25,12 +25,14 @@ const ModalTrigger = ({ title, content, children: trigger, className }: Props) =
             <Dialog.Overlay className={clsx(styles.overlay, { [styles.fullscreen]: fullscreen })} />
 
             <Dialog.Content className={clsx(styles.content, { [styles.fullscreen]: fullscreen })}>
-              <header className={styles.header}>
-                <Dialog.Title className={styles.title}>{title}</Dialog.Title>
-                <Dialog.Close className={styles.close}>
-                  <IconClose size={20} />
-                </Dialog.Close>
-              </header>
+              {title && (
+                <header className={styles.header}>
+                  <Dialog.Title className={styles.title}>{title}</Dialog.Title>
+                  <Dialog.Close className={styles.close}>
+                    <IconClose size={20} />
+                  </Dialog.Close>
+                </header>
+              )}
 
               {typeof content === "function" ? content(props) : content}
             </Dialog.Content>

@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js"
 import { IconChevronDown, IconSettingFilled } from "@initia/icons-react"
 import { useNavigate } from "@/lib/router"
 import { formatAmount, formatNumber, toQuantity } from "@/public/utils"
+import { useModal } from "@/public/app/ModalContext"
 import Button from "@/components/Button"
 import ChainAssetQuantityLayout from "@/components/form/ChainAssetQuantityLayout"
 import BalanceButton from "@/components/form/BalanceButton"
@@ -11,6 +12,7 @@ import Footer from "@/components/Footer"
 import ModalTrigger from "@/components/ModalTrigger"
 import FormHelp from "@/components/form/FormHelp"
 import { formatDuration, formatFees } from "./data/format"
+import type { FormValues } from "./data/form"
 import { FormValuesSchema, useBridgeForm } from "./data/form"
 import { useChainType, useSkipChain } from "./data/chains"
 import { useSkipAsset } from "./data/assets"
@@ -21,6 +23,7 @@ import BridgeAccount from "./BridgeAccount"
 import SlippageControl from "./SlippageControl"
 import type { RouteType } from "./SelectRouteOption"
 import SelectRouteOption from "./SelectRouteOption"
+import BridgeWarningModalContent from "./BridgeWarningModalContent"
 import styles from "./BridgeFields.module.css"
 
 const BridgeFields = () => {
@@ -70,11 +73,30 @@ const BridgeFields = () => {
     if (!route) return "Route not found"
   }, [formState, route, values])
 
+  // submit
+  const { openModal, closeModal } = useModal()
+  const submit = handleSubmit((values: FormValues) => {
+    if (route?.warning) {
+      openModal({
+        content: (
+          <BridgeWarningModalContent
+            warning={route.warning}
+            onOk={() => {
+              navigate("/bridge/preview", { route, values })
+              closeModal()
+            }}
+            onCancel={closeModal}
+          />
+        ),
+      })
+      return
+    }
+
+    navigate("/bridge/preview", { route, values })
+  })
+
   return (
-    <form
-      className={styles.form}
-      onSubmit={handleSubmit((values) => navigate("/bridge/preview", { route, values }))}
-    >
+    <form className={styles.form} onSubmit={submit}>
       <ChainAssetQuantityLayout
         selectButton={<SelectedChainAsset type="src" />}
         accountButton={srcChainType === "cosmos" && <BridgeAccount type="src" />}

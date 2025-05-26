@@ -35,12 +35,12 @@ const BridgePreview = () => {
         {isSuccess ? (
           <>
             <Video name="Success" />
-            <p className={styles.title}>Transaction completed</p>
+            <h1 className={styles.title}>Transaction completed</h1>
           </>
         ) : (
           <>
             <Video name="Failure" />
-            <p className={styles.title}>Transaction failed</p>
+            <h1 className={styles.title}>Transaction failed</h1>
           </>
         )}
 
