@@ -27,26 +27,28 @@ const AssetOptions = (props: Props) => {
         <Status>No assets</Status>
       ) : (
         <div className={styles.list}>
-          {filteredAssets.map((asset) =>
-            renderAsset(asset, ({ denom, logoUrl, symbol, name, balance, decimals, value = 0 }) => (
-              <button
-                type="button"
-                className={styles.item}
-                onClick={() => onSelect(denom)}
-                key={denom}
-              >
-                <Image src={logoUrl} width={32} height={32} className={styles.logo} />
-                <div className={styles.info}>
-                  <div>{symbol}</div>
-                  <div className={styles.name}>{name}</div>
-                </div>
-                <div className={styles.balance}>
-                  {balance && <div>{formatAmount(balance, { decimals })}</div>}
-                  {value > 0 && <div className={styles.value}>${formatNumber(value)}</div>}
-                </div>
-              </button>
-            )),
-          )}
+          {filteredAssets.map((asset) => (
+            <button
+              type="button"
+              className={styles.item}
+              onClick={() => onSelect(asset.denom)}
+              key={asset.denom}
+            >
+              {renderAsset(asset, ({ logoUrl, symbol, name, balance, decimals, value = 0 }) => (
+                <>
+                  <Image src={logoUrl} width={32} height={32} className={styles.logo} />
+                  <div className={styles.info}>
+                    <div>{symbol}</div>
+                    <div className={styles.name}>{name}</div>
+                  </div>
+                  <div className={styles.balance}>
+                    {balance && <div>{formatAmount(balance, { decimals })}</div>}
+                    {value > 0 && <div className={styles.value}>${formatNumber(value)}</div>}
+                  </div>
+                </>
+              ))}
+            </button>
+          ))}
         </div>
       )}
     </div>
