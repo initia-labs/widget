@@ -1,3 +1,4 @@
+import { useState } from "react"
 import type { TxJson } from "@skip-go/client"
 import { useNavigate } from "@/lib/router"
 import Page from "@/components/Page"
@@ -19,9 +20,10 @@ const BridgePreview = () => {
   const navigate = useNavigate()
 
   const state = useBridgePreviewState()
-  const { values, route, tx, txHash: trackingTxHash } = state
+  const { values, route } = state
 
-  const { data: trackedTxHash, error: trackTxError } = useTrackTxQuery()
+  const [txHash, setTxHash] = useState<string>()
+  const { data: trackedTxHash, error: trackTxError } = useTrackTxQuery(txHash)
   const { data: txStatus } = useTxStatusQuery(values.srcChainId, trackedTxHash, route)
 
   const status = txStatus?.status
@@ -75,7 +77,7 @@ const BridgePreview = () => {
       )
     }
 
-    if (trackingTxHash) {
+    if (txHash) {
       return (
         <Footer extra={<FormHelp level="error">{trackTxError?.message}</FormHelp>}>
           <Button.White loading="Tracking tx..." />
@@ -83,7 +85,7 @@ const BridgePreview = () => {
       )
     }
 
-    return <BridgePreviewFooter tx={tx} />
+    return <BridgePreviewFooter tx={tx} onTxCompleted={setTxHash} />
   }
 
   return (
@@ -93,19 +95,15 @@ const BridgePreview = () => {
           <>
             <BridgePreviewRoute addressList={addressList} trackedTxHash={trackedTxHash} />
 
-            {tx ? (
-              <FooterWithErc20Approval tx={tx}>{renderFooter(tx)}</FooterWithErc20Approval>
-            ) : (
-              <FooterWithSignedOpHook>
-                {(signedOpHook) => (
-                  <FooterWithMsgs addressList={addressList} signedOpHook={signedOpHook}>
-                    {(tx) => (
-                      <FooterWithErc20Approval tx={tx}>{renderFooter(tx)}</FooterWithErc20Approval>
-                    )}
-                  </FooterWithMsgs>
-                )}
-              </FooterWithSignedOpHook>
-            )}
+            <FooterWithSignedOpHook>
+              {(signedOpHook) => (
+                <FooterWithMsgs addressList={addressList} signedOpHook={signedOpHook}>
+                  {(tx) => (
+                    <FooterWithErc20Approval tx={tx}>{renderFooter(tx)}</FooterWithErc20Approval>
+                  )}
+                </FooterWithMsgs>
+              )}
+            </FooterWithSignedOpHook>
           </>
         )}
       </FooterWithAddressList>

@@ -4,7 +4,6 @@ import { calculateFee, GasPrice, SigningStargateClient } from "@cosmjs/stargate"
 import { useMutation } from "@tanstack/react-query"
 import type { TxJson } from "@skip-go/client"
 import { aminoConverters, aminoTypes } from "@initia/amino-converter"
-import { useNavigate } from "@/lib/router"
 import { DEFAULT_GAS_ADJUSTMENT } from "@/public/data/constants"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { normalizeError } from "@/data/http"
@@ -15,15 +14,19 @@ import { useChainType, useSkipChain } from "./data/chains"
 import { useBridgePreviewState } from "./data/tx"
 import FooterWithError from "./FooterWithError"
 
-const BridgePreviewFooter = ({ tx }: { tx: TxJson }) => {
-  const { route, values } = useBridgePreviewState()
+interface Props {
+  tx: TxJson
+  onTxCompleted: (txHash: string) => void
+}
+
+const BridgePreviewFooter = ({ tx, onTxCompleted }: Props) => {
+  const { values } = useBridgePreviewState()
   const { srcChainId, sender, cosmosWalletName } = values
-  const navigate = useNavigate()
 
   const { wallet, requestTxBlock } = useInitiaWidget()
   const { find } = useCosmosWallets()
   const srcChain = useSkipChain(srcChainId)
-  const chainType = useChainType(srcChain)
+  const srcChainType = useChainType(srcChain)
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: async () => {
@@ -40,14 +43,15 @@ const BridgePreviewFooter = ({ tx }: { tx: TxJson }) => {
             })
           })
 
-          if (chainType === "initia") {
+          if (srcChainType === "initia") {
             const { transactionHash } = await requestTxBlock({
               messages,
               chainId: srcChainId,
               internal: true,
-              // Override the location state with the tx hash.
-              // A tx hash is required to prevent further tx requests.
-              callback: (txHash: string) => navigate(-1, { route, values, tx, txHash }),
+              callback: (result) => {
+                if (result.txHash) onTxCompleted(result.txHash)
+                else throw result.error
+              },
               returnPath: "/bridge", // for failed or rejected tx
             })
             return transactionHash
@@ -93,11 +97,7 @@ const BridgePreviewFooter = ({ tx }: { tx: TxJson }) => {
         throw new Error(await normalizeError(error))
       }
     },
-    onSuccess: (txHash) => {
-      // Override the location state with the tx hash.
-      // A tx hash is required to prevent further tx requests.
-      navigate(0, { route, values, tx, txHash })
-    },
+    onSuccess: onTxCompleted,
     onError: (error) => {
       console.trace(error)
     },

@@ -3,7 +3,8 @@ import { createContext, useContext } from "react"
 
 export interface ModalOptions {
   title?: string
-  content: ReactNode
+  content?: ReactNode
+  path?: string
 }
 
 interface ModalContextProps {

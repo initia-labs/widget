@@ -3,12 +3,7 @@ import { AuthInfo, Tx, TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx"
 import { toBase64 } from "@cosmjs/encoding"
 import { useLocalStorage } from "react-use"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import type {
-  RouteResponseJson,
-  StatusResponseJson,
-  TrackResponseJson,
-  TxJson,
-} from "@skip-go/client"
+import type { RouteResponseJson, StatusResponseJson, TrackResponseJson } from "@skip-go/client"
 import { aminoConverters, aminoTypes } from "@initia/amino-converter"
 import { useLocationState } from "@/lib/router"
 import { useInitiaAddress } from "@/public/data/hooks"
@@ -24,8 +19,6 @@ import type { RouterRouteResponseJson } from "./simulate"
 export interface BridgePreviewState {
   route: RouterRouteResponseJson
   values: FormValues
-  tx?: TxJson
-  txHash?: string
 }
 
 export interface SignedOpHook {
@@ -109,9 +102,9 @@ export function useBridgeHistory() {
   return useLocalStorage<BridgeHistory[]>(LocalStorageKey.BRIDGE_HISTORY, [])
 }
 
-export function useTrackTxQuery() {
+export function useTrackTxQuery(txHash?: string) {
   const [, setBridgeHistory] = useBridgeHistory()
-  const { values, route, txHash } = useBridgePreviewState()
+  const { values, route } = useBridgePreviewState()
   const { srcChainId } = values
   const skip = useSkip()
   return useQuery({

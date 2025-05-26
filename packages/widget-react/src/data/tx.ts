@@ -5,6 +5,7 @@ import { atom, useAtomValue, useSetAtom } from "jotai"
 import { useNavigate } from "@/lib/router"
 import { DEFAULT_GAS_ADJUSTMENT } from "@/public/data/constants"
 import { useInitiaAddress } from "@/public/data/hooks"
+import { useModal } from "@/public/app/ModalContext"
 import { useConfig } from "./config"
 import { useCreateSigningStargateClient } from "./signer"
 import { useWidgetVisibility } from "./ui"
@@ -16,7 +17,7 @@ export interface TxRequest {
   gasAdjustment?: number
   gas?: number
   fee?: StdFee | null
-  callback?: ((txHash: string) => void) | null
+  callback?: ((result: TxResult) => void) | null
   internal?: boolean
   returnPath?: string
 }
@@ -54,6 +55,7 @@ export function useTx() {
   const address = useInitiaAddress()
   const { defaultChainId } = useConfig()
   const { openWidget, closeWidget } = useWidgetVisibility()
+  const { openModal, closeModal } = useModal()
   const setTxRequestAtom = useSetAtom(txRequestHandlerAtom)
   const setTxResultAtom = useSetAtom(txResultAtom)
   const createSigningStargateClient = useCreateSigningStargateClient()
@@ -87,18 +89,6 @@ export function useTx() {
     const txRequest = { ...defaultTxRequest, ...rawTxRequest }
 
     return new Promise<T>((resolve, reject) => {
-      const finalize = (result: TxResult) => {
-        if (txRequest.internal) {
-          setTxResultAtom(result)
-          if (result.txHash && txRequest.callback) txRequest.callback(result.txHash)
-          else navigate("/tx/result")
-        } else {
-          navigate("/blank")
-          closeWidget()
-        }
-        setTxRequestAtom(undefined)
-      }
-
       setTxRequestAtom({
         txRequest,
         resolve: async (signedTx: TxRaw) => {
@@ -118,10 +108,26 @@ export function useTx() {
         },
       })
 
-      if (txRequest.internal) {
+      if (txRequest.callback) {
+        openModal({ path: "/tx" })
+      } else if (txRequest.internal) {
         navigate("/tx")
       } else {
         openWidget("/tx")
+      }
+
+      const finalize = (result: TxResult) => {
+        if (txRequest.callback) {
+          closeModal()
+          txRequest.callback(result)
+        } else if (txRequest.internal) {
+          setTxResultAtom(result)
+          navigate("/tx/result")
+        } else {
+          navigate("/blank")
+          closeWidget()
+        }
+        setTxRequestAtom(undefined)
       }
     })
   }

@@ -2,6 +2,7 @@ import clsx from "clsx"
 import { useContext, useState, type PropsWithChildren } from "react"
 import { Dialog } from "radix-ui"
 import { IconClose } from "@initia/icons-react"
+import TxRequest from "@/pages/tx/TxRequest"
 import { fullscreenContext } from "./fullscreen"
 import { usePortal } from "./PortalContext"
 import type { ModalOptions } from "./ModalContext"
@@ -11,7 +12,7 @@ import styles from "./Modal.module.css"
 export const ModalProvider = ({ children }: PropsWithChildren) => {
   const fullscreen = useContext(fullscreenContext)
 
-  const [{ title, content }, setOptions] = useState<ModalOptions>({ content: null })
+  const [{ title, content, path }, setOptions] = useState<ModalOptions>({ content: null })
   const [isOpen, setIsOpen] = useState(false)
 
   const openModal = (opts: ModalOptions) => {
@@ -41,7 +42,7 @@ export const ModalProvider = ({ children }: PropsWithChildren) => {
               </header>
             )}
 
-            {content}
+            {path === "/tx" ? <TxRequest /> : content}
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
