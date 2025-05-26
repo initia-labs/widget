@@ -1,45 +1,26 @@
-import clsx from "clsx"
-import { useContext, type ReactNode } from "react"
-import { IconClose } from "@initia/icons-react"
-import Dialog from "@/lib/ui/Dialog"
-import { usePortal } from "@/public/app/PortalContext"
-import { fullscreenContext } from "@/public/app/fullscreen"
-import styles from "./ModalTrigger.module.css"
+import { useState, type ReactNode } from "react"
+import Modal from "./Modal"
 
 interface Props {
   title?: string
-  content: ReactNode | ((props: { onClose: () => void }) => ReactNode)
-  children: ReactNode | ((props: { onOpen: () => void }) => ReactNode)
+  content: (close: () => void) => ReactNode
+  children: ReactNode
   className?: string
 }
 
 const ModalTrigger = ({ title, content, children: trigger, className }: Props) => {
-  const fullscreen = useContext(fullscreenContext)
+  const [isOpen, setIsOpen] = useState(false)
+  const close = () => setIsOpen(false)
 
   return (
-    <Dialog.Root>
-      <Dialog.Trigger className={className}>{trigger}</Dialog.Trigger>
-      <Dialog.Portal container={usePortal()}>
-        {(props) => (
-          <>
-            <Dialog.Overlay className={clsx(styles.overlay, { [styles.fullscreen]: fullscreen })} />
-
-            <Dialog.Content className={clsx(styles.content, { [styles.fullscreen]: fullscreen })}>
-              {title && (
-                <header className={styles.header}>
-                  <Dialog.Title className={styles.title}>{title}</Dialog.Title>
-                  <Dialog.Close className={styles.close}>
-                    <IconClose size={20} />
-                  </Dialog.Close>
-                </header>
-              )}
-
-              {typeof content === "function" ? content(props) : content}
-            </Dialog.Content>
-          </>
-        )}
-      </Dialog.Portal>
-    </Dialog.Root>
+    <Modal
+      title={title}
+      trigger={<button className={className}>{trigger}</button>}
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
+      {content(close)}
+    </Modal>
   )
 }
 

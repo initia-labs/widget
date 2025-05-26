@@ -6,11 +6,10 @@ import styles from "./AssetOnChainButton.module.css"
 interface Props {
   chain: BaseChain
   asset: BaseAsset
-  onClick: () => void
   readOnly?: boolean
 }
 
-const AssetOnChainButton = ({ asset, chain, onClick, readOnly }: Props) => {
+const AssetOnChainButton = ({ asset, chain, readOnly }: Props) => {
   const content = (
     <div className={styles.content}>
       <div className={styles.logo}>
@@ -30,10 +29,10 @@ const AssetOnChainButton = ({ asset, chain, onClick, readOnly }: Props) => {
   }
 
   return (
-    <button type="button" className={styles.root} onClick={onClick}>
+    <div className={styles.root}>
       {content}
       <IconChevronDown size={16} className={styles.chevron} />
-    </button>
+    </div>
   )
 }
 

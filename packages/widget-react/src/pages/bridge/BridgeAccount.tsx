@@ -40,7 +40,7 @@ const BridgeAccount = ({ type }: Props) => {
       return (
         <ModalTrigger
           title="Connect wallet"
-          content={({ onClose }) => (
+          content={(close) => (
             <List
               onSelect={async (item) => {
                 const provider = item.getProvider()
@@ -49,7 +49,7 @@ const BridgeAccount = ({ type }: Props) => {
                 const [{ address }] = await offlineSigner.getAccounts()
                 setValue("sender", address)
                 setValue("cosmosWalletName", item.name)
-                onClose()
+                close()
               }}
               list={list}
               getImage={(item) => item.image}
@@ -75,7 +75,7 @@ const BridgeAccount = ({ type }: Props) => {
       return (
         <ModalTrigger
           title="Recipient address"
-          content={({ onClose }) => (
+          content={(close) => (
             <Scrollable>
               <InputHelp level="warning" className={styles.warning}>
                 Do not enter an exchange address. Tokens lost during the transfer will not be
@@ -85,7 +85,7 @@ const BridgeAccount = ({ type }: Props) => {
                 mode="onSubmit"
                 myAddress={getDefaultRecipientAddress(dstChainId)}
                 validate={(address) => validateRecipientAddress(address, dstChainId)}
-                onApply={onClose}
+                onApply={close}
               />
             </Scrollable>
           )}

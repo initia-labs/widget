@@ -64,16 +64,13 @@ export const SendFields = (asset: NormalizedAsset) => {
             selectButton={
               <ModalTrigger
                 title="Select chain and asset"
-                content={({ onClose }) => <SelectChainAsset afterSelect={onClose} />}
+                content={(close) => <SelectChainAsset afterSelect={close} />}
               >
-                {({ onOpen }) => (
-                  <AssetOnChainButton
-                    asset={asset}
-                    chain={chain}
-                    onClick={onOpen}
-                    readOnly={!!state.denom && !!state.chain}
-                  />
-                )}
+                <AssetOnChainButton
+                  asset={asset}
+                  chain={chain}
+                  readOnly={!!state.denom && !!state.chain}
+                />
               </ModalTrigger>
             }
             quantityInput={<QuantityInput />}

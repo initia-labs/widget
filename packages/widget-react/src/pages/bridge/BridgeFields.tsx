@@ -184,7 +184,7 @@ const BridgeFields = () => {
 
                   <ModalTrigger
                     title="Slippage tolerance"
-                    content={({ onClose }) => <SlippageControl afterConfirm={onClose} />}
+                    content={(close) => <SlippageControl afterConfirm={close} />}
                     className={styles.edit}
                   >
                     <IconSettingFilled size={12} />

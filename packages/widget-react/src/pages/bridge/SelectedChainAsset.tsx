@@ -22,24 +22,21 @@ const SelectedChainAsset = ({ type }: { type: "src" | "dst" }) => {
   return (
     <ModalTrigger
       title={title}
-      content={({ onClose }) => <SelectChainAsset type={type} afterSelect={onClose} />}
+      content={(close) => <SelectChainAsset type={type} afterSelect={close} />}
     >
-      {({ onOpen }) => (
-        <AssetOnChainButton
-          asset={{
-            denom: asset.denom,
-            decimals: asset.decimals ?? 0,
-            symbol: asset.symbol ?? truncate(asset.denom),
-            logoUrl: asset.logo_uri ?? "",
-          }}
-          chain={{
-            chainId: chain.chain_id,
-            name: chain.pretty_name || chain.chain_name,
-            logoUrl: chain.logo_uri ?? "",
-          }}
-          onClick={onOpen}
-        />
-      )}
+      <AssetOnChainButton
+        asset={{
+          denom: asset.denom,
+          decimals: asset.decimals ?? 0,
+          symbol: asset.symbol ?? truncate(asset.denom),
+          logoUrl: asset.logo_uri ?? "",
+        }}
+        chain={{
+          chainId: chain.chain_id,
+          name: chain.pretty_name || chain.chain_name,
+          logoUrl: chain.logo_uri ?? "",
+        }}
+      />
     </ModalTrigger>
   )
 }

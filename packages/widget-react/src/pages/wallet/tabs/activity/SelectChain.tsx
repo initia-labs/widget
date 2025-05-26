@@ -16,11 +16,11 @@ const SelectChain = ({ value, onSelect }: Props) => {
   return (
     <ModalTrigger
       title="Select rollup"
-      content={({ onClose }) => (
+      content={(close) => (
         <AddedChainList
           onSelect={(chainId) => {
             onSelect(chainId)
-            onClose()
+            close()
           }}
         />
       )}

@@ -88,11 +88,11 @@ const SendNftFields = () => {
 
           <ModalTrigger
             title="Destination rollup"
-            content={({ onClose }) => (
+            content={(close) => (
               <AddedChainList
                 onSelect={(chainId) => {
                   setValue("dstChainId", chainId)
-                  onClose()
+                  close()
                 }}
               />
             )}

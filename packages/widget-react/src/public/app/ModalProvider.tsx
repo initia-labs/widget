@@ -1,26 +1,20 @@
-import clsx from "clsx"
-import { useContext, useState, type PropsWithChildren } from "react"
-import { Dialog } from "radix-ui"
-import { IconClose } from "@initia/icons-react"
+import { useState, type PropsWithChildren } from "react"
+import Modal from "@/components/Modal"
 import TxRequest from "@/pages/tx/TxRequest"
-import { fullscreenContext } from "./fullscreen"
-import { usePortal } from "./PortalContext"
 import type { ModalOptions } from "./ModalContext"
 import { ModalContext } from "./ModalContext"
-import styles from "./Modal.module.css"
 
 export const ModalProvider = ({ children }: PropsWithChildren) => {
-  const fullscreen = useContext(fullscreenContext)
-
-  const [{ title, content, path }, setOptions] = useState<ModalOptions>({ content: null })
+  const [{ title, content, path }, setOptions] = useState<ModalOptions>({})
   const [isOpen, setIsOpen] = useState(false)
 
-  const openModal = (opts: ModalOptions) => {
-    setOptions(opts)
+  const openModal = (options: ModalOptions) => {
+    setOptions(options)
     setIsOpen(true)
   }
 
   const closeModal = () => {
+    setOptions({})
     setIsOpen(false)
   }
 
@@ -28,24 +22,9 @@ export const ModalProvider = ({ children }: PropsWithChildren) => {
     <ModalContext.Provider value={{ openModal, closeModal }}>
       {children}
 
-      <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
-        <Dialog.Portal container={usePortal()}>
-          <Dialog.Overlay className={clsx(styles.overlay, { [styles.fullscreen]: fullscreen })} />
-
-          <Dialog.Content className={clsx(styles.content, { [styles.fullscreen]: fullscreen })}>
-            {title && (
-              <header className={styles.header}>
-                <Dialog.Title className={styles.title}>{title}</Dialog.Title>
-                <Dialog.Close className={styles.close}>
-                  <IconClose size={20} />
-                </Dialog.Close>
-              </header>
-            )}
-
-            {path === "/tx" ? <TxRequest /> : content}
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+      <Modal title={title} open={isOpen} onOpenChange={setIsOpen}>
+        {path === "/tx" ? <TxRequest /> : content}
+      </Modal>
     </ModalContext.Provider>
   )
 }
