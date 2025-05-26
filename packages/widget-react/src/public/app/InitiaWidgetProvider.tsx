@@ -6,6 +6,7 @@ import { useAddEthereumChain, useDefaultChain, useInitiaRegistry } from "@/data/
 import AsyncBoundary from "@/components/AsyncBoundary"
 import { MAINNET } from "../data/constants"
 import PortalProvider from "./PortalProvider"
+import { ModalProvider } from "./ModalProvider"
 import Drawer from "./Drawer"
 import Routes from "./Routes"
 
@@ -49,23 +50,27 @@ const InitiaWidgetProvider = ({ children, ...config }: PropsWithChildren<Partial
   }
 
   return (
-    <ConfigContext.Provider value={{ ...MAINNET, ...config }}>
-      <PortalProvider>
-        <Fonts />
+    <>
+      <Fonts />
 
+      <ConfigContext.Provider value={{ ...MAINNET, ...config }}>
         <AsyncBoundary suspenseFallback={null} errorFallbackRender={() => null}>
           <Prefetch />
         </AsyncBoundary>
 
         <MemoryRouter>
-          {children}
+          <PortalProvider>
+            <ModalProvider>
+              {children}
 
-          <Drawer>
-            <Routes />
-          </Drawer>
+              <Drawer>
+                <Routes />
+              </Drawer>
+            </ModalProvider>
+          </PortalProvider>
         </MemoryRouter>
-      </PortalProvider>
-    </ConfigContext.Provider>
+      </ConfigContext.Provider>
+    </>
   )
 }
 
