@@ -1,6 +1,6 @@
 {
   "name": "@initia/widget-react",
-  "version": "2.0.0-alpha.2",
+  "version": "2.0.0-alpha.3",
   "repository": "github:initia-labs/widget",
   "type": "module",
   "types": "dist/index.d.ts",
