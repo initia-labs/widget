@@ -19,7 +19,7 @@ import { FormValuesSchema, useBridgeForm } from "./data/form"
 import { useChainType, useSkipChain } from "./data/chains"
 import { useSkipAsset } from "./data/assets"
 import { useIsOpWithdrawable, useRouteQuery } from "./data/simulate"
-import { useSkipBalance } from "./data/balance"
+import { useSkipBalance, useSkipBalancesQuery } from "./data/balance"
 import SelectedChainAsset from "./SelectedChainAsset"
 import BridgeAccount from "./BridgeAccount"
 import SlippageControl from "./SlippageControl"
@@ -45,6 +45,7 @@ const BridgeFields = () => {
   const srcChainType = useChainType(srcChain)
   const srcAsset = useSkipAsset(srcDenom, srcChainId)
   const dstAsset = useSkipAsset(dstDenom, dstChainId)
+  const { data: balances } = useSkipBalancesQuery(sender, srcChainId)
   const srcBalance = useSkipBalance(sender, srcChainId, srcDenom)
 
   useEffect(() => {
@@ -99,6 +100,15 @@ const BridgeFields = () => {
   })
 
   // disabled
+  const feeErrorMessage = useMemo(() => {
+    for (const fee of route?.estimated_fees ?? []) {
+      const balance = balances?.[fee.origin_asset.denom]?.amount
+      if (!balance || BigNumber(balance).lt(fee.amount ?? 0)) {
+        return `Insufficient ${fee.origin_asset.symbol} for fees`
+      }
+    }
+  }, [balances, route])
+
   const disabledMessage = useMemo(() => {
     if (!values.sender) return "Connect wallet"
     if (!values.quantity) return "Enter amount"
@@ -107,7 +117,8 @@ const BridgeFields = () => {
     const result = FormValuesSchema.safeParse(values)
     if (!result.success) return `Invalid ${result.error.issues[0].path}`
     if (!route) return "Route not found"
-  }, [formState, route, values])
+    if (feeErrorMessage) return // feeErrorMessage
+  }, [feeErrorMessage, formState, route, values])
 
   // render
   const received = route ? formatAmount(route.amount_out, { decimals: dstAsset.decimals }) : "0"
