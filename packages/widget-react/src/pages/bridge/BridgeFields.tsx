@@ -31,6 +31,7 @@ const BridgeFields = () => {
 
   const [selectedType, setSelectedType] = useState<RouteType>("default")
 
+  // form
   const { watch, setValue, handleSubmit, trigger, formState } = useBridgeForm()
   const values = watch()
   const { srcChainId, srcDenom, dstChainId, dstDenom, quantity, sender, slippagePercent } = values
@@ -39,6 +40,11 @@ const BridgeFields = () => {
   const srcChainType = useChainType(srcChain)
   const srcAsset = useSkipAsset(srcDenom, srcChainId)
   const dstAsset = useSkipAsset(dstDenom, dstChainId)
+  const srcBalance = useSkipBalance(sender, srcChainId, srcDenom)
+
+  useEffect(() => {
+    if (Number(quantity)) trigger()
+  }, [srcBalance, quantity, trigger])
 
   // simulation
   const isOpWithdrawable = useIsOpWithdrawable()
@@ -47,11 +53,6 @@ const BridgeFields = () => {
   const routeQuery =
     isOpWithdrawable && selectedType === "op" ? routeQueryOpWithdrawal : routeQueryDefault
   const { data: route, isLoading: isSimulating, error: simulationError } = routeQuery
-  const srcBalance = useSkipBalance(sender, srcChainId, srcDenom)
-
-  useEffect(() => {
-    if (Number(quantity)) trigger()
-  }, [srcBalance, quantity, trigger])
 
   const flip = () => {
     setValue("srcChainId", dstChainId)
@@ -60,18 +61,6 @@ const BridgeFields = () => {
     setValue("dstDenom", srcDenom)
     if (Number(quantity)) trigger()
   }
-
-  const received = route ? formatAmount(route.amount_out, { decimals: dstAsset.decimals }) : "0"
-
-  const disabledMessage = useMemo(() => {
-    if (!values.sender) return "Connect wallet"
-    if (!values.quantity) return "Enter amount"
-    if (!values.recipient) return "Enter recipient address"
-    if (formState.errors.quantity) return formState.errors.quantity.message
-    const result = FormValuesSchema.safeParse(values)
-    if (!result.success) return `Invalid ${result.error.issues[0].path}`
-    if (!route) return "Route not found"
-  }, [formState, route, values])
 
   // submit
   const { openModal, closeModal } = useModal()
@@ -94,6 +83,23 @@ const BridgeFields = () => {
 
     navigate("/bridge/preview", { route, values })
   })
+
+  // disabled
+  const disabledMessage = useMemo(() => {
+    if (!values.sender) return "Connect wallet"
+    if (!values.quantity) return "Enter amount"
+    if (!values.recipient) return "Enter recipient address"
+    if (formState.errors.quantity) return formState.errors.quantity.message
+    const result = FormValuesSchema.safeParse(values)
+    if (!result.success) return `Invalid ${result.error.issues[0].path}`
+    if (!route) return "Route not found"
+  }, [formState, route, values])
+
+  // render
+  const received = route ? formatAmount(route.amount_out, { decimals: dstAsset.decimals }) : "0"
+  const isMaxAmount =
+    BigNumber(quantity).gt(0) &&
+    BigNumber(quantity).isEqualTo(toQuantity(srcBalance?.amount, srcBalance?.decimals ?? 0))
 
   return (
     <form className={styles.form} onSubmit={submit}>
@@ -133,10 +139,9 @@ const BridgeFields = () => {
         extra={
           <>
             <FormHelp.Stack>
-              {BigNumber(quantity).gt(0) &&
-                BigNumber(quantity).isEqualTo(
-                  toQuantity(srcBalance?.amount, srcBalance?.decimals ?? 0),
-                ) && <FormHelp level="warning">Make sure to leave enough for fees</FormHelp>}
+              {isMaxAmount && (
+                <FormHelp level="warning">Make sure to leave enough for fees</FormHelp>
+              )}
               <FormHelp level="warning">{route?.warning?.message}</FormHelp>
               <FormHelp level="error">{simulationError?.message}</FormHelp>
             </FormHelp.Stack>
