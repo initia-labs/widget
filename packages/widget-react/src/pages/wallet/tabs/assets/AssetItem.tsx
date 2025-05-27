@@ -9,16 +9,7 @@ const AssetItem = (props: BaseAsset) => {
 
   return (
     <div className={styles.asset}>
-      <Image
-        src={logoUrl}
-        width={24}
-        height={24}
-        placeholder={
-          <div className={styles.placeholder} style={{ width: 24, height: 24 }}>
-            ?
-          </div>
-        }
-      />
+      <Image src={logoUrl} width={24} height={24} />
 
       <div className={styles.token}>
         <div className={styles.symbol}>{symbol ?? truncate(denom)}</div>

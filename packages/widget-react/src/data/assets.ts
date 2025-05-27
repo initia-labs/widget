@@ -11,6 +11,7 @@ import { Address } from "@/public/utils"
 import { STALE_TIMES } from "./http"
 import type { NormalizedChain } from "./chains"
 import { useLayer1 } from "./chains"
+import placeholder from "./placeholder"
 
 export const assetQueryKeys = createQueryKeys("initia-widget:asset", {
   list: (assetlistUrl?: string) => [assetlistUrl],
@@ -59,7 +60,7 @@ export function useFindAsset(chain?: NormalizedChain) {
   const assets = useAssets(chain)
   return (denom: string) => {
     const asset = assets.find((asset) => asset.base === denom)
-    if (!asset) return { denom } as NormalizedAsset
+    if (!asset) return { denom, logoUrl: placeholder } as NormalizedAsset
     return asset
   }
 }
