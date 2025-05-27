@@ -30,8 +30,11 @@ const Drawer = ({ children }: PropsWithChildren) => {
     const errorMessage = isPendingTransaction
       ? "User exited before response arrived. Transaction may succeed or fail."
       : "User rejected"
-    txRequest?.reject(new Error(errorMessage))
+
+    // The drawer must be closed first.
+    // This is because `reject` may re-throw the error after handling it.
     closeWidget()
+    txRequest?.reject(new Error(errorMessage))
   }
 
   const isSmall = useMedia("(max-width: 576px)")

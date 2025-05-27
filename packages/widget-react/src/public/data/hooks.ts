@@ -47,7 +47,7 @@ export function useInitiaWidget() {
   const { data: username } = useUsernameQuery()
   const { wallet } = useConfig()
 
-  const { openWidget, closeWidget } = useWidgetVisibility()
+  const { openWidget } = useWidgetVisibility()
 
   const openWallet = () => {
     openWidget("/")
@@ -66,7 +66,6 @@ export function useInitiaWidget() {
     username,
     wallet,
     openWallet,
-    closeWidget,
     openBridge,
     ...tx,
   }

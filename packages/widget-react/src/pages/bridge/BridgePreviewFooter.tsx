@@ -47,12 +47,12 @@ const BridgePreviewFooter = ({ tx, onTxCompleted }: Props) => {
             const { transactionHash } = await requestTxBlock({
               messages,
               chainId: srcChainId,
-              internal: true,
-              callback: (result) => {
-                if (result.txHash) onTxCompleted(result.txHash)
-                else throw result.error
+              internal: {
+                onResult: (result) => {
+                  if (result.txHash) onTxCompleted(result.txHash)
+                  else throw result.error
+                },
               },
-              returnPath: "/bridge", // for failed or rejected tx
             })
             return transactionHash
           }

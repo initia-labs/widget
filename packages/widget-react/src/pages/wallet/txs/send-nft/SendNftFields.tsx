@@ -66,8 +66,7 @@ const SendNftFields = () => {
       await requestTxBlock({
         messages,
         chainId: srcChain.chainId,
-        internal: true,
-        returnPath: "/nfts",
+        internal: { returnPath: "/nfts" },
       })
     },
   })

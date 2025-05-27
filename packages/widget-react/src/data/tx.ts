@@ -17,9 +17,9 @@ export interface TxRequest {
   gasAdjustment?: number
   gas?: number
   fee?: StdFee | null
-  callback?: ((result: TxResult) => void) | null
-  internal?: boolean
-  returnPath?: string
+
+  /** Internal use only */
+  internal?: { returnPath?: string | number; onResult?: (result: TxResult) => void } | false
 }
 
 interface TxRequestHandler {
@@ -81,9 +81,7 @@ export function useTx() {
       gas: rawTxRequest.gas || (await estimateGas(rawTxRequest)),
       gasAdjustment: DEFAULT_GAS_ADJUSTMENT,
       fee: null,
-      callback: null,
-      internal: false,
-      returnPath: "/",
+      internal: false as const,
     }
 
     const txRequest = { ...defaultTxRequest, ...rawTxRequest }
@@ -108,26 +106,27 @@ export function useTx() {
         },
       })
 
-      if (txRequest.callback) {
-        openModal({ path: "/tx" })
-      } else if (txRequest.internal) {
-        navigate("/tx")
-      } else {
+      if (!txRequest.internal) {
         openWidget("/tx")
+      } else if (txRequest.internal.onResult) {
+        openModal({ path: "/tx" })
+      } else {
+        navigate("/tx")
       }
 
       const finalize = (result: TxResult) => {
-        if (txRequest.callback) {
-          closeModal()
-          txRequest.callback(result)
-        } else if (txRequest.internal) {
-          setTxResultAtom(result)
-          navigate("/tx/result")
-        } else {
+        if (!txRequest.internal) {
           navigate("/blank")
           closeWidget()
+        } else if (txRequest.internal.onResult) {
+          // The modal must be closed first.
+          // This is because `onResult` may re-throw the error after handling it.
+          closeModal()
+          txRequest.internal.onResult(result)
+        } else {
+          setTxResultAtom(result)
+          navigate("/tx/result")
         }
-        setTxRequestAtom(undefined)
       }
     })
   }

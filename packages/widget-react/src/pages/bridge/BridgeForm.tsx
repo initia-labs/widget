@@ -5,8 +5,8 @@ import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconChevronRight } from "@initia/icons-react"
 import { useHistory, useNavigate } from "@/lib/router"
-import { useInitiaWidget } from "@/public/data/hooks"
 import { LocalStorageKey } from "@/data/constants"
+import { useWidgetVisibility } from "@/data/ui"
 import { quantitySuperRefine } from "@/data/form"
 import AsyncBoundary from "@/components/AsyncBoundary"
 import Page from "@/components/Page"
@@ -24,7 +24,7 @@ import BridgeFields from "./BridgeFields"
 const BridgeForm = () => {
   const history = useHistory()
   const navigate = useNavigate()
-  const { closeWidget } = useInitiaWidget()
+  const { closeWidget } = useWidgetVisibility()
 
   const defaultValues = useDefaultValues()
   const validateRecipientAddress = useValidateAddress()

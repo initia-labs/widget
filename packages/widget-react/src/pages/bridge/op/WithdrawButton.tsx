@@ -59,7 +59,7 @@ const WithdrawButton = ({ withdrawalTx }: Props) => {
             }),
           },
         ],
-        internal: true,
+        internal: { returnPath: -2 },
       })
     },
     onSuccess: () => {

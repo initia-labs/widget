@@ -12,7 +12,7 @@ const TxResult = () => {
   const navigate = useNavigate()
 
   const { txRequest, txHash, error } = useTxResult()
-  const { chainId, returnPath } = txRequest
+  const { chainId, internal } = txRequest
 
   const setTxResult = useSetAtom(txResultAtom)
 
@@ -37,7 +37,7 @@ const TxResult = () => {
       <Footer>
         <Button.White
           onClick={() => {
-            navigate(returnPath)
+            if (internal && internal.returnPath) navigate(internal.returnPath)
             setTxResult(undefined)
           }}
         >

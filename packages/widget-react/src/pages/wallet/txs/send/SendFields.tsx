@@ -52,7 +52,7 @@ export const SendFields = (asset: NormalizedAsset) => {
           }),
         },
       ]
-      return requestTxBlock({ messages, memo, chainId, internal: true })
+      return requestTxBlock({ messages, memo, chainId, internal: { returnPath: "/" } })
     },
   })
 
