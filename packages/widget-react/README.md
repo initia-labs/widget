@@ -190,7 +190,10 @@ interface UseInitiaWidgetResult {
   openWallet(): void
 
   /** Opens the bridge drawer UI. */
-  openBridge(): void
+  openBridge(defaultValues: Partial<FormValues>): void
+
+  /** Estimates gas required for a transaction. */
+  estimateGas(txRequest: TxRequest): Promise<number>
 
   /** Signs and broadcasts a transaction, waits for block inclusion, and returns the full transaction response. */
   requestTxBlock(txRequest: TxRequest): Promise<DeliverTxResponse>
@@ -198,14 +201,15 @@ interface UseInitiaWidgetResult {
   /** Signs and broadcasts a transaction and returns the transaction hash immediately. */
   requestTxSync(txRequest: TxRequest): Promise<string>
 
-  /** Estimates gas required for a transaction. */
-  estimateGas(txRequest: TxRequest): Promise<number>
+  /** Waits for a transaction to be confirmed on-chain. */
+  waitForTxConfirmation(params: {
+    txHash: string
+    chainId?: string
+    timeoutSeconds?: number
+    intervalSeconds?: number
+  }): Promise<IndexedTx>
 }
-```
 
-#### `TxRequest`
-
-```ts
 interface TxRequest {
   messages: EncodeObject[]
   memo?: string
