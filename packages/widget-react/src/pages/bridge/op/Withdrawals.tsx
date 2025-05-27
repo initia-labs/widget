@@ -17,7 +17,7 @@ const Withdrawals = () => {
   return (
     <Page title="Optimistic bridge withdrawals">
       <ChainOptions
-        chains={chains.filter(({ metadata }) => !metadata?.is_l1 && metadata?.executor_uri)}
+        chains={chains.filter(({ metadata }) => !metadata?.is_l1 && metadata?.op_denoms?.length)}
         value={chainId}
         onSelect={setChainId}
       />
