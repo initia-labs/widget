@@ -155,5 +155,37 @@ export function useTx() {
     })
   }
 
-  return { estimateGas, requestTxSync, requestTxBlock }
+  const waitForTxConfirmation = async ({
+    txHash,
+    chainId = defaultChainId,
+    timeoutSeconds = 60,
+    intervalSeconds = 1,
+  }: {
+    txHash: string
+    chainId?: string
+    timeoutSeconds?: number
+    intervalSeconds?: number
+  }) => {
+    const client = await createSigningStargateClient(chainId)
+    const start = Date.now()
+    const timeoutMs = timeoutSeconds * 1000
+
+    while (true) {
+      const tx = await client.getTx(txHash)
+
+      if (tx) {
+        return tx
+      }
+
+      if (Date.now() - start >= timeoutMs) {
+        throw new Error(
+          `Transaction was submitted, but not found on the chain within ${timeoutSeconds} seconds.`,
+        )
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, intervalSeconds * 1000))
+    }
+  }
+
+  return { estimateGas, requestTxSync, requestTxBlock, waitForTxConfirmation }
 }
