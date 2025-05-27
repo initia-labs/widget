@@ -2,6 +2,7 @@ import { encodeSecp256k1Pubkey, pubkeyToAddress } from "@cosmjs/amino"
 import { fromBech32, toBech32 } from "@cosmjs/encoding"
 import type { ReactNode } from "react"
 import { useAsync } from "react-use"
+import { Address } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { useOfflineSigner } from "@/data/signer"
 import Footer from "@/components/Footer"
@@ -18,7 +19,7 @@ const FooterWithAddressList = ({ children }: Props) => {
   const state = useBridgePreviewState()
   const { route, values } = state
   const { required_chain_addresses } = route
-  const { srcChainId, sender, recipient } = values
+  const { srcChainId, dstChainId, sender, recipient } = values
 
   const { initiaAddress, hexAddress } = useInitiaWidget()
   const signer = useOfflineSigner()
@@ -30,6 +31,9 @@ const FooterWithAddressList = ({ children }: Props) => {
     Promise.all(
       required_chain_addresses.map(async (chainId, index) => {
         if (index === required_chain_addresses.length - 1) {
+          const dstChain = findSkipChain(dstChainId)
+          const findSkipChainType = findChainType(dstChain)
+          if (findSkipChainType === "initia") return Address.toBech32(recipient)
           return recipient
         }
 
