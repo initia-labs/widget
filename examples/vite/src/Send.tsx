@@ -13,7 +13,7 @@ interface FormValues {
 }
 
 const Send = () => {
-  const { initiaAddress, requestTxBlock } = useInitiaWidget()
+  const { initiaAddress, requestTxSync, waitForTxConfirmation } = useInitiaWidget()
 
   const { register, setValue, handleSubmit } = useForm({
     defaultValues: { recipient: "", amount: "1000000", denom: "uinit", memo: "" },
@@ -24,7 +24,7 @@ const Send = () => {
   }, [initiaAddress, setValue])
 
   const { mutate, data, isPending, error } = useMutation({
-    mutationFn: ({ recipient, amount, denom, memo }: FormValues) => {
+    mutationFn: async ({ recipient, amount, denom, memo }: FormValues) => {
       const messages = [
         {
           typeUrl: "/cosmos.bank.v1beta1.MsgSend",
@@ -36,13 +36,19 @@ const Send = () => {
         },
       ]
 
-      return requestTxBlock({ messages, memo })
+      const txHash = await requestTxSync({ messages, memo })
+
+      waitForTxConfirmation({ txHash })
+        .then((tx) => window.alert(tx.hash))
+        .catch((error) => window.alert(error.message))
+
+      return txHash
     },
   })
 
   const renderResult = () => {
     if (error) return <p className={styles.error}>{error.message}</p>
-    if (data) return <pre className={styles.result}>{data.transactionHash}</pre>
+    if (data) return <pre className={styles.result}>{data}</pre>
   }
 
   return (
