@@ -19,6 +19,7 @@
   --warning-bg: #2b2416;
   --info: #51dcfb;
   --info-bg: #122327;
+  --info-light: #74e3fc;
 }
 
 :root[data-theme="light"],
@@ -42,6 +43,7 @@
   --warning-bg: #f8c24f;
   --info: #122327;
   --info-bg: #51dcfb;
+  --info-light: #001c26;
 }
 
 :root,
@@ -69,7 +71,7 @@
   color: var(--info);
 
   &:hover {
-    color: var(--info-bg);
+    color: var(--info-light);
   }
 }
 
