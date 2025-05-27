@@ -1,4 +1,5 @@
-import { IconChevronDown, IconCopy } from "@initia/icons-react"
+import type { ReactNode } from "react"
+import { IconChevronDown } from "@initia/icons-react"
 import { formatAmount, truncate } from "@/public/utils"
 import Loader from "@/components/Loader"
 import Image from "@/components/Image"
@@ -14,13 +15,14 @@ interface Props {
   denom: string
   chainId: string
   address: string
+  walletIcon?: ReactNode
 
   isStepAbandonedOrFailed?: boolean
   isStepPending?: boolean
   isStepSuccessful?: boolean
 }
 
-const OperationItem = ({ type, amount, denom, chainId, address, ...props }: Props) => {
+const OperationItem = ({ type, amount, denom, chainId, address, walletIcon, ...props }: Props) => {
   const { isStepAbandonedOrFailed, isStepPending, isStepSuccessful } = props
   const { chain_name, pretty_name } = useSkipChain(chainId)
   const { symbol, decimals, logo_uri } = useSkipAsset(denom, chainId)
@@ -63,8 +65,8 @@ const OperationItem = ({ type, amount, denom, chainId, address, ...props }: Prop
               <CopyButton value={address}>
                 {({ copy, copied }) => (
                   <button className={styles.address} onClick={copy}>
+                    {walletIcon}
                     <span>{copied ? "Copied!" : truncate(address)}</span>
-                    <IconCopy size={11} />
                   </button>
                 )}
               </CopyButton>

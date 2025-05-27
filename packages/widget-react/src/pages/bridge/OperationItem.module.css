@@ -99,7 +99,7 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
 
   color: var(--gray-2);
   font-size: 11px;

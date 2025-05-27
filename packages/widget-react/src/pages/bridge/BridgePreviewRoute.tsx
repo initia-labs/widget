@@ -1,7 +1,11 @@
 import { zipObj } from "ramda"
+import { IconWallet } from "@initia/icons-react"
+import { useConfig } from "@/data/config"
 import AsyncBoundary from "@/components/AsyncBoundary"
+import Image from "@/components/Image"
 import type { RouterOperationJson } from "./data/simulate"
 import { useBridgePreviewState, useTxStatusQuery } from "./data/tx"
+import { useCosmosWallets } from "./data/cosmos"
 import OperationItem from "./OperationItem"
 import styles from "./BridgePreviewRoute.module.css"
 
@@ -56,12 +60,22 @@ const BridgePreviewRoute = ({ addressList, trackedTxHash }: Props) => {
   const addressMap = zipObj(route.required_chain_addresses, addressList)
   const { data: txStatus } = useTxStatusQuery(values.srcChainId, trackedTxHash, route)
 
+  const { find } = useCosmosWallets()
+  const { wallet } = useConfig()
+
   const getFirstOperationProps = () => {
     const props = {
       amount: amount_in,
       denom: source_asset_denom,
       chainId: source_asset_chain_id,
       address: values.sender,
+      walletIcon: (
+        <Image
+          src={values.cosmosWalletName ? find(values.cosmosWalletName)?.image : wallet?.meta.icon}
+          width={12}
+          height={12}
+        />
+      ),
     }
 
     if (!txStatus) return props
@@ -82,7 +96,14 @@ const BridgePreviewRoute = ({ addressList, trackedTxHash }: Props) => {
     // @ts-expect-error Skip API's response structure is too complicated
     const { type, amount_out, denom, denom_out = denom, chain_id, to_chain_id = chain_id } = normalizedOperation
     const address = addressMap[to_chain_id]
-    const props = { type, amount: amount_out, denom: denom_out, chainId: to_chain_id, address }
+    const props = {
+      type,
+      amount: amount_out,
+      denom: denom_out,
+      chainId: to_chain_id,
+      address,
+      walletIcon: index === operations.length - 1 ? <IconWallet size={11} /> : null,
+    }
 
     if (!txStatus) return props
 
