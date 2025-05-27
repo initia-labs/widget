@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from "react"
 import BigNumber from "bignumber.js"
+import { useEffect, useMemo } from "react"
+import { useLocalStorage } from "react-use"
 import { IconChevronDown, IconSettingFilled } from "@initia/icons-react"
 import { useNavigate } from "@/lib/router"
 import { formatAmount, formatNumber, toQuantity } from "@/public/utils"
 import { useModal } from "@/public/app/ModalContext"
+import { LocalStorageKey } from "@/data/constants"
 import Button from "@/components/Button"
 import ChainAssetQuantityLayout from "@/components/form/ChainAssetQuantityLayout"
 import BalanceButton from "@/components/form/BalanceButton"
@@ -29,7 +31,10 @@ import styles from "./BridgeFields.module.css"
 const BridgeFields = () => {
   const navigate = useNavigate()
 
-  const [selectedType, setSelectedType] = useState<RouteType>("default")
+  const [selectedType, setSelectedType] = useLocalStorage<RouteType>(
+    LocalStorageKey.BRIDGE_ROUTE_TYPE,
+    "default",
+  )
 
   // form
   const { watch, setValue, handleSubmit, trigger, formState } = useBridgeForm()

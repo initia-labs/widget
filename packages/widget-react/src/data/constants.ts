@@ -18,5 +18,6 @@ export const LocalStorageKey = {
   BRIDGE_DST_DENOM: `${NAMESPACE}:bridge:dst-denom`,
   BRIDGE_QUANTITY: `${NAMESPACE}:bridge:quantity`,
   BRIDGE_SLIPPAGE_PERCENT: `${NAMESPACE}:bridge:slippage-percent`,
+  BRIDGE_ROUTE_TYPE: `${NAMESPACE}:bridge:route-type`,
   BRIDGE_HISTORY: `${NAMESPACE}:bridge:history`,
 }
