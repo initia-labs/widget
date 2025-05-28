@@ -11,9 +11,11 @@ interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   chainId: string
   txHash: string
   showIcon?: boolean
+  onClick?: () => void
 }
 
-const ExplorerLink = ({ chainId, txHash, showIcon, className, children, ...attrs }: Props) => {
+const ExplorerLink = (props: Props) => {
+  const { chainId, txHash, showIcon, className, children, onClick, ...attrs } = props
   const chain = useChain(chainId)
   const txPage = path<string>(["explorers", 0, "tx_page"], chain)
   const text = children ?? truncate(txHash)
@@ -27,6 +29,7 @@ const ExplorerLink = ({ chainId, txHash, showIcon, className, children, ...attrs
       {...attrs}
       href={xss(txPage.replace(/\$\{txHash\}/g, txHash))}
       className={clsx(styles.link, className)}
+      onClick={onClick}
       target="_blank"
     >
       {text}

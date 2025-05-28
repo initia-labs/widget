@@ -17,6 +17,7 @@ import Button from "@/components/Button"
 import { usePortalContainer } from "../portal"
 import { PortalContext } from "./PortalContext"
 import WidgetHeader from "./WidgetHeader"
+import TxWatcher from "./TxWatcher"
 import styles from "./Drawer.module.css"
 
 const Drawer = ({ children }: PropsWithChildren) => {
@@ -82,6 +83,7 @@ const Drawer = ({ children }: PropsWithChildren) => {
       {drawerTransition((style, item) =>
         item ? (
           <animated.div style={style} className={clsx(styles.content, "body")}>
+            <TxWatcher />
             <WidgetHeader />
             <AsyncBoundary errorBoundaryProps={errorBoundaryProps}>{children}</AsyncBoundary>
             <div ref={setContainer} />

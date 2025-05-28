@@ -28,8 +28,16 @@ interface TxRequestHandler {
   reject: (error: Error) => void
 }
 
+export interface TxStatus {
+  status: "loading" | "success" | "error"
+  chainId: string
+  txHash?: string
+  error?: Error
+}
+
 export const TX_APPROVAL_MUTATION_KEY = "approve"
 export const txRequestHandlerAtom = atom<TxRequestHandler>()
+export const txStatusAtom = atom<TxStatus | null>(null)
 
 export function useTxRequestHandler() {
   const txRequest = useAtomValue(txRequestHandlerAtom)
@@ -44,6 +52,7 @@ export function useTx() {
   const { openWidget, closeWidget } = useWidgetVisibility()
   const { openModal, closeModal } = useModal()
   const setTxRequestHandler = useSetAtom(txRequestHandlerAtom)
+  const setTxStatus = useSetAtom(txStatusAtom)
   const createSigningStargateClient = useCreateSigningStargateClient()
 
   const estimateGas = async ({ messages, memo, chainId = defaultChainId }: TxRequest) => {
@@ -120,15 +129,41 @@ export function useTx() {
     })
   }
 
-  const requestTxSync = (txRequest: TxRequest) => {
-    return requestTx<string>({
-      txRequest,
-      broadcaster: async (client, signedTxBytes) => {
-        const transactionHash = await client.broadcastTxSync(signedTxBytes)
-        return transactionHash
-      },
-      getTransactionHash: (response) => response,
-    })
+  const requestTxSync = async (txRequest: TxRequest) => {
+    try {
+      const txHash = await requestTx<string>({
+        txRequest,
+        broadcaster: async (client, signedTxBytes) => {
+          const transactionHash = await client.broadcastTxSync(signedTxBytes)
+          return transactionHash
+        },
+        getTransactionHash: (response) => response,
+      })
+
+      if (txRequest.internal) {
+        setTxStatus({ txHash, chainId: txRequest.chainId ?? defaultChainId, status: "loading" })
+        waitForTxConfirmation({ txHash, chainId: txRequest.chainId })
+          .then((tx) => {
+            const status = tx.code === 0 ? "success" : "error"
+            setTxStatus({ status, chainId: txRequest.chainId ?? defaultChainId, txHash })
+          })
+          .catch(() => {
+            setTxStatus({ status: "error", chainId: txRequest.chainId ?? defaultChainId, txHash })
+          })
+      }
+
+      return txHash
+    } catch (error) {
+      if (txRequest.internal) {
+        setTxStatus({
+          status: "error",
+          chainId: txRequest.chainId ?? defaultChainId,
+          error: error as Error,
+        })
+        return
+      }
+      throw error
+    }
   }
 
   const requestTxBlock = (txRequest: TxRequest) => {
