@@ -34,6 +34,22 @@ function normalizeAsset(asset: Asset) {
 
 export type NormalizedAsset = ReturnType<typeof normalizeAsset>
 
+/**
+ * NOTE:
+ *
+ * We currently load asset metadata (e.g. symbol, decimals) primarily from `assetlist.json`,
+ * regardless of the user's balance.
+ *
+ * If an asset is not found in the list — especially on Move-based chains — we fall back to
+ * fetching its info from on-chain Move resources. However, this fallback is only possible
+ * after we detect the user's balance for that asset.
+ *
+ * Because of this, we first fetch from the asset list for all assets, and later query
+ * Move resources only for the assets that appear in the user's balance but are missing metadata.
+ *
+ * This structure is not perfect. A future improvement might be to query all assets individually,
+ * cache the result into queryClient, and always read asset metadata from there.
+ */
 export function useAssets(chain?: NormalizedChain) {
   const assetlistUrl = chain?.metadata?.assetlist
   const queryClient = useQueryClient()
