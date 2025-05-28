@@ -55,17 +55,21 @@
     border-top: 1px solid var(--border);
   }
 
-  .button {
-    cursor: default;
+  .type {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     background-color: var(--border);
     border-radius: 4px;
     color: var(--dimmed);
+    cursor: default;
     width: 24px;
     height: 24px;
     z-index: 1;
   }
 
-  .button:hover {
+  button.type:hover {
     color: var(--gray-1);
   }
 }

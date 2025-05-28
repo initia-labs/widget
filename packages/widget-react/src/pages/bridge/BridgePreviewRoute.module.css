@@ -1,6 +1,41 @@
+.root {
+  display: grid;
+  gap: 12px;
+}
+
 .route {
   background: var(--gray-8);
   border: 1px solid var(--gray-5);
   border-radius: 12px;
   padding: 24px 20px;
+}
+
+.content {
+  overflow: hidden;
+}
+
+.content[data-state="open"] {
+  animation: slideDown 150ms ease-out;
+}
+
+.content[data-state="closed"] {
+  animation: slideUp 150ms ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    height: var(--radix-collapsible-content-height);
+  }
+  to {
+    height: 0;
+  }
 }

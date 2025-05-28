@@ -1,7 +1,10 @@
 import { zipObj } from "ramda"
+import { useToggle } from "react-use"
+import { Collapsible } from "radix-ui"
 import { IconWallet } from "@initia/icons-react"
 import { useConfig } from "@/data/config"
 import AsyncBoundary from "@/components/AsyncBoundary"
+import CheckboxButton from "@/components/CheckboxButton"
 import Image from "@/components/Image"
 import type { RouterOperationJson } from "./data/simulate"
 import { useBridgePreviewState, useTxStatusQuery } from "./data/tx"
@@ -63,6 +66,8 @@ const BridgePreviewRoute = ({ addressList, trackedTxHash }: Props) => {
   const { find } = useCosmosWallets()
   const { wallet } = useConfig()
 
+  const [showAll, toggleShowAll] = useToggle(false)
+
   const getFirstOperationProps = () => {
     const props = {
       amount: amount_in,
@@ -97,7 +102,7 @@ const BridgePreviewRoute = ({ addressList, trackedTxHash }: Props) => {
     const { type, amount_out, denom, denom_out = denom, chain_id, to_chain_id = chain_id } = normalizedOperation
     const address = addressMap[to_chain_id]
     const props = {
-      type,
+      type: showAll ? type : undefined,
       amount: amount_out,
       denom: denom_out,
       chainId: to_chain_id,
@@ -122,19 +127,32 @@ const BridgePreviewRoute = ({ addressList, trackedTxHash }: Props) => {
     return { ...props, isStepAbandonedOrFailed, isStepPending, isStepSuccessful }
   }
 
-  const operationProps = [
-    getFirstOperationProps(),
-    ...operations.map(normalizeOperation).map(toProps),
-  ]
+  const operationProps = operations.map(normalizeOperation).map(toProps)
+  const intermediateOperations = operationProps.slice(0, -1)
+  const lastOperationProps = operationProps[operationProps.length - 1]
 
   return (
-    <div className={styles.route}>
-      {operationProps.map((props, index) => (
-        <AsyncBoundary suspenseFallback={null} key={index}>
-          <OperationItem {...props} />
-        </AsyncBoundary>
-      ))}
-    </div>
+    <Collapsible.Root className={styles.root} open={showAll} onOpenChange={toggleShowAll}>
+      {operationProps.length > 1 && (
+        <Collapsible.Trigger asChild>
+          <CheckboxButton checked={showAll} onClick={toggleShowAll} label="Show details" />
+        </Collapsible.Trigger>
+      )}
+
+      <div className={styles.route}>
+        <OperationItem {...getFirstOperationProps()} source />
+
+        <Collapsible.Content className={styles.content}>
+          {intermediateOperations.map((props, index) => (
+            <AsyncBoundary suspenseFallback={<OperationItem.Placeholder {...props} />} key={index}>
+              <OperationItem {...props} />
+            </AsyncBoundary>
+          ))}
+        </Collapsible.Content>
+
+        <OperationItem {...lastOperationProps} />
+      </div>
+    </Collapsible.Root>
   )
 }
 

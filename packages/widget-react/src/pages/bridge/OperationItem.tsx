@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 import { IconChevronDown } from "@initia/icons-react"
 import { formatAmount, truncate } from "@/public/utils"
+import placeholder from "@/data/placeholder"
 import Loader from "@/components/Loader"
 import Image from "@/components/Image"
 import WidgetTooltip from "@/components/WidgetTooltip"
@@ -9,23 +10,17 @@ import { useSkipAsset } from "./data/assets"
 import { useSkipChain } from "./data/chains"
 import styles from "./OperationItem.module.css"
 
-interface Props {
-  type?: string
-  amount: string
-  denom: string
-  chainId: string
-  address: string
-  walletIcon?: ReactNode
-
-  isStepAbandonedOrFailed?: boolean
-  isStepPending?: boolean
-  isStepSuccessful?: boolean
+interface ComponentProps extends Props {
+  symbol?: string
+  decimals?: number
+  logo_uri?: string
 }
 
-const OperationItem = ({ type, amount, denom, chainId, address, walletIcon, ...props }: Props) => {
+const OperationItemComponent = (props: ComponentProps) => {
+  const { source, type, amount, denom, chainId, address, walletIcon } = props
   const { isStepAbandonedOrFailed, isStepPending, isStepSuccessful } = props
+  const { symbol = truncate(denom), decimals = 0, logo_uri = placeholder } = props
   const { chain_name, pretty_name } = useSkipChain(chainId)
-  const { symbol, decimals, logo_uri } = useSkipAsset(denom, chainId)
 
   const renderStepState = () => {
     if (isStepAbandonedOrFailed) return <div className={styles.error} />
@@ -35,14 +30,20 @@ const OperationItem = ({ type, amount, denom, chainId, address, walletIcon, ...p
 
   return (
     <div>
-      {type && (
+      {!source && (
         <div className={styles.arrow}>
           <div className={styles.divider} />
-          <WidgetTooltip label={type}>
-            <button className={styles.button}>
+          {type ? (
+            <WidgetTooltip label={type}>
+              <button className={styles.type}>
+                <IconChevronDown size={16} />
+              </button>
+            </WidgetTooltip>
+          ) : (
+            <span className={styles.type}>
               <IconChevronDown size={16} />
-            </button>
-          </WidgetTooltip>
+            </span>
+          )}
         </div>
       )}
 
@@ -77,5 +78,26 @@ const OperationItem = ({ type, amount, denom, chainId, address, walletIcon, ...p
     </div>
   )
 }
+
+interface Props {
+  source?: boolean
+  type?: string
+  amount: string
+  denom: string
+  chainId: string
+  address: string
+  walletIcon?: ReactNode
+
+  isStepAbandonedOrFailed?: boolean
+  isStepPending?: boolean
+  isStepSuccessful?: boolean
+}
+
+const OperationItem = (props: Props) => {
+  const asset = useSkipAsset(props.denom, props.chainId)
+  return <OperationItemComponent {...props} {...asset} />
+}
+
+OperationItem.Placeholder = OperationItemComponent
 
 export default OperationItem
