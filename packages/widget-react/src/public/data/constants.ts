@@ -1,6 +1,6 @@
 import type { Config } from "../../data/config"
 
-export const PRIVY_APP_ID = "cm0c6axwl00en12cam7m1ca18"
+export const PRIVY_APP_ID = "cmb7ejlwv006ejm0m67u318pr"
 export const DEFAULT_GAS_ADJUSTMENT = 1.4
 export const DEFAULT_GAS_PRICE_MULTIPLIER = 1.03
 
