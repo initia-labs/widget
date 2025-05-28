@@ -29,6 +29,7 @@ export type RouterOperationJson =
 export interface RouterRouteResponseJson extends RouteResponseJson {
   operations: RouterOperationJson[]
   required_op_hook?: boolean
+  extra_warnings?: string[]
 }
 
 export function useRouteQuery(

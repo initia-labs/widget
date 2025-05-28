@@ -190,6 +190,11 @@ const BridgeFields = () => {
                 <FormHelp level="warning">Make sure to leave enough for fees</FormHelp>
               )}
               <FormHelp level="warning">{route?.warning?.message}</FormHelp>
+              {route?.extra_warnings?.map((warning) => (
+                <FormHelp level="warning" key={warning}>
+                  {warning}
+                </FormHelp>
+              ))}
               <FormHelp level="error">{error?.message}</FormHelp>
             </FormHelp.Stack>
 
