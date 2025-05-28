@@ -4,7 +4,8 @@
   gap: 8px;
 
   border-bottom: 1px solid var(--border);
-  padding: 16px var(--padding);
+  height: 52px;
+  padding: 0px var(--padding);
 }
 
 .back {
