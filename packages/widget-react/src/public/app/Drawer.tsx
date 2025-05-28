@@ -47,21 +47,23 @@ const Drawer = ({ children }: PropsWithChildren) => {
 
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const renderFallbackError = ({ error, resetErrorBoundary }: FallbackProps) => {
-    const retry = () => {
-      navigate("/")
-      queryClient.clear()
-      resetErrorBoundary()
-    }
+  const errorBoundaryProps = {
+    fallbackRender: ({ error, resetErrorBoundary }: FallbackProps) => {
+      const retry = () => {
+        navigate("/")
+        queryClient.clear()
+        resetErrorBoundary()
+      }
 
-    return (
-      <Scrollable>
-        <Status error>{error.message}</Status>
-        <Footer>
-          <Button.White onClick={retry}>Retry</Button.White>
-        </Footer>
-      </Scrollable>
-    )
+      return (
+        <Scrollable>
+          <Status error>{error.message}</Status>
+          <Footer>
+            <Button.White onClick={retry}>Retry</Button.White>
+          </Footer>
+        </Scrollable>
+      )
+    },
   }
 
   return createPortal(
@@ -81,7 +83,7 @@ const Drawer = ({ children }: PropsWithChildren) => {
         item ? (
           <animated.div style={style} className={clsx(styles.content, "body")}>
             <WidgetHeader />
-            <AsyncBoundary errorFallbackRender={renderFallbackError}>{children}</AsyncBoundary>
+            <AsyncBoundary errorBoundaryProps={errorBoundaryProps}>{children}</AsyncBoundary>
             <div ref={setContainer} />
           </animated.div>
         ) : null,

@@ -1,21 +1,21 @@
 import type { PropsWithChildren, ReactNode } from "react"
 import { Suspense } from "react"
-import type { FallbackProps } from "react-error-boundary"
+import type { ErrorBoundaryProps } from "react-error-boundary"
 import { ErrorBoundary } from "react-error-boundary"
 import Status from "./Status"
 
 interface Props {
+  errorBoundaryProps?: ErrorBoundaryProps
   suspenseFallback?: ReactNode
-  errorFallbackRender?: (props: FallbackProps) => ReactNode
 }
 
 const AsyncBoundary = ({
+  errorBoundaryProps = { fallbackRender: ({ error }) => <Status error>{error.message}</Status> },
   suspenseFallback = <Status>Loading...</Status>,
-  errorFallbackRender = ({ error }) => <Status error>{error.message}</Status>,
   children,
 }: PropsWithChildren<Props>) => {
   return (
-    <ErrorBoundary fallbackRender={errorFallbackRender}>
+    <ErrorBoundary {...errorBoundaryProps}>
       <Suspense fallback={suspenseFallback}>{children}</Suspense>
     </ErrorBoundary>
   )

@@ -41,7 +41,7 @@ const ActivityChanges = ({ tx, events, chain }: Props) => {
     const isPositive = new BigNumber(amount).isPositive()
     const absAmount = new BigNumber(amount).abs().toString()
     return (
-      <AsyncBoundary suspenseFallback={null} errorFallbackRender={() => null} key={index}>
+      <AsyncBoundary suspenseFallback={null} errorBoundaryProps={{ fallback: null }} key={index}>
         <WithDenom metadata={metadata} chain={chain}>
           {(denom) => (
             <WithMoveResource asset={findAsset(denom)} chain={chain}>

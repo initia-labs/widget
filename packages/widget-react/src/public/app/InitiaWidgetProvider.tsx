@@ -54,7 +54,7 @@ const InitiaWidgetProvider = ({ children, ...config }: PropsWithChildren<Partial
       <Fonts />
 
       <ConfigContext.Provider value={{ ...MAINNET, ...config }}>
-        <AsyncBoundary suspenseFallback={null} errorFallbackRender={() => null}>
+        <AsyncBoundary suspenseFallback={null} errorBoundaryProps={{ fallback: null }}>
           <Prefetch />
         </AsyncBoundary>
 
