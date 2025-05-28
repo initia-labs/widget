@@ -6,7 +6,7 @@ import { useAddEthereumChain, useDefaultChain, useInitiaRegistry } from "@/data/
 import AsyncBoundary from "@/components/AsyncBoundary"
 import { MAINNET } from "../data/constants"
 import PortalProvider from "./PortalProvider"
-import { ModalProvider } from "./ModalProvider"
+import ModalProvider from "./ModalProvider"
 import Drawer from "./Drawer"
 import Routes from "./Routes"
 

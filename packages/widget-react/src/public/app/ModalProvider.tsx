@@ -6,7 +6,7 @@ import TxRequest from "@/pages/tx/TxRequest"
 import type { ModalOptions } from "./ModalContext"
 import { ModalContext } from "./ModalContext"
 
-export const ModalProvider = ({ children }: PropsWithChildren) => {
+const ModalProvider = ({ children }: PropsWithChildren) => {
   const txRequest = useAtomValue(txRequestHandlerAtom)
   const [{ title, content, path }, setOptions] = useState<ModalOptions>({})
   const [isOpen, setIsOpen] = useState(false)
@@ -36,3 +36,5 @@ export const ModalProvider = ({ children }: PropsWithChildren) => {
     </ModalContext.Provider>
   )
 }
+
+export default ModalProvider
