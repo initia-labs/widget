@@ -125,7 +125,7 @@ const BridgeForm = () => {
   return (
     <Page
       title="Bridge/Swap"
-      // The previous page might be TxResult.
+      // The previous page may not be the intended destination.
       // To avoid unexpected behavior, it explicitly returns to the wallet page.
       returnTo={isBridgeWidget ? false : "/"}
       extra={

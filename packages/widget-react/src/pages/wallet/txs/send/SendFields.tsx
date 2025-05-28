@@ -27,7 +27,7 @@ import styles from "./SendFields.module.css"
 export const SendFields = (asset: NormalizedAsset) => {
   const state = useLocationState<{ denom: string; chain: NormalizedChain }>()
 
-  const { address, initiaAddress, requestTxBlock } = useInitiaWidget()
+  const { address, initiaAddress, requestTxSync } = useInitiaWidget()
 
   const { register, watch, setValue, handleSubmit, formState } = useFormContext<FormValues>()
   const { chainId, denom, quantity, memo } = watch()
@@ -52,7 +52,7 @@ export const SendFields = (asset: NormalizedAsset) => {
           }),
         },
       ]
-      return requestTxBlock({ messages, memo, chainId, internal: { returnPath: "/" } })
+      return requestTxSync({ messages, memo, chainId, internal: "/" })
     },
   })
 

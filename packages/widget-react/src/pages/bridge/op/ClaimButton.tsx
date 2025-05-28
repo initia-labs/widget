@@ -27,7 +27,7 @@ const ClaimButton = ({ withdrawalTx }: Props) => {
 
   const layer1 = useLayer1()
   const address = useInitiaAddress()
-  const { requestTxBlock } = useInitiaWidget()
+  const { requestTxSync } = useInitiaWidget()
   const outputResponse = useOutputResponse(withdrawalTx)
   const withdrawalHash = toBase64(computeWithdrawalHash(withdrawalTx))
   const claimed = useWithdrawalClaimed(withdrawalTx, withdrawalHash)
@@ -38,7 +38,7 @@ const ClaimButton = ({ withdrawalTx }: Props) => {
       if (!outputResponse) throw new Error("Output not found")
       const { last_block_hash } = outputResponse
 
-      return requestTxBlock({
+      return requestTxSync({
         chainId: layer1.chain_id,
         messages: [
           {
@@ -58,7 +58,7 @@ const ClaimButton = ({ withdrawalTx }: Props) => {
             }),
           },
         ],
-        internal: { returnPath: -2 },
+        internal: true,
       })
     },
     onSuccess: () => {

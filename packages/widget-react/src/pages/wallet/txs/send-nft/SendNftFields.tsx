@@ -29,7 +29,7 @@ const SendNftFields = () => {
   const { routerApiUrl } = useConfig()
   const aminoTypes = useAminoTypes()
   const layer1 = useLayer1()
-  const { address, initiaAddress, requestTxBlock } = useInitiaWidget()
+  const { address, initiaAddress, requestTxSync } = useInitiaWidget()
 
   const { watch, setValue, handleSubmit, formState } = useFormContext<FormValues>()
   const { dstChainId } = watch()
@@ -63,11 +63,7 @@ const SendNftFields = () => {
 
       const messages = msgs.map((msg) => aminoTypes.fromAmino(msg))
 
-      await requestTxBlock({
-        messages,
-        chainId: srcChain.chainId,
-        internal: { returnPath: "/nfts" },
-      })
+      await requestTxSync({ messages, chainId: srcChain.chainId, internal: "/nfts" })
     },
   })
 

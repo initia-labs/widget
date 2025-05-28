@@ -9,7 +9,6 @@ import BridgeForm from "@/pages/bridge/BridgeForm"
 import Withdrawals from "@/pages/bridge/op/Withdrawals"
 import BridgePreview from "@/pages/bridge/BridgePreview"
 import BridgeHistory from "@/pages/bridge/BridgeHistory"
-import TxResult from "@/pages/tx/TxResult"
 import TxRequest from "@/pages/tx/TxRequest"
 import { useAddress } from "../data/hooks"
 
@@ -50,8 +49,6 @@ const Routes = () => {
       return <Withdrawals />
     case "/tx":
       return <TxRequest />
-    case "/tx/result":
-      return <TxResult />
     case "/blank":
       return null
   }

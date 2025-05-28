@@ -19,7 +19,7 @@ export interface TxRequest {
   fee?: StdFee | null
 
   /** Internal use only */
-  internal?: { returnPath?: string | number; onResult?: (result: TxResult) => void } | false
+  internal?: boolean | string | ((result: string | Error) => void)
 }
 
 interface TxRequestHandler {
@@ -28,26 +28,13 @@ interface TxRequestHandler {
   reject: (error: Error) => void
 }
 
-interface TxResult {
-  txRequest: Required<TxRequest>
-  txHash?: string
-  error?: Error
-}
-
 export const TX_APPROVAL_MUTATION_KEY = "approve"
 export const txRequestHandlerAtom = atom<TxRequestHandler>()
-export const txResultAtom = atom<TxResult>()
 
 export function useTxRequestHandler() {
   const txRequest = useAtomValue(txRequestHandlerAtom)
   if (!txRequest) throw new Error("Tx request not found")
   return txRequest
-}
-
-export function useTxResult() {
-  const txResult = useAtomValue(txResultAtom)
-  if (!txResult) throw new Error("Tx result not found")
-  return txResult
 }
 
 export function useTx() {
@@ -56,8 +43,7 @@ export function useTx() {
   const { defaultChainId } = useConfig()
   const { openWidget, closeWidget } = useWidgetVisibility()
   const { openModal, closeModal } = useModal()
-  const setTxRequestAtom = useSetAtom(txRequestHandlerAtom)
-  const setTxResultAtom = useSetAtom(txResultAtom)
+  const setTxRequestHandler = useSetAtom(txRequestHandlerAtom)
   const createSigningStargateClient = useCreateSigningStargateClient()
 
   const estimateGas = async ({ messages, memo, chainId = defaultChainId }: TxRequest) => {
@@ -81,51 +67,54 @@ export function useTx() {
       gas: rawTxRequest.gas || (await estimateGas(rawTxRequest)),
       gasAdjustment: DEFAULT_GAS_ADJUSTMENT,
       fee: null,
-      internal: false as const,
+      internal: false,
     }
 
     const txRequest = { ...defaultTxRequest, ...rawTxRequest }
 
     return new Promise<T>((resolve, reject) => {
-      setTxRequestAtom({
+      setTxRequestHandler({
         txRequest,
         resolve: async (signedTx: TxRaw) => {
           try {
             const client = await createSigningStargateClient(txRequest.chainId)
             const response = await broadcaster(client, TxRaw.encode(signedTx).finish())
             resolve(response)
-            finalize({ txRequest, txHash: getTransactionHash(response) })
+            finalize(getTransactionHash(response))
           } catch (error) {
             reject(error)
-            finalize({ txRequest, error: error as Error })
+            finalize(error as Error)
           }
         },
         reject: (error: Error) => {
           reject(error)
-          finalize({ txRequest, error })
+          finalize(error)
         },
       })
 
       if (!txRequest.internal) {
         openWidget("/tx")
-      } else if (txRequest.internal.onResult) {
-        openModal({ path: "/tx" })
       } else {
-        navigate("/tx")
+        openModal({ path: "/tx" })
       }
 
-      const finalize = (result: TxResult) => {
+      const finalize = (result: string | Error) => {
         if (!txRequest.internal) {
           navigate("/blank")
           closeWidget()
-        } else if (txRequest.internal.onResult) {
-          // The modal must be closed first.
-          // This is because `onResult` may re-throw the error after handling it.
-          closeModal()
-          txRequest.internal.onResult(result)
-        } else {
-          setTxResultAtom(result)
-          navigate("/tx/result")
+          return
+        }
+
+        // The modal must be closed first.
+        // This is because function may re-throw the error after handling it.
+        closeModal()
+        switch (typeof txRequest.internal) {
+          case "string":
+            navigate(txRequest.internal)
+            break
+          case "function":
+            txRequest.internal(result)
+            break
         }
       }
     })
