@@ -1,6 +1,4 @@
-import clsx from "clsx"
 import { useToggle } from "react-use"
-import { IconCheck } from "@initia/icons-react"
 import { useInitiaWidget } from "@/public/data/hooks"
 import Page from "@/components/Page"
 import Status from "@/components/Status"
@@ -9,6 +7,7 @@ import type { BridgeHistory } from "./data/tx"
 import { useBridgeHistory } from "./data/tx"
 import BridgeHistoryItem from "./BridgeHistoryItem"
 import styles from "./BridgeHistory.module.css"
+import CheckboxButton from "@/components/CheckboxButton"
 
 const BridgeHistory = () => {
   const { initiaAddress, hexAddress } = useInitiaWidget()
@@ -27,12 +26,12 @@ const BridgeHistory = () => {
       <div className={styles.list}>
         {allHistory.length > 0 && allHistory.length !== myHistory.length && (
           <header className={styles.header}>
-            <button className={styles.toggle} onClick={toggleShowAll}>
-              <div className={clsx(styles.checkbox, { [styles.checked]: showAll })}>
-                {showAll && <IconCheck size={12} />}
-              </div>
-              <span>Show all transactions stored in this browser</span>
-            </button>
+            <CheckboxButton
+              checked={showAll}
+              onClick={toggleShowAll}
+              label="Show all transactions stored in this browser"
+              className={styles.checkbox}
+            />
           </header>
         )}
 
