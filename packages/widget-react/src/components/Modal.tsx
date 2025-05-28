@@ -24,6 +24,8 @@ const Modal = ({ title, children, trigger, open, onOpenChange, onInteractOutside
       {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
 
       <Dialog.Portal container={usePortal()}>
+        {/* Overlay is not used because it breaks scrolling behavior in production */}
+
         <Dialog.Content
           className={clsx(styles.content, { [styles.fullscreen]: fullscreen })}
           onInteractOutside={onInteractOutside}
