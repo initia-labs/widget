@@ -65,16 +65,6 @@ const BridgeForm = () => {
     }
   })
 
-  // localStorage
-  useEffect(() => {
-    localStorage.setItem(LocalStorageKey.BRIDGE_SRC_CHAIN_ID, srcChainId)
-    localStorage.setItem(LocalStorageKey.BRIDGE_SRC_DENOM, srcDenom)
-    localStorage.setItem(LocalStorageKey.BRIDGE_DST_CHAIN_ID, dstChainId)
-    localStorage.setItem(LocalStorageKey.BRIDGE_DST_DENOM, dstDenom)
-    localStorage.setItem(LocalStorageKey.BRIDGE_QUANTITY, quantity)
-    localStorage.setItem(LocalStorageKey.BRIDGE_SLIPPAGE_PERCENT, slippagePercent)
-  }, [srcChainId, srcDenom, dstChainId, dstDenom, quantity, slippagePercent])
-
   // address
   const getDefaultAddress = useGetDefaultAddress()
   const defaultSenderAddress = getDefaultAddress(srcChainId)
@@ -103,6 +93,18 @@ const BridgeForm = () => {
     }
   }, [dstAssets, dstChainId, dstDenom, srcAssets, srcChainId, srcDenom])
 
+  // localStorage
+  useEffect(() => {
+    if (errorMessage) return
+    localStorage.setItem(LocalStorageKey.BRIDGE_SRC_CHAIN_ID, srcChainId)
+    localStorage.setItem(LocalStorageKey.BRIDGE_SRC_DENOM, srcDenom)
+    localStorage.setItem(LocalStorageKey.BRIDGE_DST_CHAIN_ID, dstChainId)
+    localStorage.setItem(LocalStorageKey.BRIDGE_DST_DENOM, dstDenom)
+    localStorage.setItem(LocalStorageKey.BRIDGE_QUANTITY, quantity)
+    localStorage.setItem(LocalStorageKey.BRIDGE_SLIPPAGE_PERCENT, slippagePercent)
+  }, [srcChainId, srcDenom, dstChainId, dstDenom, quantity, slippagePercent, errorMessage])
+
+  // render
   const isBridgeWidget = history[0].path === "/bridge"
 
   const renderError = () => {
