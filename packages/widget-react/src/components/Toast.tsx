@@ -1,0 +1,43 @@
+import clsx from "clsx"
+import { useTransition, animated } from "@react-spring/web"
+import { IconClose } from "@initia/icons-react"
+import type { InternalNotification } from "@/public/app/NotificationProvider"
+import styles from "./Toast.module.css"
+
+interface Props {
+  notification: InternalNotification | null
+  onClose: () => void
+}
+
+const Toast = ({ notification, onClose }: Props) => {
+  const transition = useTransition(notification, {
+    keys: (notification) => notification?.id || "empty",
+    from: { transform: "translateY(-100%)", opacity: 0 },
+    enter: { transform: "translateY(0%)", opacity: 1 },
+    leave: { transform: "translateY(-100%)", opacity: 0 },
+    config: { duration: 150 },
+  })
+
+  return transition((style, notification) => {
+    if (!notification) return null
+    const { icon, color, title, description } = notification
+    return (
+      <animated.div style={style} className={styles.container}>
+        <div className={clsx(styles.toast, color && styles[color])}>
+          <div className={styles.icon}>{icon}</div>
+
+          <div className={styles.content}>
+            <p className={styles.title}>{title}</p>
+            <div className={styles.description}>{description}</div>
+          </div>
+
+          <button className={styles.close} onClick={onClose}>
+            <IconClose size={14} />
+          </button>
+        </div>
+      </animated.div>
+    )
+  })
+}
+
+export default Toast

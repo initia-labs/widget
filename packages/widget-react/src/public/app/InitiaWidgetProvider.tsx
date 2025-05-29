@@ -6,6 +6,7 @@ import { useAddEthereumChain, useDefaultChain, useInitiaRegistry } from "@/data/
 import AsyncBoundary from "@/components/AsyncBoundary"
 import { MAINNET } from "../data/constants"
 import PortalProvider from "./PortalProvider"
+import NotificationProvider from "./NotificationProvider"
 import ModalProvider from "./ModalProvider"
 import Drawer from "./Drawer"
 import Routes from "./Routes"
@@ -60,13 +61,15 @@ const InitiaWidgetProvider = ({ children, ...config }: PropsWithChildren<Partial
 
         <MemoryRouter>
           <PortalProvider>
-            <ModalProvider>
-              {children}
+            <NotificationProvider>
+              <ModalProvider>
+                {children}
 
-              <Drawer>
-                <Routes />
-              </Drawer>
-            </ModalProvider>
+                <Drawer>
+                  <Routes />
+                </Drawer>
+              </ModalProvider>
+            </NotificationProvider>
           </PortalProvider>
         </MemoryRouter>
       </ConfigContext.Provider>
