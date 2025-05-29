@@ -27,6 +27,9 @@ const Drawer = ({ children }: PropsWithChildren) => {
 
   const isPendingTransaction = useIsMutating({ mutationKey: [TX_APPROVAL_MUTATION_KEY] })
 
+  // FIXME: Should reject on unmount, but didn't work as expected.
+  // Currently handled via drawer/modal close instead.
+  // Would be nice to fix this properly later.
   const handleOverlayClick = () => {
     const errorMessage = isPendingTransaction
       ? "User exited before response arrived. Transaction may succeed or fail."

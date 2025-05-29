@@ -29,6 +29,9 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
         title={title}
         open={isOpen}
         onOpenChange={setIsOpen}
+        // FIXME: Should reject on unmount, but didn't work as expected.
+        // Currently handled via drawer/modal close instead.
+        // Would be nice to fix this properly later.
         onInteractOutside={() => txRequest?.reject(new Error("User rejected"))}
       >
         {path === "/tx" ? <TxRequest /> : content}
