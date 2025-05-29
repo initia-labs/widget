@@ -27,7 +27,7 @@ const WithdrawalList = ({ chain }: { chain: NormalizedChain }) => {
           <div className={styles.item} key={withdrawalTx.sequence}>
             <WithdrawalAsset {...amount} />
 
-            <AsyncBoundary>
+            <AsyncBoundary suspenseFallback={null}>
               <WithdrawalAction withdrawalTx={withdrawalTx} />
             </AsyncBoundary>
           </div>

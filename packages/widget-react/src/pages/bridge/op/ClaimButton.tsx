@@ -4,7 +4,6 @@ import { MsgFinalizeTokenWithdrawal } from "@initia/opinit.proto/opinit/ophost/v
 import { IconCheckCircleFilled } from "@initia/icons-react"
 import { useInitiaAddress, useInitiaWidget } from "@/public/data/hooks"
 import { useLayer1 } from "@/data/chains"
-import Loader from "@/components/Loader"
 import type { WithdrawalTx } from "./data"
 import { computeWithdrawalHash, opQueryKeys, useOutputResponse, useWithdrawalClaimed } from "./data"
 import styles from "./ClaimButton.module.css"
@@ -82,7 +81,7 @@ const ClaimButton = ({ withdrawalTx }: Props) => {
 
   return (
     <button className={styles.button} onClick={() => mutate()} disabled={isPending}>
-      {isPending ? <Loader /> : "Claim"}
+      Claim
     </button>
   )
 }
