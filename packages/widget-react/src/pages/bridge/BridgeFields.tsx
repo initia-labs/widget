@@ -171,7 +171,7 @@ const BridgeFields = () => {
             ) : null}
 
             <FormHelp.Stack>
-              {isOpWithdrawable && selectedType === "op" && (
+              {isOpWithdrawable && selectedType === "op" && route && (
                 <FormHelp level="info">
                   Withdraw transaction is required when using the Optimistic bridge. Status of all
                   withdrawals can be viewed on the {withdrawalStatusLink} page.
