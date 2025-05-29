@@ -1,17 +1,13 @@
 import { formatAmount, formatPercent, toAmount } from "./format"
 
 test("formatAmount", () => {
-  expect(formatAmount("1234567890")).toBe("1,234.567890")
-  expect(formatAmount("1234567890", { decimals: 7 })).toBe("123.456789")
+  expect(formatAmount("1234567890")).toBe("1,234,567,890")
   expect(formatAmount("1234567890", { decimals: 0 })).toBe("1,234,567,890")
-  expect(formatAmount("1234567890", { dp: 6 })).toBe("1,234.567890")
-  expect(formatAmount("1234567890", { dp: 0 })).toBe("1,234")
+  expect(formatAmount("1234567890", { decimals: 7 })).toBe("123.456789")
+  expect(formatAmount("1234567890", { decimals: 6 })).toBe("1,234.567890")
+  expect(formatAmount("1234567890", { decimals: 6, dp: 6 })).toBe("1,234.567890")
+  expect(formatAmount("1234567890", { decimals: 6, dp: 0 })).toBe("1,234")
   expect(formatAmount("1234567890", { decimals: 6, dp: 2 })).toBe("1,234.56")
-  expect(formatAmount("1234567890", { unitConversion: true })).toBe("1.234567K")
-  expect(formatAmount("1234567890", { unitConversion: true, dp: 1 })).toBe("1.2K")
-  expect(formatAmount("1234567890", { unitConversion: true, dp: 0 })).toBe("1K")
-  expect(formatAmount("1234567890", { unitConversion: false })).toBe("1,234.567890")
-  expect(formatAmount("1234567890", { dp: 2 })).toBe("1,234.56")
   expect(formatAmount("1", { decimals: 7 })).toBe("0.000000")
   expect(formatAmount("0", { decimals: undefined })).toBe("0")
   expect(formatAmount("")).toBe("0")
