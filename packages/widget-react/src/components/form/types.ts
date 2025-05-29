@@ -18,8 +18,8 @@ export interface BaseAsset {
   denom: string
   symbol: string
   decimals: number
-  name?: string
   logoUrl: string
+  name?: string
   balance?: string
   value?: number
 }
