@@ -7,11 +7,11 @@ interface Props {
   children: (date: Date | null) => ReactNode
 }
 
-const WithWithdrawableDate = ({ withdrawalTx, children }: Props) => {
+const WithClaimableDate = ({ withdrawalTx, children }: Props) => {
   const bridge = useOpBridge(withdrawalTx.bridge_id)
   const output = useOutput(withdrawalTx)
 
-  const withdrawableDate = useMemo(() => {
+  const claimableDate = useMemo(() => {
     if (!output) return null
     const { bridge_config } = bridge
     const { output_proposal } = output
@@ -21,7 +21,7 @@ const WithWithdrawableDate = ({ withdrawalTx, children }: Props) => {
     )
   }, [bridge, output])
 
-  return children(withdrawableDate)
+  return children(claimableDate)
 }
 
-export default WithWithdrawableDate
+export default WithClaimableDate

@@ -7,13 +7,13 @@ import { useLayer1 } from "@/data/chains"
 import Loader from "@/components/Loader"
 import type { WithdrawalTx } from "./data"
 import { computeWithdrawalHash, opQueryKeys, useOutputResponse, useWithdrawalClaimed } from "./data"
-import styles from "./WithdrawButton.module.css"
+import styles from "./ClaimButton.module.css"
 
 interface Props {
   withdrawalTx: WithdrawalTx
 }
 
-const WithdrawButton = ({ withdrawalTx }: Props) => {
+const ClaimButton = ({ withdrawalTx }: Props) => {
   const {
     bridge_id,
     sequence,
@@ -81,10 +81,10 @@ const WithdrawButton = ({ withdrawalTx }: Props) => {
   }
 
   return (
-    <button className={styles.withdraw} onClick={() => mutate()} disabled={isPending}>
-      {isPending ? <Loader /> : "Withdraw"}
+    <button className={styles.button} onClick={() => mutate()} disabled={isPending}>
+      {isPending ? <Loader /> : "Claim"}
     </button>
   )
 }
 
-export default WithdrawButton
+export default ClaimButton
