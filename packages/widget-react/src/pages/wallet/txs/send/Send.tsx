@@ -7,11 +7,10 @@ import { useLocationState } from "@/lib/router"
 import { useInitiaAddress } from "@/public/data/hooks"
 import { useDefaultChain, useFindChain, type NormalizedChain } from "@/data/chains"
 import type { NormalizedAsset } from "@/data/assets"
-import { assetQueryKeys, useAsset, useAssets } from "@/data/assets"
+import { assetQueryKeys, useAssets } from "@/data/assets"
 import { accountQueryKeys } from "@/data/account"
 import { quantitySuperRefine } from "@/data/form"
 import { RecipientSchema } from "@/components/form/types"
-import WithMoveResource from "../../tabs/assets/WithMoveResource"
 import SendFields from "./SendFields"
 
 const FormValuesSchema = z.object({
@@ -38,7 +37,6 @@ export const Send = () => {
   const defaultAssets = useAssets(defaultChain)
   const [primaryAsset] = defaultAssets
   const { chain = defaultChain, denom = primaryAsset.denom } = state
-  const asset = useAsset(denom, chain)
 
   const findChain = useFindChain()
 
@@ -64,9 +62,7 @@ export const Send = () => {
 
   return (
     <FormProvider {...form}>
-      <WithMoveResource chain={chain} asset={asset}>
-        {(asset) => <SendFields {...asset} />}
-      </WithMoveResource>
+      <SendFields />
     </FormProvider>
   )
 }

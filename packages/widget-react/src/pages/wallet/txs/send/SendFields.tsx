@@ -2,12 +2,10 @@ import BigNumber from "bignumber.js"
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 import { useMutation } from "@tanstack/react-query"
 import { useFormContext } from "react-hook-form"
-import { useLocationState } from "@/lib/router"
-import type { NormalizedChain } from "@/data/chains"
 import { useChain, usePricesQuery } from "@/data/chains"
 import { Address, formatAmount, formatNumber, toAmount, toQuantity } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
-import type { NormalizedAsset } from "@/data/assets"
+import { useAsset } from "@/data/assets"
 import { useBalances } from "@/data/account"
 import Page from "@/components/Page"
 import Footer from "@/components/Footer"
@@ -24,9 +22,7 @@ import type { FormValues } from "./Send"
 import SelectChainAsset from "./SelectChainAsset"
 import styles from "./SendFields.module.css"
 
-export const SendFields = (asset: NormalizedAsset) => {
-  const state = useLocationState<{ denom: string; chain: NormalizedChain }>()
-
+export const SendFields = () => {
   const { address, initiaAddress, requestTxSync } = useInitiaWidget()
 
   const { register, watch, setValue, handleSubmit, formState } = useFormContext<FormValues>()
@@ -34,6 +30,7 @@ export const SendFields = (asset: NormalizedAsset) => {
 
   const chain = useChain(chainId)
   const balances = useBalances(chain)
+  const asset = useAsset(denom, chain)
   const { data: prices } = usePricesQuery(chain.chainId)
   const { decimals } = asset
   const balance = balances.find((coin) => coin.denom === denom)?.amount ?? "0"
@@ -66,11 +63,7 @@ export const SendFields = (asset: NormalizedAsset) => {
                 title="Select chain and asset"
                 content={(close) => <SelectChainAsset afterSelect={close} />}
               >
-                <AssetOnChainButton
-                  asset={asset}
-                  chain={chain}
-                  readOnly={!!state.denom && !!state.chain}
-                />
+                <AssetOnChainButton asset={asset} chain={chain} />
               </ModalTrigger>
             }
             quantityInput={<QuantityInput />}
