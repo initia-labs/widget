@@ -23,13 +23,7 @@ const AssetActions = ({ denom, chain }: { denom: string; chain: NormalizedChain 
   }
 
   const bridge = () => {
-    navigate("/bridge", {
-      srcChainId: chain.chainId,
-      srcDenom: denom,
-      dstChainId: chain.chainId,
-      dstDenom: denom,
-      quantity: "",
-    })
+    navigate("/bridge", { srcChainId: chain.chainId, srcDenom: denom })
   }
 
   if (!wallet) return null
