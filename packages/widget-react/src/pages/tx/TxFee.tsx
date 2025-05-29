@@ -41,7 +41,7 @@ const TxFee = ({ options, value, onChange }: Props) => {
       </Select.Trigger>
 
       <Select.Portal container={portalContainer}>
-        <Select.Content className={styles.content}>
+        <Select.Content className={styles.content} position="popper" sideOffset={6} align="end">
           <Select.Viewport>
             {options.map((option) => {
               const [{ denom }] = option.amount
