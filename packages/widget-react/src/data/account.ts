@@ -44,9 +44,6 @@ export function useSortedBalancesWithValue(chain: NormalizedChain) {
   const balances = useBalances(chain)
   const assets = useAssets(chain)
   const findAsset = useFindAsset(chain)
-
-  const layer1 = useLayer1()
-  const findLayer1Asset = useFindAsset(layer1)
   const getLayer1Denom = useGetLayer1Denom(chain)
 
   const { data: prices } = usePricesQuery(chain.chainId)
@@ -56,7 +53,7 @@ export function useSortedBalancesWithValue(chain: NormalizedChain) {
   }
 
   const isListed = (denom: string) => {
-    return assets.some((asset) => asset.base === denom)
+    return assets.some((asset) => asset.denom === denom)
   }
 
   return sortWith(
@@ -71,7 +68,7 @@ export function useSortedBalancesWithValue(chain: NormalizedChain) {
     balances
       .filter(({ amount }) => !BigNumber(amount).isZero())
       .map(({ amount: balance, denom }) => {
-        const asset = { ...findLayer1Asset(getLayer1Denom(denom)), ...findAsset(denom) }
+        const asset = findAsset(denom)
         const price = prices?.find(({ id }) => id === asset?.denom)?.price ?? 0
         const value = BigNumber(balance)
           .times(price)
