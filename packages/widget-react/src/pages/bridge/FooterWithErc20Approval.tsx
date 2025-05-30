@@ -17,8 +17,12 @@ const FooterWithErc20Approval = ({ tx, children }: PropsWithChildren<{ tx: TxJso
         if (!("evm_tx" in tx)) throw new Error("Transaction is not EVM")
         if (!tx.evm_tx.required_erc20_approvals) throw new Error("No approvals required")
 
+        const { chain_id: chainId } = tx.evm_tx
         if (!wallet) throw new Error("Wallet not connected")
         const provider = new BrowserProvider(await wallet.getEthereumProvider())
+        await provider.send("wallet_switchEthereumChain", [
+          { chainId: `0x${Number(chainId).toString(16)}` },
+        ])
         const signer = await provider.getSigner()
 
         for (const approval of tx.evm_tx.required_erc20_approvals) {
