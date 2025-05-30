@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js"
-import { useEffect, useMemo } from "react"
-import { useLocalStorage } from "react-use"
+import { useEffect, useMemo, useState } from "react"
+import { useDebounce, useLocalStorage } from "react-use"
 import { IconChevronDown, IconSettingFilled } from "@initia/icons-react"
 import { useNavigate } from "@/lib/router"
 import { formatAmount, formatNumber, toQuantity } from "@/public/utils"
@@ -52,12 +52,21 @@ const BridgeFields = () => {
   }, [srcBalance, quantity, trigger])
 
   // simulation
+  const [debouncedQuantity, setDebouncedQuantity] = useState(quantity)
+  const [isReady] = useDebounce(() => setDebouncedQuantity(quantity), 300, [quantity])
+
   const isOpWithdrawable = useIsOpWithdrawable()
-  const routeQueryDefault = useRouteQuery()
-  const routeQueryOpWithdrawal = useRouteQuery({ isOpWithdraw: true, disabled: !isOpWithdrawable })
+  const routeQueryDefault = useRouteQuery(debouncedQuantity)
+  const routeQueryOpWithdrawal = useRouteQuery(debouncedQuantity, {
+    isOpWithdraw: true,
+    disabled: !isOpWithdrawable,
+  })
   const routeQuery =
     isOpWithdrawable && selectedType === "op" ? routeQueryOpWithdrawal : routeQueryDefault
-  const { data: route, isLoading: isSimulating, error: simulationError } = routeQuery
+  const { data, isLoading, isFetching, error, isFetched } = routeQuery
+  const ready = isReady()
+  const route = ready && isFetched ? data : undefined
+  const isSimulating = !ready || isLoading || isFetching
 
   const flip = () => {
     setValue("srcChainId", dstChainId)
@@ -181,7 +190,7 @@ const BridgeFields = () => {
                 <FormHelp level="warning">Make sure to leave enough for fees</FormHelp>
               )}
               <FormHelp level="warning">{route?.warning?.message}</FormHelp>
-              <FormHelp level="error">{simulationError?.message}</FormHelp>
+              <FormHelp level="error">{error?.message}</FormHelp>
             </FormHelp.Stack>
 
             <div className={styles.meta}>

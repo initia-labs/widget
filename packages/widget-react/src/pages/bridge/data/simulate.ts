@@ -1,5 +1,3 @@
-import { useState } from "react"
-import { useDebounce } from "react-use"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import type { OperationJson, RouteResponseJson } from "@skip-go/client"
 import { toAmount } from "@/public/utils"
@@ -33,14 +31,15 @@ export interface RouterRouteResponseJson extends RouteResponseJson {
   required_op_hook?: boolean
 }
 
-export function useRouteQuery(opWithdrawal?: { isOpWithdraw?: boolean; disabled?: boolean }) {
+export function useRouteQuery(
+  debouncedQuantity: string,
+  opWithdrawal?: { isOpWithdraw?: boolean; disabled?: boolean },
+) {
   const { watch } = useBridgeForm()
-  const { quantity, ...values } = watch()
+  const values = watch()
   const skip = useSkip()
 
-  const [debouncedQuantity, setDebouncedQuantity] = useState(quantity)
-  useDebounce(() => setDebouncedQuantity(quantity), 300, [quantity])
-  const debouncedValues = { quantity: debouncedQuantity, ...values }
+  const debouncedValues = { ...values, quantity: debouncedQuantity }
 
   const queryClient = useQueryClient()
   return useQuery({
