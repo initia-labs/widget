@@ -7,9 +7,9 @@
 }
 
 .positive {
-  color: var(--info);
+  color: var(--info-light);
 }
 
 .negative {
-  color: var(--error);
+  color: var(--error-light);
 }

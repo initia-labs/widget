@@ -10,16 +10,19 @@
   --gray-7: #242629;
   --gray-8: #1b1c1d;
   --gray-9: #101010;
-  --success: #55f678;
 
+  --success-light: #77f893;
+  --success: #55f678;
   --success-bg: #172a1b;
+  --error-light: #f97676;
   --error: #f85454;
   --error-bg: #2a1515;
+  --warning-light: #f9cf72;
   --warning: #f8c24f;
   --warning-bg: #2b2416;
+  --info-light: #74e3fc;
   --info: #51dcfb;
   --info-bg: #122327;
-  --info-light: #74e3fc;
 }
 
 :root[data-theme="light"],
@@ -35,15 +38,18 @@
   --gray-8: #d1d9e0;
   --gray-9: #f5f5f5;
 
+  --success-light: --success;
   --success: #172a1b;
   --success-bg: #55f678;
+  --error-light: --error;
   --error: #2a1515;
   --error-bg: #f85454;
+  --warning-light: --warning;
   --warning: #2b2416;
   --warning-bg: #f8c24f;
+  --info-light: --info;
   --info: #122327;
   --info-bg: #51dcfb;
-  --info-light: #001c26;
 }
 
 :root,
@@ -98,7 +104,9 @@
   &:hover {
     border-color: var(--gray-4);
   }
+}
 
+:where(input) {
   &:focus {
     border-color: var(--gray-1);
     outline: none;
