@@ -4,6 +4,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
+
+  overflow: hidden;
 }
 
 .placeholder {
@@ -21,6 +23,14 @@
 .token {
   flex: 1;
   font-weight: 600;
+  overflow: hidden;
+
+  .symbol,
+  .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   .name {
     font-size: 10px;
@@ -51,8 +61,4 @@
 .name,
 .value {
   color: var(--dimmed);
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }

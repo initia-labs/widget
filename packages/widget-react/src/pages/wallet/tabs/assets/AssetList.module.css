@@ -7,6 +7,7 @@
 
 .item {
   background-color: var(--gray-8);
+  overflow: hidden;
 
   &:hover {
     background-color: var(--gray-7);
