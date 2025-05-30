@@ -11,6 +11,7 @@ import Button from "@/components/Button"
 import Footer from "@/components/Footer"
 import { useCosmosWallets } from "./data/cosmos"
 import { useChainType, useSkipChain } from "./data/chains"
+import { useFindSkipAsset } from "./data/assets"
 import { useBridgePreviewState } from "./data/tx"
 import FooterWithError from "./FooterWithError"
 
@@ -27,6 +28,7 @@ const BridgePreviewFooter = ({ tx, onTxCompleted }: Props) => {
   const { find } = useCosmosWallets()
   const srcChain = useSkipChain(srcChainId)
   const srcChainType = useChainType(srcChain)
+  const findAsset = useFindSkipAsset(srcChainId)
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: async () => {
@@ -67,7 +69,15 @@ const BridgePreviewFooter = ({ tx, onTxCompleted }: Props) => {
               (balance) => balance.denom === asset.denom && BigNumber(balance.amount).gt(0),
             ),
           )
-          if (!availableFeeAsset) throw new Error("Insufficient fee balance")
+          if (!availableFeeAsset) {
+            const feeSymbols = srcChain.fee_assets.map((asset) => findAsset(asset.denom).symbol)
+            const errorMessage = [
+              `Insufficient balance for fees.`,
+              `Available fee assets: ${feeSymbols.join(", ")}`,
+              `(note: asset symbols may refer to different tokens across chains)`,
+            ].join(" ")
+            throw new Error(errorMessage)
+          }
           const { denom, gas_price } = availableFeeAsset
           if (!gas_price) throw new Error(`Gas price not found for ${denom}`)
           const gas = await client.simulate(sender, messages, "")
