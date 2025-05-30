@@ -1,6 +1,6 @@
 import clsx from "clsx"
 import { useAtomValue } from "jotai"
-import { useContext, type PropsWithChildren } from "react"
+import { useContext, useLayoutEffect, type PropsWithChildren } from "react"
 import { createPortal } from "react-dom"
 import { useMedia } from "react-use"
 import type { FallbackProps } from "react-error-boundary"
@@ -42,6 +42,10 @@ const Drawer = ({ children }: PropsWithChildren) => {
   }
 
   const isSmall = useMedia("(max-width: 576px)")
+
+  // Lock body scroll when the widget is open on small screens
+  useLockBodyScroll(isWidgetOpen && isSmall)
+
   const drawerTransition = useTransition(isWidgetOpen, {
     from: { transform: isSmall ? "translateY(100%)" : "translateX(100%)" },
     enter: { transform: isSmall ? "translateY(0%)" : "translateX(0%)" },
@@ -99,3 +103,17 @@ const Drawer = ({ children }: PropsWithChildren) => {
 }
 
 export default Drawer
+
+function useLockBodyScroll(lock: boolean) {
+  useLayoutEffect(() => {
+    const originalOverflow = document.body.style.overflow
+    if (lock) {
+      document.body.style.overflow = "hidden" // disable scroll
+    } else {
+      document.body.style.overflow = originalOverflow // reset
+    }
+    return () => {
+      document.body.style.overflow = originalOverflow
+    }
+  }, [lock])
+}
