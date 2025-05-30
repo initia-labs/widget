@@ -61,7 +61,7 @@ const BridgePreviewFooter = ({ tx, onTxCompleted }: Props) => {
 
           const provider = find(cosmosWalletName)?.getProvider()
           if (!provider) throw new Error("Wallet not connected")
-          const offlineSigner = provider.getOfflineSigner(srcChainId)
+          const offlineSigner = provider.getOfflineSignerOnlyAmino(srcChainId)
           const client = await SigningStargateClient.connectWithSigner(srcChain.rpc, offlineSigner)
           const balances = await client.getAllBalances(sender)
           const availableFeeAsset = srcChain.fee_assets.find((asset) =>
