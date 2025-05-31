@@ -4,8 +4,10 @@ import { calculateFee, GasPrice, SigningStargateClient } from "@cosmjs/stargate"
 import { useMutation } from "@tanstack/react-query"
 import type { TxJson } from "@skip-go/client"
 import { aminoConverters, aminoTypes } from "@initia/amino-converter"
+import { Link, useNavigate } from "@/lib/router"
 import { DEFAULT_GAS_ADJUSTMENT } from "@/public/data/constants"
 import { useInitiaWidget } from "@/public/data/hooks"
+import { useNotification } from "@/public/app/NotificationContext"
 import { useConfig } from "@/data/config"
 import { normalizeError } from "@/data/http"
 import Button from "@/components/Button"
@@ -13,20 +15,24 @@ import Footer from "@/components/Footer"
 import { useCosmosWallets } from "./data/cosmos"
 import { useChainType, useSkipChain } from "./data/chains"
 import { useFindSkipAsset } from "./data/assets"
-import { useBridgePreviewState } from "./data/tx"
+import { useBridgeHistory, useBridgePreviewState } from "./data/tx"
 import FooterWithError from "./FooterWithError"
+import styles from "./BridgePreviewFooter.module.css"
 
 interface Props {
   tx: TxJson
-  onTxCompleted: (txHash: string) => void
 }
 
-const BridgePreviewFooter = ({ tx, onTxCompleted }: Props) => {
-  const { values } = useBridgePreviewState()
+const BridgePreviewFooter = ({ tx }: Props) => {
+  const navigate = useNavigate()
+  const { showNotification, hideNotification } = useNotification()
+  const [, setBridgeHistory] = useBridgeHistory()
+
+  const { route, values } = useBridgePreviewState()
   const { srcChainId, sender, cosmosWalletName } = values
 
   const { wallet } = useConfig()
-  const { requestTxBlock } = useInitiaWidget()
+  const { requestTxSync } = useInitiaWidget()
   const { find } = useCosmosWallets()
   const srcChain = useSkipChain(srcChainId)
   const srcChainType = useChainType(srcChain)
@@ -48,15 +54,7 @@ const BridgePreviewFooter = ({ tx, onTxCompleted }: Props) => {
           })
 
           if (srcChainType === "initia") {
-            const { transactionHash } = await requestTxBlock({
-              messages,
-              chainId: srcChainId,
-              internal: (result) => {
-                if (typeof result === "string") onTxCompleted(result)
-                else throw result
-              },
-            })
-            return transactionHash
+            return await requestTxSync({ messages, chainId: srcChainId, internal: 1 })
           }
 
           const provider = find(cosmosWalletName)?.getProvider()
@@ -83,8 +81,7 @@ const BridgePreviewFooter = ({ tx, onTxCompleted }: Props) => {
           const gas = await client.simulate(sender, messages, "")
           const gasPrice = GasPrice.fromString(gas_price.average + denom)
           const fee = calculateFee(Math.ceil(gas * DEFAULT_GAS_ADJUSTMENT), gasPrice)
-          const { transactionHash } = await client.signAndBroadcast(sender, messages, fee)
-          return transactionHash
+          return await client.signAndBroadcastSync(sender, messages, fee)
         }
 
         if ("evm_tx" in tx) {
@@ -95,10 +92,7 @@ const BridgePreviewFooter = ({ tx, onTxCompleted }: Props) => {
             { chainId: `0x${Number(chainId).toString(16)}` },
           ])
           const signer = await provider.getSigner()
-          const response = await signer.sendTransaction({ chainId, to, value, data: `0x${data}` })
-          const receipt = await response.wait()
-          if (!receipt) throw new Error("Transaction failed")
-          const { hash } = receipt
+          const { hash } = await signer.sendTransaction({ chainId, to, value, data: `0x${data}` })
           return hash
         }
 
@@ -107,8 +101,30 @@ const BridgePreviewFooter = ({ tx, onTxCompleted }: Props) => {
         throw new Error(await normalizeError(error))
       }
     },
-    onSuccess: onTxCompleted,
+    onSuccess: (txHash: string) => {
+      navigate(-1)
+      setBridgeHistory((prev = []) => [
+        ...prev,
+        { timestamp: Date.now(), chainId: srcChainId, txHash, route, values },
+      ])
+      const link = (
+        <Link to="/bridge/history" className={styles.link} onClick={hideNotification}>
+          the history page
+        </Link>
+      )
+      showNotification({
+        type: "success",
+        title: "Transaction sent",
+        description: <>Check {link} for transaction status</>,
+      })
+    },
     onError: (error) => {
+      navigate(-1)
+      showNotification({
+        type: "error",
+        title: "Transaction failed",
+        description: error.message,
+      })
       console.trace(error)
     },
   })

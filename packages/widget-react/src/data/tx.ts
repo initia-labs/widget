@@ -19,7 +19,7 @@ export interface TxRequest {
   fee?: StdFee | null
 
   /** Internal use only */
-  internal?: boolean | string | ((result: string | Error) => void)
+  internal?: boolean | string | number // number for disabling notification
 }
 
 interface TxRequestHandler {
@@ -64,11 +64,9 @@ export function useTx() {
   const requestTx = async <T>({
     txRequest: rawTxRequest,
     broadcaster,
-    getTransactionHash,
   }: {
     txRequest: TxRequest
     broadcaster: Broadcaster<T>
-    getTransactionHash: (response: T) => string
   }): Promise<T> => {
     const defaultTxRequest = {
       memo: "",
@@ -89,15 +87,15 @@ export function useTx() {
             const client = await createSigningStargateClient(txRequest.chainId)
             const response = await broadcaster(client, TxRaw.encode(signedTx).finish())
             resolve(response)
-            finalize(getTransactionHash(response))
+            finalize()
           } catch (error) {
             reject(error)
-            finalize(error as Error)
+            finalize()
           }
         },
         reject: (error: Error) => {
           reject(error)
-          finalize(error)
+          finalize()
         },
       })
 
@@ -107,24 +105,17 @@ export function useTx() {
         openModal({ path: "/tx" })
       }
 
-      const finalize = (result: string | Error) => {
+      const finalize = () => {
         if (!txRequest.internal) {
           navigate("/blank")
           closeWidget()
           return
         }
 
-        // The modal must be closed first.
-        // This is because function may re-throw the error after handling it.
-        closeModal()
-        switch (typeof txRequest.internal) {
-          case "string":
-            navigate(txRequest.internal)
-            break
-          case "function":
-            txRequest.internal(result)
-            break
+        if (typeof txRequest.internal === "string") {
+          navigate(txRequest.internal)
         }
+        closeModal()
       }
     })
   }
@@ -139,10 +130,9 @@ export function useTx() {
           const transactionHash = await client.broadcastTxSync(signedTxBytes)
           return transactionHash
         },
-        getTransactionHash: (response) => response,
       })
 
-      if (txRequest.internal) {
+      if (txRequest.internal && typeof txRequest.internal !== "number") {
         setTxStatus({ txHash, chainId, status: "loading" })
         waitForTxConfirmation({ txHash, chainId: txRequest.chainId })
           .then((tx) => {
@@ -155,9 +145,8 @@ export function useTx() {
 
       return txHash
     } catch (error) {
-      if (txRequest.internal) {
+      if (txRequest.internal && typeof txRequest.internal !== "number") {
         setTxStatus({ status: "error", chainId, error: error as Error })
-        return ""
       }
       throw error
     }
@@ -171,7 +160,6 @@ export function useTx() {
         if (response.code !== 0) throw new Error(response.rawLog)
         return response
       },
-      getTransactionHash: (response) => response.transactionHash,
     })
   }
 
