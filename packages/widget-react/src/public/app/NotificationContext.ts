@@ -2,11 +2,12 @@ import type { ReactNode } from "react"
 import { createContext, useContext } from "react"
 
 export interface Notification {
-  icon: ReactNode
-  color?: string
+  type?: NotificationType
   title: string
-  description: ReactNode
+  description?: ReactNode
 }
+
+export type NotificationType = "loading" | "success" | "error"
 
 export interface NotificationContextValue {
   showNotification: (notification: Notification) => void

@@ -1,8 +1,6 @@
 import { useAtom } from "jotai"
 import { useEffect } from "react"
-import { IconCheckCircleFilled, IconWarningFilled } from "@initia/icons-react"
 import { txStatusAtom } from "@/data/tx"
-import Loader from "@/components/Loader"
 import ExplorerLink from "@/components/ExplorerLink"
 import { useNotification } from "./NotificationContext"
 import styles from "./TxWatcher.module.css"
@@ -33,15 +31,13 @@ const TxWatcher = () => {
     switch (status) {
       case "loading":
         showNotification({
-          icon: <Loader size={16} />,
+          type: "loading",
           title: "Transaction is pending...",
-          description,
         })
         break
       case "error":
         updateNotification({
-          icon: <IconWarningFilled size={16} />,
-          color: "error",
+          type: "error",
           title: "Transaction failed",
           description,
         })
@@ -49,8 +45,7 @@ const TxWatcher = () => {
         break
       case "success":
         updateNotification({
-          icon: <IconCheckCircleFilled size={16} />,
-          color: "success",
+          type: "success",
           title: "Transaction is successful!",
           description,
         })

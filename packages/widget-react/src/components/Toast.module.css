@@ -25,6 +25,7 @@
 
 .error {
   color: var(--error);
+  word-break: break-all;
 }
 
 .icon {

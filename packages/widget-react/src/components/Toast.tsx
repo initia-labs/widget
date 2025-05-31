@@ -1,7 +1,9 @@
 import clsx from "clsx"
 import { useTransition, animated } from "@react-spring/web"
-import { IconClose } from "@initia/icons-react"
+import { IconCheckCircleFilled, IconClose } from "@initia/icons-react"
 import type { InternalNotification } from "@/public/app/NotificationProvider"
+import type { NotificationType } from "@/public/app/NotificationContext"
+import Loader from "./Loader"
 import styles from "./Toast.module.css"
 
 interface Props {
@@ -18,17 +20,31 @@ const Toast = ({ notification, onClose }: Props) => {
     config: { duration: 150 },
   })
 
+  const getIcon = (type?: NotificationType) => {
+    switch (type) {
+      case "loading":
+        return <Loader size={16} />
+      case "success":
+        return <IconCheckCircleFilled size={16} />
+      case "error":
+        return <IconClose size={16} />
+      default:
+        return null
+    }
+  }
+
   return transition((style, notification) => {
     if (!notification) return null
-    const { icon, color, title, description } = notification
+    const { type, title, description } = notification
+    const icon = getIcon(type)
     return (
       <animated.div style={style} className={styles.container}>
-        <div className={clsx(styles.toast, color && styles[color])}>
-          <div className={styles.icon}>{icon}</div>
+        <div className={clsx(styles.toast, type && styles[type])}>
+          {icon && <div className={styles.icon}>{icon}</div>}
 
           <div className={styles.content}>
             <p className={styles.title}>{title}</p>
-            <div className={styles.description}>{description}</div>
+            {description && <div className={styles.description}>{description}</div>}
           </div>
 
           <button className={styles.close} onClick={onClose}>
