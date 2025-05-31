@@ -1,9 +1,12 @@
 import { useEffect, type PropsWithChildren } from "react"
 import { MemoryRouter } from "@/lib/router"
+import { LocalStorageKey } from "@/data/constants"
 import type { Config } from "@/data/config"
 import { ConfigContext } from "@/data/config"
-import { useAddEthereumChain, useDefaultChain, useInitiaRegistry } from "@/data/chains"
+import { useAddEthereumChain, useDefaultChain, useInitiaRegistry, useLayer1 } from "@/data/chains"
 import AsyncBoundary from "@/components/AsyncBoundary"
+import { useSkipChains } from "@/pages/bridge/data/chains"
+import { useSkipAssets } from "@/pages/bridge/data/assets"
 import { MAINNET } from "../data/constants"
 import PortalProvider from "./PortalProvider"
 import NotificationProvider from "./NotificationProvider"
@@ -27,8 +30,15 @@ const Fonts = () => {
 
 const Prefetch = () => {
   useInitiaRegistry()
-  const chain = useDefaultChain()
 
+  // bridge
+  const layer1 = useLayer1()
+  useSkipChains()
+  useSkipAssets(localStorage.getItem(LocalStorageKey.BRIDGE_SRC_CHAIN_ID) ?? layer1.chainId)
+  useSkipAssets(localStorage.getItem(LocalStorageKey.BRIDGE_DST_CHAIN_ID) ?? layer1.chainId)
+
+  // evm
+  const chain = useDefaultChain()
   const isEthereumChain = !!chain.evm_chain_id
   const addEthereumChain = useAddEthereumChain(chain)
 
