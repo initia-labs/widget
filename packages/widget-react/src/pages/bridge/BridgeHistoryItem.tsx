@@ -92,7 +92,8 @@ const BridgeHistoryItem = ({ timestamp, chainId, txHash, route, values }: Bridge
   }, [operations])
 
   const explorerLink = useMemo(() => {
-    if (type === "lz") return new URL(`/tx/${txHash}`, "https://layerzeroscan.com").toString()
+    if (type === "lz")
+      return new URL(`/tx/${txHash.toLowerCase()}`, "https://layerzeroscan.com").toString()
     const searchParams = new URLSearchParams({ tx_hash: txHash, chain_id: chainId })
     return new URL(`?${searchParams.toString()}`, "https://explorer.skip.build").toString()
   }, [chainId, txHash, type])
