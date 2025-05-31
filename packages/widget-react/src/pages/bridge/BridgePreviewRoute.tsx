@@ -67,6 +67,7 @@ const BridgePreviewRoute = ({ addressList, trackedTxHash }: Props) => {
   const { wallet } = useConfig()
 
   const [showAll, toggleShowAll] = useToggle(false)
+  const canToggleShowAll = operations.length > 1
 
   const getFirstOperationProps = () => {
     const props = {
@@ -102,7 +103,7 @@ const BridgePreviewRoute = ({ addressList, trackedTxHash }: Props) => {
     const { type, amount_out, denom, denom_out = denom, chain_id, to_chain_id = chain_id } = normalizedOperation
     const address = addressMap[to_chain_id]
     const props = {
-      type: showAll ? type : undefined,
+      type: canToggleShowAll && !showAll ? undefined : type,
       amount: amount_out,
       denom: denom_out,
       chainId: to_chain_id,
@@ -133,7 +134,7 @@ const BridgePreviewRoute = ({ addressList, trackedTxHash }: Props) => {
 
   return (
     <Collapsible.Root className={styles.root} open={showAll} onOpenChange={toggleShowAll}>
-      {operationProps.length > 1 && (
+      {canToggleShowAll && (
         <Collapsible.Trigger asChild>
           <CheckboxButton checked={showAll} onClick={toggleShowAll} label="Show details" />
         </Collapsible.Trigger>
