@@ -8,37 +8,6 @@
   }
 }
 
-.icon {
-  display: flex;
-  width: 36px;
-  height: 36px;
-  position: relative;
-
-  .image {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  .success,
-  .danger {
-    border-width: 2px;
-    border-style: solid;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-  }
-
-  .success {
-    border-color: var(--success);
-  }
-
-  .error {
-    border-color: var(--error);
-  }
-}
-
 .arrow {
   display: flex;
   justify-content: center;

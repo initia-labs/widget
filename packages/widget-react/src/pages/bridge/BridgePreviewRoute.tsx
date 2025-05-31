@@ -7,7 +7,7 @@ import AsyncBoundary from "@/components/AsyncBoundary"
 import CheckboxButton from "@/components/CheckboxButton"
 import Image from "@/components/Image"
 import type { RouterOperationJson } from "./data/simulate"
-import { useBridgePreviewState, useTxStatusQuery } from "./data/tx"
+import { useBridgePreviewState } from "./data/tx"
 import { useCosmosWallets } from "./data/cosmos"
 import OperationItem from "./OperationItem"
 import styles from "./BridgePreviewRoute.module.css"
@@ -54,14 +54,12 @@ function normalizeOperation(operation: RouterOperationJson) {
 
 interface Props {
   addressList: string[]
-  trackedTxHash?: string
 }
 
-const BridgePreviewRoute = ({ addressList, trackedTxHash }: Props) => {
+const BridgePreviewRoute = ({ addressList }: Props) => {
   const { values, route } = useBridgePreviewState()
   const { source_asset_denom, source_asset_chain_id, amount_in, operations } = route
   const addressMap = zipObj(route.required_chain_addresses, addressList)
-  const { data: txStatus } = useTxStatusQuery(values.srcChainId, trackedTxHash, route)
 
   const { find } = useCosmosWallets()
   const { wallet } = useConfig()
@@ -69,32 +67,18 @@ const BridgePreviewRoute = ({ addressList, trackedTxHash }: Props) => {
   const [showAll, toggleShowAll] = useToggle(false)
   const canToggleShowAll = operations.length > 1
 
-  const getFirstOperationProps = () => {
-    const props = {
-      amount: amount_in,
-      denom: source_asset_denom,
-      chainId: source_asset_chain_id,
-      address: values.sender,
-      walletIcon: (
-        <Image
-          src={values.cosmosWalletName ? find(values.cosmosWalletName)?.image : wallet?.meta.icon}
-          width={12}
-          height={12}
-        />
-      ),
-    }
-
-    if (!txStatus) return props
-
-    const isTransactionSuccessful = txStatus.state === "STATE_COMPLETED_SUCCESS"
-    const nextBlockingIndex = txStatus.next_blocking_transfer?.transfer_sequence_index ?? -1
-
-    return {
-      ...props,
-      isStepAbandonedOrFailed: false,
-      isStepPending: false,
-      isStepSuccessful: isTransactionSuccessful || nextBlockingIndex > -1,
-    }
+  const firstOperationProps = {
+    amount: amount_in,
+    denom: source_asset_denom,
+    chainId: source_asset_chain_id,
+    address: values.sender,
+    walletIcon: (
+      <Image
+        src={values.cosmosWalletName ? find(values.cosmosWalletName)?.image : wallet?.meta.icon}
+        width={12}
+        height={12}
+      />
+    ),
   }
 
   const toProps = (normalizedOperation: ReturnType<typeof normalizeOperation>, index: number) => {
@@ -102,7 +86,7 @@ const BridgePreviewRoute = ({ addressList, trackedTxHash }: Props) => {
     // @ts-expect-error Skip API's response structure is too complicated
     const { type, amount_out, denom, denom_out = denom, chain_id, to_chain_id = chain_id } = normalizedOperation
     const address = addressMap[to_chain_id]
-    const props = {
+    return {
       type: canToggleShowAll && !showAll ? undefined : type,
       amount: amount_out,
       denom: denom_out,
@@ -110,22 +94,6 @@ const BridgePreviewRoute = ({ addressList, trackedTxHash }: Props) => {
       address,
       walletIcon: index === operations.length - 1 ? <IconWallet size={11} /> : null,
     }
-
-    if (!txStatus) return props
-
-    const isTransactionSuccessful = txStatus.state === "STATE_COMPLETED_SUCCESS"
-    const isTransactionFailed = txStatus.state === "STATE_COMPLETED_ERROR"
-    const isTransactionAbandoned = txStatus.state === "STATE_ABANDONED"
-    const nextBlockingIndex = txStatus.next_blocking_transfer?.transfer_sequence_index ?? -1
-    const totalSteps = txStatus.transfer_sequence.length
-
-    const isStepAbandonedOrFailed =
-      (isTransactionAbandoned || isTransactionFailed) &&
-      (index === nextBlockingIndex || (index === totalSteps - 1 && isTransactionFailed))
-    const isStepPending =
-      index === nextBlockingIndex && !isTransactionFailed && !isTransactionAbandoned
-    const isStepSuccessful = isTransactionSuccessful || index < nextBlockingIndex
-    return { ...props, isStepAbandonedOrFailed, isStepPending, isStepSuccessful }
   }
 
   const operationProps = operations.map(normalizeOperation).map(toProps)
@@ -141,7 +109,7 @@ const BridgePreviewRoute = ({ addressList, trackedTxHash }: Props) => {
       )}
 
       <div className={styles.route}>
-        <OperationItem {...getFirstOperationProps()} source />
+        <OperationItem {...firstOperationProps} source />
 
         <Collapsible.Content className={styles.content}>
           {intermediateOperations.map((props, index) => (

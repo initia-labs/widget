@@ -2,7 +2,6 @@ import type { ReactNode } from "react"
 import { IconChevronDown } from "@initia/icons-react"
 import { formatAmount, truncate } from "@/public/utils"
 import placeholder from "@/data/placeholder"
-import Loader from "@/components/Loader"
 import Image from "@/components/Image"
 import WidgetTooltip from "@/components/WidgetTooltip"
 import CopyButton from "@/components/CopyButton"
@@ -18,15 +17,8 @@ interface ComponentProps extends Props {
 
 const OperationItemComponent = (props: ComponentProps) => {
   const { source, type, amount, denom, chainId, address, walletIcon } = props
-  const { isStepAbandonedOrFailed, isStepPending, isStepSuccessful } = props
   const { symbol = truncate(denom), decimals = 0, logo_uri = placeholder } = props
   const { chain_name, pretty_name } = useSkipChain(chainId)
-
-  const renderStepState = () => {
-    if (isStepAbandonedOrFailed) return <div className={styles.error} />
-    if (isStepPending) return <Loader size={36} color="var(--success)" border={2} />
-    if (isStepSuccessful) return <div className={styles.success} />
-  }
 
   return (
     <div>
@@ -48,10 +40,7 @@ const OperationItemComponent = (props: ComponentProps) => {
       )}
 
       <div className={styles.content}>
-        <div className={styles.icon}>
-          {renderStepState()}
-          <Image src={logo_uri} width={32} height={32} className={styles.image} />
-        </div>
+        <Image src={logo_uri} width={32} height={32} />
 
         <div className={styles.info}>
           <div className={styles.asset}>
@@ -87,10 +76,6 @@ interface Props {
   chainId: string
   address: string
   walletIcon?: ReactNode
-
-  isStepAbandonedOrFailed?: boolean
-  isStepPending?: boolean
-  isStepSuccessful?: boolean
 }
 
 const OperationItem = (props: Props) => {
