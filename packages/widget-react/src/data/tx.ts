@@ -130,6 +130,8 @@ export function useTx() {
   }
 
   const requestTxSync = async (txRequest: TxRequest) => {
+    const chainId = txRequest.chainId ?? defaultChainId
+
     try {
       const txHash = await requestTx<string>({
         txRequest,
@@ -141,26 +143,21 @@ export function useTx() {
       })
 
       if (txRequest.internal) {
-        setTxStatus({ txHash, chainId: txRequest.chainId ?? defaultChainId, status: "loading" })
+        setTxStatus({ txHash, chainId, status: "loading" })
         waitForTxConfirmation({ txHash, chainId: txRequest.chainId })
           .then((tx) => {
-            const status = tx.code === 0 ? "success" : "error"
-            setTxStatus({ status, chainId: txRequest.chainId ?? defaultChainId, txHash })
+            setTxStatus({ status: tx.code === 0 ? "success" : "error", chainId, txHash })
           })
           .catch(() => {
-            setTxStatus({ status: "error", chainId: txRequest.chainId ?? defaultChainId, txHash })
+            setTxStatus({ status: "error", chainId, txHash })
           })
       }
 
       return txHash
     } catch (error) {
       if (txRequest.internal) {
-        setTxStatus({
-          status: "error",
-          chainId: txRequest.chainId ?? defaultChainId,
-          error: error as Error,
-        })
-        return
+        setTxStatus({ status: "error", chainId, error: error as Error })
+        return ""
       }
       throw error
     }
