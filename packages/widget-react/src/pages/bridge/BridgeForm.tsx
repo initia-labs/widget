@@ -1,8 +1,10 @@
 import { z } from "zod"
+import { pathOr } from "ramda"
 import { useEffect, useMemo } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import type { BalancesResponseJson } from "@skip-go/client"
 import { IconChevronRight } from "@initia/icons-react"
 import { useHistory, useNavigate } from "@/lib/router"
 import { useAddress } from "@/public/data/hooks"
@@ -37,9 +39,10 @@ const BridgeForm = () => {
     defaultValues,
     resolver: zodResolver(
       FormValuesSchema.superRefine(({ srcChainId, srcDenom, quantity, sender }, ctx) => {
-        const balance = queryClient.getQueryData<string>(
-          skipQueryKeys.balance(sender, srcChainId, srcDenom).queryKey,
+        const balances = queryClient.getQueryData<BalancesResponseJson>(
+          skipQueryKeys.balances(srcChainId, sender).queryKey,
         )
+        const balance = pathOr("0", ["chains", srcChainId, "denoms", srcDenom, "amount"], balances)
         const { decimals } = queryClient.getQueryData<RouterAsset>(
           skipQueryKeys.asset(srcChainId, srcDenom).queryKey,
         ) ?? { decimals: 0 }

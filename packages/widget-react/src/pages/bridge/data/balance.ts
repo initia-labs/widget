@@ -1,12 +1,11 @@
 import { path } from "ramda"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import type { BalanceResponseDenomEntryJson, BalancesResponseJson } from "@skip-go/client"
 import { STALE_TIMES } from "@/data/http"
 import { skipQueryKeys, useSkip } from "./skip"
 
 export function useSkipBalancesQuery(address: string, chainId: string) {
   const skip = useSkip()
-  const queryClient = useQueryClient()
   return useQuery({
     queryKey: skipQueryKeys.balances(chainId, address).queryKey,
     queryFn: () =>
@@ -16,12 +15,7 @@ export function useSkipBalancesQuery(address: string, chainId: string) {
     select: ({ chains }) => {
       if (!address) return {}
       if (!chains) return {}
-      const { denoms } = chains[chainId]
-      for (const denom in denoms) {
-        const { amount } = denoms[denom]
-        queryClient.setQueryData(skipQueryKeys.balance(address, chainId, denom).queryKey, amount)
-      }
-      return denoms
+      return chains[chainId].denoms ?? {}
     },
     enabled: !!address,
     staleTime: STALE_TIMES.SECOND,
