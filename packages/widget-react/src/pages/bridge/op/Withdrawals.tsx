@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useLocationState } from "@/lib/router"
 import { useDefaultChain, useFindChain, useInitiaRegistry } from "@/data/chains"
 import Page from "@/components/Page"
 import FormHelp from "@/components/form/FormHelp"
@@ -8,9 +9,12 @@ import WithdrawalList from "./WithdrawalList"
 import styles from "./Withdrawals.module.css"
 
 const Withdrawals = () => {
+  const { chainId: initialChainId } = useLocationState<{ chainId?: string }>()
   const chains = useInitiaRegistry()
   const defaultChain = useDefaultChain()
-  const [chainId, setChainId] = useState(defaultChain.metadata?.is_l1 ? "" : defaultChain.chainId)
+  const [chainId, setChainId] = useState(
+    initialChainId ?? (defaultChain.metadata?.is_l1 ? "" : defaultChain.chainId),
+  )
   const findChain = useFindChain()
   const chain = chainId ? findChain(chainId) : undefined
 

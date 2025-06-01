@@ -1,4 +1,4 @@
-import { has, path } from "ramda"
+import { has, head } from "ramda"
 import { AuthInfo, Tx, TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx"
 import { toBase64 } from "@cosmjs/encoding"
 import { useLocalStorage } from "react-use"
@@ -138,7 +138,7 @@ export function useTxStatusQuery(
   history: BridgeHistoryDetailedItem,
 ) {
   const skip = useSkip()
-  const isLz = has("lz_transfer", path(["operations", 0], history.route))
+  const isLz = getBridgeType(history) === BridgeType.LZ
 
   return useQuery({
     queryKey: skipQueryKeys.txStatus(chainId, txHash, isLz).queryKey,
@@ -157,12 +157,23 @@ export function useTxStatusQuery(
   })
 }
 
-export function getBridgeHistoryType({ route: { operations } }: BridgeHistoryDetailedItem) {
-  if (operations.some((operation) => "lz_transfer" in operation)) return "lz"
-  if (operations.some((operation) => "op_init_transfer" in operation)) return "op"
-  return "skip"
+export enum BridgeType {
+  OP_WITHDRAW = "Optimistic bridge withdrawal",
+  LZ = "LayerZero",
+  SKIP = "Skip",
+}
+
+export function getBridgeType({ route }: BridgeHistoryDetailedItem) {
+  const { operations, dest_asset_denom } = route
+  if (has("op_init_transfer", head(operations)) && dest_asset_denom === "uinit") {
+    return BridgeType.OP_WITHDRAW
+  }
+  if (has("lz_transfer", head(operations))) {
+    return BridgeType.LZ
+  }
+  return BridgeType.SKIP
 }
 
 export function shouldTrackBridgeHistory(history: BridgeHistoryDetailedItem) {
-  return !history.tracked && getBridgeHistoryType(history) !== "lz"
+  return !history.tracked && getBridgeType(history) !== BridgeType.LZ
 }

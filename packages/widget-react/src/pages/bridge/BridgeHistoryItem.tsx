@@ -3,6 +3,7 @@ import { useEffect, useMemo } from "react"
 import { useLocalStorage } from "react-use"
 import type { StatusResponseJson } from "@skip-go/client"
 import { IconArrowDown, IconCheckCircleFilled, IconWarningFilled } from "@initia/icons-react"
+import { Link } from "@/lib/router"
 import { formatAmount, truncate } from "@/public/utils"
 import { LocalStorageKey } from "@/data/constants"
 import Loader from "@/components/Loader"
@@ -13,7 +14,7 @@ import { useSkipChain } from "./data/chains"
 import type { RouterAsset } from "./data/assets"
 import { useSkipAsset } from "./data/assets"
 import type { TxIdentifier, BridgeHistoryDetailedItem } from "./data/tx"
-import { getBridgeHistoryType, useTrackTxQuery, useTxStatusQuery } from "./data/tx"
+import { BridgeType, getBridgeType, useTrackTxQuery, useTxStatusQuery } from "./data/tx"
 import styles from "./BridgeHistoryItem.module.css"
 
 const BridgeHistoryItem = (history: TxIdentifier) => {
@@ -108,32 +109,14 @@ const BridgeHistoryItem = (history: TxIdentifier) => {
     )
   }
 
-  const type = getBridgeHistoryType(historyItemDetails)
+  const type = getBridgeType(historyItemDetails)
 
-  const explorerLink = useMemo(() => {
-    if (type === "lz")
-      return new URL(`/tx/${txHash.toLowerCase()}`, "https://layerzeroscan.com").toString()
-    const searchParams = new URLSearchParams({ tx_hash: txHash, chain_id: chainId })
-    return new URL(`?${searchParams.toString()}`, "https://explorer.skip.build").toString()
-  }, [chainId, txHash, type])
-
-  const badge = useMemo(() => {
-    switch (type) {
-      case "lz":
-        return "LayerZero"
-      case "op":
-        return "Optimistic bridge"
-      default:
-        return "Skip"
-    }
-  }, [type])
-
-  return (
-    <a href={explorerLink} className={styles.link} target="_blank">
+  const content = (
+    <>
       <header className={styles.header}>
         <div className={styles.title}>
           {renderIcon()}
-          <span className={styles.badge}>{badge}</span>
+          <span className={styles.badge}>{type}</span>
         </div>
         <div className={styles.meta}>
           <div>{intlFormatDistance(new Date(timestamp), new Date(), { locale: "en-US" })}</div>
@@ -161,6 +144,32 @@ const BridgeHistoryItem = (history: TxIdentifier) => {
         </div>
         {renderRow(amount_out, dstAsset, dstChain, values.recipient)}
       </div>
+    </>
+  )
+
+  const explorerLink = useMemo(() => {
+    switch (type) {
+      case BridgeType.LZ: {
+        return new URL(`/tx/${txHash.toLowerCase()}`, "https://layerzeroscan.com").toString()
+      }
+      case BridgeType.SKIP: {
+        const searchParams = new URLSearchParams({ tx_hash: txHash, chain_id: chainId })
+        return new URL(`?${searchParams.toString()}`, "https://explorer.skip.build").toString()
+      }
+    }
+  }, [chainId, txHash, type])
+
+  if (type === BridgeType.OP_WITHDRAW) {
+    return (
+      <Link to="/op/withdrawals" state={{ chainId }} className={styles.link}>
+        {content}
+      </Link>
+    )
+  }
+
+  return (
+    <a href={explorerLink} className={styles.link} target="_blank">
+      {content}
     </a>
   )
 }
