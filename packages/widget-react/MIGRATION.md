@@ -15,25 +15,18 @@ The package name has changed:
 
 All imports from `@initia/react-wallet-widget` should now come from `@initia/widget-react`.
 
-### Dependencies
-
-The widget now relies on:
-
-- [@privy-io/react-auth](https://docs.privy.io/wallets/connectors/overview) for wallet modals
-- [wagmi](https://wagmi.sh/) to manage connection status
-- [@tanstack/react-query](https://tanstack.com/query/latest) internally
-
-Be sure to install and configure these in your project.
-
-```bash
-pnpm add @tanstack/react-query @privy-io/react-auth @privy-io/wagmi wagmi
-```
-
 ### Provider Setup
 
-Wrap your application with the `InitiaWidgetProvider`.
+You must install a wallet connector to inject a wallet into the app.
+This library also uses [@tanstack/react-query](https://tanstack.com/query/latest) internally, so you need to install it as well:
 
-- **Vite**: [examples/vite/main.tsx](https://github.com/initia-labs/widget/blob/main/examples/vite/main.tsx)
+```bash
+pnpm add @tanstack/react-query
+```
+
+⚠️ Refer to the examples below.
+
+- **Vite**: [examples/vite/src/Providers.tsx](https://github.com/initia-labs/widget/blob/main/examples/vite/src/Providers.tsx)
 - **Next.js**: [examples/nextjs/src/app/providers/index.tsx](https://github.com/initia-labs/widget/blob/main/examples/nextjs/src/app/providers.tsx)
 
 ## 2. SSR Support

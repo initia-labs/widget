@@ -2,14 +2,14 @@ import { BrowserProvider, ethers } from "ethers"
 import type { PropsWithChildren } from "react"
 import { useMutation } from "@tanstack/react-query"
 import type { TxJson } from "@skip-go/client"
-import { useInitiaWidget } from "@/public/data/hooks"
+import { useConfig } from "@/data/config"
 import { normalizeError } from "@/data/http"
 import Footer from "@/components/Footer"
 import FormHelp from "@/components/form/FormHelp"
 import Button from "@/components/Button"
 
 const FooterWithErc20Approval = ({ tx, children }: PropsWithChildren<{ tx: TxJson }>) => {
-  const { wallet } = useInitiaWidget()
+  const { wallet } = useConfig()
 
   const { mutate, data, isPending, error } = useMutation({
     mutationFn: async () => {

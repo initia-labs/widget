@@ -1,28 +1,28 @@
 import clsx from "clsx"
-import { useDisconnect } from "wagmi"
 import { IconCopy, IconSignOut } from "@initia/icons-react"
 import { Link } from "@/lib/router"
-import { useWidgetVisibility } from "@/data/ui"
 import { truncate } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
+import { useConfig } from "@/data/config"
+import { useWidgetVisibility } from "@/data/ui"
 import CopyButton from "@/components/CopyButton"
 import Image from "@/components/Image"
 import styles from "./WidgetHeader.module.css"
 
 const WidgetHeader = () => {
-  const { address, username, wallet } = useInitiaWidget()
+  const { wallet } = useConfig()
+  const { address, username } = useInitiaWidget()
   const { closeWidget } = useWidgetVisibility()
-  const { disconnect } = useDisconnect()
   const name = username ?? address
 
-  if (!address) {
+  if (!wallet) {
     return null
   }
 
   return (
     <header className={styles.header}>
       <Link to="/" className={styles.logo}>
-        <Image src={wallet?.meta.icon} width={18} height={18} />
+        <Image src={wallet.meta.icon} width={18} height={18} />
       </Link>
 
       <CopyButton value={address}>
@@ -40,7 +40,7 @@ const WidgetHeader = () => {
         className={styles.disconnect}
         onClick={() => {
           closeWidget()
-          disconnect()
+          wallet.disconnect()
         }}
       >
         <IconSignOut size={18} />

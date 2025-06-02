@@ -1,8 +1,7 @@
 import clsx from "clsx"
-import { useWatchAsset } from "wagmi"
+import { useMutation } from "@tanstack/react-query"
 import { IconCheck, IconPlus } from "@initia/icons-react"
 import { useNavigate } from "@/lib/router"
-import { useInitiaWidget } from "@/public/data/hooks"
 import { useConfig } from "@/data/config"
 import type { NormalizedChain } from "@/data/chains"
 import { useAddEthereumChain } from "@/data/chains"
@@ -12,21 +11,32 @@ import styles from "./AssetActions.module.css"
 
 const AssetActions = ({ denom, chain }: { denom: string; chain: NormalizedChain }) => {
   const navigate = useNavigate()
-  const { defaultChainId } = useConfig()
-  const { address = "", symbol, decimals } = useAsset(denom, chain)
-  const { wallet } = useInitiaWidget()
-  const { watchAsset, data } = useWatchAsset()
+  const { defaultChainId, wallet } = useConfig()
+  const { address = "", symbol, decimals, logoUrl: image } = useAsset(denom, chain)
   const addEthereumChain = useAddEthereumChain(chain)
+  const { chainId } = chain
+
+  if (!wallet) throw new Error("Wallet not connected")
 
   const send = () => {
     navigate("/send", { denom, chain })
   }
 
   const bridge = () => {
-    navigate("/bridge", { srcChainId: chain.chainId, srcDenom: denom })
+    navigate("/bridge", { srcChainId: chainId, srcDenom: denom })
   }
 
-  if (!wallet) return null
+  const addAsset = useMutation({
+    mutationFn: async () => {
+      await addEthereumChain()
+      const provider = await wallet.getEthereumProvider()
+      await provider.request({
+        method: "wallet_watchAsset",
+        params: { type: "ERC20", options: { address, symbol, decimals, image } },
+      })
+      return true
+    },
+  })
 
   return (
     <nav className={styles.actions}>
@@ -38,15 +48,13 @@ const AssetActions = ({ denom, chain }: { denom: string; chain: NormalizedChain 
         Bridge/Swap
       </button>
 
-      {chain.chainId === defaultChainId && !!address && (
+      {chainId === defaultChainId && !!address && (
         <button
           className={clsx(styles.button, styles.add)}
-          onClick={async () => {
-            await addEthereumChain()
-            watchAsset({ type: "ERC20", options: { address, symbol, decimals } })
-          }}
+          onClick={() => addAsset.mutate()}
+          disabled={addAsset.isPending || addAsset.data}
         >
-          {!data ? <IconPlus size={10} /> : <IconCheck size={10} />}
+          {!addAsset.data ? <IconPlus size={10} /> : <IconCheck size={10} />}
           <Image src={wallet.meta.icon} width={16} height={16} />
         </button>
       )}

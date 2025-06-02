@@ -6,6 +6,7 @@ import type { TxJson } from "@skip-go/client"
 import { aminoConverters, aminoTypes } from "@initia/amino-converter"
 import { DEFAULT_GAS_ADJUSTMENT } from "@/public/data/constants"
 import { useInitiaWidget } from "@/public/data/hooks"
+import { useConfig } from "@/data/config"
 import { normalizeError } from "@/data/http"
 import Button from "@/components/Button"
 import Footer from "@/components/Footer"
@@ -24,7 +25,8 @@ const BridgePreviewFooter = ({ tx, onTxCompleted }: Props) => {
   const { values } = useBridgePreviewState()
   const { srcChainId, sender, cosmosWalletName } = values
 
-  const { wallet, requestTxBlock } = useInitiaWidget()
+  const { wallet } = useConfig()
+  const { requestTxBlock } = useInitiaWidget()
   const { find } = useCosmosWallets()
   const srcChain = useSkipChain(srcChainId)
   const srcChainType = useChainType(srcChain)

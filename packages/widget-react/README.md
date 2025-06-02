@@ -75,27 +75,29 @@ const Example = () => {
 Install the core widget and required peer dependencies:
 
 ```bash
-pnpm add @initia/widget-react @tanstack/react-query @privy-io/react-auth @privy-io/wagmi wagmi
+pnpm add @initia/widget-react
 ```
 
 ### Provider Setup
 
-⚠️ Wrap your application with `PrivyProvider`, `QueryClientProvider`, and `WagmiProvider` as shown in the example below.
+You must install a wallet connector to inject a wallet into the app.
+This library also uses [@tanstack/react-query](https://tanstack.com/query/latest) internally, so you need to install it as well:
 
-- **Vite**: [examples/vite/main.tsx](https://github.com/initia-labs/widget/blob/main/examples/vite/main.tsx)
-- **Next.js**: [examples/nextjs/src/app/providers.tsx](https://github.com/initia-labs/widget/blob/main/examples/nextjs/src/app/providers.tsx)
+```bash
+pnpm add @tanstack/react-query
+```
 
-**Using a registered chain:**
+⚠️ Refer to the examples below.
+
+- **Vite**: [examples/vite/src/Providers.tsx](https://github.com/initia-labs/widget/blob/main/examples/vite/src/Providers.tsx)
+- **Next.js**: [examples/nextjs/src/app/providers/index.tsx](https://github.com/initia-labs/widget/blob/main/examples/nextjs/src/app/providers.tsx)
 
 ```tsx
-import { useWallets } from "@privy-io/react-auth"
 import { InitiaWidgetProvider } from "@initia/widget-react"
 
 const App = () => {
-  const { wallets } = useWallets()
-
   return (
-    <InitiaWidgetProvider defaultChainId="YOUR_CHAIN_ID" wallet={wallets[0]}>
+    <InitiaWidgetProvider defaultChainId="YOUR_CHAIN_ID">
       {/* YOUR APP HERE */}
     </InitiaWidgetProvider>
   )
@@ -105,7 +107,6 @@ const App = () => {
 **Using a custom chain configuration:**
 
 ```tsx
-import { useWallets } from "@privy-io/react-auth"
 import { ChainSchema } from "@initia/initia-registry-types/zod"
 import { InitiaWidgetProvider } from "@initia/widget-react"
 
@@ -124,14 +125,8 @@ const customChain = ChainSchema.parse({
 })
 
 const App = () => {
-  const { wallets } = useWallets()
-
   return (
-    <InitiaWidgetProvider
-      defaultChainId="YOUR_CHAIN_ID"
-      customChain={customChain}
-      wallet={wallets[0]}
-    >
+    <InitiaWidgetProvider defaultChainId="YOUR_CHAIN_ID" customChain={customChain}>
       {/* YOUR APP HERE */}
     </InitiaWidgetProvider>
   )
@@ -144,9 +139,11 @@ const App = () => {
 interface Config {
   /** Wallet integration interface. */
   wallet?: {
-    meta: { icon?: string }
+    meta: { icon?: string; name: string }
+    address: string
     getEthereumProvider: () => Promise<Eip1193Provider>
     sign: (message: string) => Promise<string>
+    disconnect: () => void
   }
 
   /** The default chain ID for wallet connection (registered in initia-registry). Defaults to "interwoven-1". */
@@ -223,17 +220,11 @@ interface TxRequest {
 ## Usage on Testnet
 
 ```tsx
-import { TESTNET, useWallets } from "@privy-io/react-auth"
+import { TESTNET } from "@privy-io/react-auth"
 import { InitiaWidgetProvider } from "@initia/widget-react"
 
 const App = () => {
-  const { wallets } = useWallets()
-
-  return (
-    <InitiaWidgetProvider {...TESTNET} wallet={wallets[0]}>
-      {/* YOUR APP HERE */}
-    </InitiaWidgetProvider>
-  )
+  return <InitiaWidgetProvider {...TESTNET}>{/* YOUR APP HERE */}</InitiaWidgetProvider>
 }
 ```
 

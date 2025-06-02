@@ -93,6 +93,9 @@ importers:
       ethers:
         specifier: ^6
         version: 6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      jotai:
+        specifier: ^2
+        version: 2.12.5(@types/react@19.1.6)(react@19.1.0)
       react:
         specifier: ^19
         version: 19.1.0
@@ -283,9 +286,6 @@ importers:
       vitest:
         specifier: ^3
         version: 3.1.4(@types/debug@4.1.12)(@types/node@22.15.23)(terser@5.40.0)(yaml@2.8.0)
-      wagmi:
-        specifier: ^2
-        version: 2.15.4(@tanstack/query-core@5.77.2)(@tanstack/react-query@5.77.2(react@19.1.0))(@types/react@19.1.6)(bufferutil@4.0.9)(encoding@0.1.13)(react@19.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.30.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.32))(zod@3.25.32)
       xss:
         specifier: ^1
         version: 1.0.15
