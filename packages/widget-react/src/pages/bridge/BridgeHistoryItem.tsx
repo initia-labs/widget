@@ -79,6 +79,7 @@ const BridgeHistoryItem = (history: TxIdentifier) => {
     source_asset_denom: srcDenom,
     dest_asset_chain_id: dstChainId,
     dest_asset_denom: dstDenom,
+    operations,
     estimated_fees = [],
   } = route
 
@@ -129,11 +130,15 @@ const BridgeHistoryItem = (history: TxIdentifier) => {
               </div>
             </>
           )}
-          <div className={styles.divider} />
-          <div className={styles.item}>
-            <span>Slippage</span>
-            <span>{values.slippagePercent}%</span>
-          </div>
+          {operations.some((operation) => "swap" in operation) && (
+            <>
+              <div className={styles.divider} />
+              <div className={styles.item}>
+                <span>Slippage</span>
+                <span>{values.slippagePercent}%</span>
+              </div>
+            </>
+          )}
         </div>
       </header>
 
