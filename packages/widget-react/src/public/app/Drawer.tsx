@@ -27,7 +27,8 @@ const Drawer = ({ children }: PropsWithChildren) => {
 
   const isPendingTransaction = useIsMutating({ mutationKey: [TX_APPROVAL_MUTATION_KEY] })
 
-  // FIXME: Should reject on unmount, but didn't work as expected.
+  // FIXME: React StrictMode causes a problem by unmounting the component once on purpose.
+  // Should reject on unmount, but didn't work as expected.
   // Currently handled via drawer/modal close instead.
   // Would be nice to fix this properly later.
   const handleOverlayClick = () => {
