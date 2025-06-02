@@ -5,6 +5,7 @@ import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconChevronRight } from "@initia/icons-react"
 import { useHistory, useNavigate } from "@/lib/router"
+import { useAddress } from "@/public/data/hooks"
 import { LocalStorageKey } from "@/data/constants"
 import { useWidgetVisibility } from "@/data/ui"
 import { quantitySuperRefine } from "@/data/form"
@@ -25,6 +26,7 @@ const BridgeForm = () => {
   const history = useHistory()
   const navigate = useNavigate()
   const { closeWidget } = useWidgetVisibility()
+  const address = useAddress()
 
   const defaultValues = useDefaultValues()
   const validateRecipientAddress = useValidateAddress()
@@ -136,7 +138,7 @@ const BridgeForm = () => {
               <path d="M9 5.5 H7.5 v3.75 h3.75 v-1.5 H9 V5.5 Z" />
             </svg>
           </Button.Small>
-          <Button.Small onClick={() => navigate("/op/withdrawals")}>
+          <Button.Small onClick={() => navigate("/op/withdrawals")} disabled={!address}>
             <span>Withdrawal status</span>
             <IconChevronRight size={12} />
           </Button.Small>

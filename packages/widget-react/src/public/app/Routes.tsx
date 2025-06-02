@@ -1,4 +1,5 @@
 import { usePath } from "@/lib/router"
+import Status from "@/components/Status"
 import Home from "@/pages/wallet/tabs/Home"
 import Send from "@/pages/wallet/txs/send/Send"
 import CollectionDetails from "@/pages/wallet/tabs/nft/CollectionDetails"
@@ -16,12 +17,15 @@ const Routes = () => {
   const path = usePath()
   const address = useAddress()
 
-  if (path === "/bridge") {
-    return <BridgeForm />
+  switch (path) {
+    case "/bridge":
+      return <BridgeForm />
+    case "/bridge/history":
+      return <BridgeHistory />
   }
 
   if (!address) {
-    return null
+    return <Status error>Wallet not connected</Status>
   }
 
   switch (path) {
@@ -39,12 +43,8 @@ const Routes = () => {
       return <SendNft />
     case "/rollups":
       return <ManageChains />
-    case "/bridge":
-      return <BridgeForm />
     case "/bridge/preview":
       return <BridgePreview />
-    case "/bridge/history":
-      return <BridgeHistory />
     case "/op/withdrawals":
       return <Withdrawals />
     case "/tx":

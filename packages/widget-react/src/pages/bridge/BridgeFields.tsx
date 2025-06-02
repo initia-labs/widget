@@ -67,7 +67,7 @@ const BridgeFields = () => {
   const { data, isLoading, isFetching, error, isFetched } = routeQuery
   const ready = isReady()
   const route = ready && isFetched ? data : undefined
-  const isSimulating = !ready || isLoading || isFetching
+  const isSimulating = debouncedQuantity && (!ready || isLoading || isFetching)
 
   const flip = () => {
     setValue("srcChainId", dstChainId)
