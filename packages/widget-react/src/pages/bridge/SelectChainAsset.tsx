@@ -32,7 +32,7 @@ const SelectChainAsset = ({ type, afterSelect }: Props) => {
   const getIsInitiaChain = useGetIsInitiaChain()
   const [internalChains, externalChains] = partition(
     (chain) => getIsInitiaChain(chain.chain_id),
-    chains,
+    chains.filter((chain) => !chain.hidden),
   )
 
   const handleSelect = (denom: string) => {

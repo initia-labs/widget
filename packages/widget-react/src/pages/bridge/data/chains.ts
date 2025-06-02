@@ -9,6 +9,7 @@ import { skipQueryKeys, useSkip } from "./skip"
 export interface RouterChainJson extends ChainJson {
   rpc: string
   rest: string
+  hidden?: boolean
 }
 
 export function useGetIsInitiaChain() {
