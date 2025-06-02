@@ -206,7 +206,10 @@ const BridgeFields = () => {
                   {warning}
                 </FormHelp>
               ))}
-              <FormHelp level="error">{error?.message}</FormHelp>
+              {/* In this case, the route option component above will show an error. */}
+              {BigNumber(quantity).gt(0) && isOpWithdrawable ? null : (
+                <FormHelp level="error">{error?.message}</FormHelp>
+              )}
             </FormHelp.Stack>
 
             <div className={styles.meta}>
