@@ -90,66 +90,63 @@ export function useSignOpHook() {
   })
 }
 
-export interface BridgeHistory {
-  timestamp: number
+export interface TxIdentifier {
   chainId: string
   txHash: string
+}
+
+export interface BridgeHistoryDetailedItem {
+  timestamp: number
   route: RouteResponseJson
   values: FormValues
+  tracked?: boolean
+  state?: "success" | "error"
 }
 
 export function useBridgeHistory() {
-  return useLocalStorage<BridgeHistory[]>(LocalStorageKey.BRIDGE_HISTORY, [])
+  return useLocalStorage<TxIdentifier[]>(LocalStorageKey.BRIDGE_HISTORY, [])
 }
 
-export function useTrackTxQuery(txHash?: string) {
-  const [, setBridgeHistory] = useBridgeHistory()
-  const { values, route } = useBridgePreviewState()
-  const { srcChainId } = values
+export function useTrackTxQuery(
+  chainId: string,
+  txHash: string,
+  historyItem: BridgeHistoryDetailedItem,
+) {
   const skip = useSkip()
   return useQuery({
-    queryKey: skipQueryKeys.txTrack(srcChainId, txHash).queryKey,
+    queryKey: skipQueryKeys.txTrack(chainId, txHash).queryKey,
     queryFn: async () => {
       try {
-        const response = await skip
-          .post("v2/tx/track", { json: { tx_hash: txHash, chain_id: srcChainId } })
+        if (!shouldTrackBridgeHistory(historyItem)) return { tx_hash: txHash }
+        return await skip
+          .post("v2/tx/track", { json: { tx_hash: txHash, chain_id: chainId } })
           .json<TrackResponseJson>()
-        setBridgeHistory((prev = []) => [
-          ...prev,
-          { timestamp: Date.now(), chainId: srcChainId, txHash: response.tx_hash, route, values },
-        ])
-        return response
       } catch (error) {
         throw new Error(await normalizeError(error))
       }
     },
     select: ({ tx_hash }) => tx_hash,
-    enabled: !!txHash,
-    retry: 6,
+    retry: 30,
     retryDelay: 1000,
     staleTime: STALE_TIMES.INFINITY,
   })
 }
 
 export function useTxStatusQuery(
-  srcChainId: string,
-  trackedTxHash?: string,
-  route?: RouterRouteResponseJson,
+  chainId: string,
+  txHash: string = "",
+  history: BridgeHistoryDetailedItem,
 ) {
   const skip = useSkip()
-  const isLz = has("lz_transfer", path(["operations", 0], route))
+  const isLz = has("lz_transfer", path(["operations", 0], history.route))
 
   return useQuery({
-    queryKey: skipQueryKeys.txStatus(srcChainId, trackedTxHash, isLz).queryKey,
-    queryFn: () => {
-      if (!trackedTxHash) throw new Error("Transaction hash is required")
-      return skip
-        .get("v2/tx/status", {
-          searchParams: { tx_hash: trackedTxHash, chain_id: srcChainId, is_lz: isLz },
-        })
-        .json<StatusResponseJson>()
-    },
-    enabled: !!trackedTxHash,
+    queryKey: skipQueryKeys.txStatus(chainId, txHash, isLz).queryKey,
+    queryFn: () =>
+      skip
+        .get("v2/tx/status", { searchParams: { tx_hash: txHash, chain_id: chainId, is_lz: isLz } })
+        .json<StatusResponseJson>(),
+    enabled: !!txHash && !history.state,
     refetchInterval: ({ state: { data } }) => {
       if (!data) return false
       const { status } = data
@@ -158,4 +155,14 @@ export function useTxStatusQuery(
     },
     staleTime: STALE_TIMES.INFINITY,
   })
+}
+
+export function getBridgeHistoryType({ route: { operations } }: BridgeHistoryDetailedItem) {
+  if (operations.some((operation) => "lz_transfer" in operation)) return "lz"
+  if (operations.some((operation) => "op_init_transfer" in operation)) return "op"
+  return "skip"
+}
+
+export function shouldTrackBridgeHistory(history: BridgeHistoryDetailedItem) {
+  return !history.tracked && getBridgeHistoryType(history) !== "lz"
 }

@@ -1,7 +1,10 @@
-import { useMemo } from "react"
 import { intlFormatDistance } from "date-fns"
+import { useEffect, useMemo } from "react"
+import { useLocalStorage } from "react-use"
+import type { StatusResponseJson } from "@skip-go/client"
 import { IconArrowDown, IconCheckCircleFilled, IconWarningFilled } from "@initia/icons-react"
 import { formatAmount, truncate } from "@/public/utils"
+import { LocalStorageKey } from "@/data/constants"
 import Loader from "@/components/Loader"
 import Image from "@/components/Image"
 import { formatFees } from "./data/format"
@@ -9,33 +12,54 @@ import type { RouterChainJson } from "./data/chains"
 import { useSkipChain } from "./data/chains"
 import type { RouterAsset } from "./data/assets"
 import { useSkipAsset } from "./data/assets"
-import type { BridgeHistory } from "./data/tx"
-import { useTxStatusQuery } from "./data/tx"
+import type { TxIdentifier, BridgeHistoryDetailedItem } from "./data/tx"
+import { getBridgeHistoryType, useTrackTxQuery, useTxStatusQuery } from "./data/tx"
 import styles from "./BridgeHistoryItem.module.css"
 
-const BridgeHistoryItem = ({ timestamp, chainId, txHash, route, values }: BridgeHistory) => {
-  const { data } = useTxStatusQuery(chainId, txHash, route)
+const BridgeHistoryItem = (history: TxIdentifier) => {
+  const { chainId, txHash } = history
+
+  const [historyItemDetails, setHistoryItemDetails] = useLocalStorage<BridgeHistoryDetailedItem>(
+    `${LocalStorageKey.BRIDGE_HISTORY}:${chainId}:${txHash}`,
+  )
+
+  if (!historyItemDetails)
+    throw new Error(
+      `Bridge history item details not found for chainId: ${chainId}, txHash: ${txHash}`,
+    )
+
+  const { timestamp, values, route } = historyItemDetails
+
+  const { data: trackedTxHash } = useTrackTxQuery(chainId, txHash, historyItemDetails)
+  const { data: txStatus } = useTxStatusQuery(chainId, trackedTxHash, historyItemDetails)
+  const state = historyItemDetails.state ?? getState(txStatus)
+
+  useEffect(() => {
+    if (!trackedTxHash) return
+    setHistoryItemDetails((prev) => {
+      if (!prev) return prev
+      return { ...prev, tracked: true }
+    })
+  }, [trackedTxHash, setHistoryItemDetails])
+
+  useEffect(() => {
+    if (state === "loading") return
+    setHistoryItemDetails((prev) => {
+      if (!prev) return prev
+      return { ...prev, tracked: true, state }
+    })
+  }, [state, setHistoryItemDetails])
 
   const renderIcon = () => {
-    if (!data) {
-      return <Loader size={14} />
-    }
-
-    switch (data.state) {
-      case "STATE_ABANDONED":
-      case "STATE_COMPLETED_ERROR":
-      case "STATE_PENDING_ERROR":
+    switch (state) {
+      case "error":
         return (
           <div className={styles.error}>
             <IconWarningFilled size={14} />
           </div>
         )
 
-      case "STATE_SUBMITTED":
-      case "STATE_PENDING":
-        return <Loader size={14} />
-
-      case "STATE_COMPLETED_SUCCESS":
+      case "success":
         return (
           <div className={styles.success}>
             <IconCheckCircleFilled size={14} />
@@ -54,7 +78,6 @@ const BridgeHistoryItem = ({ timestamp, chainId, txHash, route, values }: Bridge
     source_asset_denom: srcDenom,
     dest_asset_chain_id: dstChainId,
     dest_asset_denom: dstDenom,
-    operations,
     estimated_fees = [],
   } = route
 
@@ -85,11 +108,7 @@ const BridgeHistoryItem = ({ timestamp, chainId, txHash, route, values }: Bridge
     )
   }
 
-  const type = useMemo(() => {
-    if (operations.some((operation) => "lz_transfer" in operation)) return "lz"
-    if (operations.some((operation) => "op_init_transfer" in operation)) return "op"
-    return "skip"
-  }, [operations])
+  const type = getBridgeHistoryType(historyItemDetails)
 
   const explorerLink = useMemo(() => {
     if (type === "lz")
@@ -147,3 +166,20 @@ const BridgeHistoryItem = ({ timestamp, chainId, txHash, route, values }: Bridge
 }
 
 export default BridgeHistoryItem
+
+function getState(data?: StatusResponseJson | null) {
+  if (!data) return "loading"
+
+  switch (data.state) {
+    case "STATE_ABANDONED":
+    case "STATE_COMPLETED_ERROR":
+    case "STATE_PENDING_ERROR":
+      return "error"
+
+    case "STATE_COMPLETED_SUCCESS":
+      return "success"
+
+    default:
+      return "loading"
+  }
+}

@@ -1,17 +1,20 @@
 import { BrowserProvider } from "ethers"
 import BigNumber from "bignumber.js"
 import { calculateFee, GasPrice, SigningStargateClient } from "@cosmjs/stargate"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { TxJson } from "@skip-go/client"
 import { aminoConverters, aminoTypes } from "@initia/amino-converter"
 import { Link, useNavigate } from "@/lib/router"
 import { DEFAULT_GAS_ADJUSTMENT } from "@/public/data/constants"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { useNotification } from "@/public/app/NotificationContext"
+import { LocalStorageKey } from "@/data/constants"
 import { useConfig } from "@/data/config"
 import { normalizeError } from "@/data/http"
+import { waitForTxConfirmationWithClient } from "@/data/tx"
 import Button from "@/components/Button"
 import Footer from "@/components/Footer"
+import { skipQueryKeys } from "./data/skip"
 import { useCosmosWallets } from "./data/cosmos"
 import { useChainType, useSkipChain } from "./data/chains"
 import { useFindSkipAsset } from "./data/assets"
@@ -25,18 +28,19 @@ interface Props {
 
 const BridgePreviewFooter = ({ tx }: Props) => {
   const navigate = useNavigate()
-  const { showNotification, hideNotification } = useNotification()
+  const { showNotification, updateNotification, hideNotification } = useNotification()
   const [, setBridgeHistory] = useBridgeHistory()
 
   const { route, values } = useBridgePreviewState()
   const { srcChainId, sender, cosmosWalletName } = values
 
   const { wallet } = useConfig()
-  const { requestTxSync } = useInitiaWidget()
+  const { requestTxSync, waitForTxConfirmation } = useInitiaWidget()
   const { find } = useCosmosWallets()
   const srcChain = useSkipChain(srcChainId)
   const srcChainType = useChainType(srcChain)
   const findAsset = useFindSkipAsset(srcChainId)
+  const queryClient = useQueryClient()
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: async () => {
@@ -54,7 +58,9 @@ const BridgePreviewFooter = ({ tx }: Props) => {
           })
 
           if (srcChainType === "initia") {
-            return await requestTxSync({ messages, chainId: srcChainId, internal: 1 })
+            const txHash = await requestTxSync({ messages, chainId: srcChainId, internal: 1 })
+            const wait = waitForTxConfirmation({ txHash, chainId: srcChainId })
+            return { txHash, wait }
           }
 
           const provider = find(cosmosWalletName)?.getProvider()
@@ -81,7 +87,9 @@ const BridgePreviewFooter = ({ tx }: Props) => {
           const gas = await client.simulate(sender, messages, "")
           const gasPrice = GasPrice.fromString(gas_price.average + denom)
           const fee = calculateFee(Math.ceil(gas * DEFAULT_GAS_ADJUSTMENT), gasPrice)
-          return await client.signAndBroadcastSync(sender, messages, fee)
+          const txHash = await client.signAndBroadcastSync(sender, messages, fee)
+          const wait = waitForTxConfirmationWithClient({ txHash, client })
+          return { txHash, wait }
         }
 
         if ("evm_tx" in tx) {
@@ -92,8 +100,9 @@ const BridgePreviewFooter = ({ tx }: Props) => {
             { chainId: `0x${Number(chainId).toString(16)}` },
           ])
           const signer = await provider.getSigner()
-          const { hash } = await signer.sendTransaction({ chainId, to, value, data: `0x${data}` })
-          return hash
+          const response = await signer.sendTransaction({ chainId, to, value, data: `0x${data}` })
+          // Do not use destructuring. It will break the behavior.
+          return { txHash: response.hash, wait: response.wait() }
         }
 
         throw new Error("Unsupported chain type")
@@ -101,22 +110,43 @@ const BridgePreviewFooter = ({ tx }: Props) => {
         throw new Error(await normalizeError(error))
       }
     },
-    onSuccess: (txHash: string) => {
+    onSuccess: ({ txHash, wait }) => {
       navigate(-1)
-      setBridgeHistory((prev = []) => [
-        ...prev,
-        { timestamp: Date.now(), chainId: srcChainId, txHash, route, values },
-      ])
+      showNotification({
+        type: "loading",
+        title: "Transaction is pending...",
+      })
       const link = (
         <Link to="/bridge/history" className={styles.link} onClick={hideNotification}>
           the history page
         </Link>
       )
-      showNotification({
-        type: "success",
-        title: "Transaction sent",
-        description: <>Check {link} for transaction status</>,
-      })
+      wait
+        .then(() => {
+          setBridgeHistory((prev = []) => [{ chainId: srcChainId, txHash }, ...prev])
+          localStorage.setItem(
+            `${LocalStorageKey.BRIDGE_HISTORY}:${srcChainId}:${txHash}`,
+            JSON.stringify({ timestamp: Date.now(), route, values }),
+          )
+          updateNotification({
+            type: "success",
+            title: "Transaction sent",
+            description: <>Check {link} for transaction status</>,
+          })
+        })
+        .catch((error) => {
+          updateNotification({
+            type: "error",
+            title: "Transaction failed",
+            description: error.message,
+          })
+          console.trace(error)
+        })
+        .finally(() => {
+          queryClient.invalidateQueries({
+            queryKey: skipQueryKeys.balances(srcChainId, sender).queryKey,
+          })
+        })
     },
     onError: (error) => {
       navigate(-1)

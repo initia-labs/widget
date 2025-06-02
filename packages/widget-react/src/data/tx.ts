@@ -164,10 +164,8 @@ export function useTx() {
   }
 
   const waitForTxConfirmation = async ({
-    txHash,
     chainId = defaultChainId,
-    timeoutSeconds = 60,
-    intervalSeconds = 1,
+    ...params
   }: {
     txHash: string
     chainId?: string
@@ -175,25 +173,40 @@ export function useTx() {
     intervalSeconds?: number
   }) => {
     const client = await createSigningStargateClient(chainId)
-    const start = Date.now()
-    const timeoutMs = timeoutSeconds * 1000
-
-    while (true) {
-      const tx = await client.getTx(txHash)
-
-      if (tx) {
-        return tx
-      }
-
-      if (Date.now() - start >= timeoutMs) {
-        throw new Error(
-          `Transaction was submitted, but not found on the chain within ${timeoutSeconds} seconds.`,
-        )
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, intervalSeconds * 1000))
-    }
+    return waitForTxConfirmationWithClient({ ...params, client })
   }
 
   return { estimateGas, requestTxSync, requestTxBlock, waitForTxConfirmation }
+}
+
+export async function waitForTxConfirmationWithClient({
+  txHash,
+  client,
+  timeoutSeconds = 30,
+  intervalSeconds = 1,
+}: {
+  txHash: string
+  client: SigningStargateClient
+  timeoutSeconds?: number
+  intervalSeconds?: number
+}) {
+  const start = Date.now()
+  const timeoutMs = timeoutSeconds * 1000
+
+  while (true) {
+    const tx = await client.getTx(txHash)
+
+    if (tx) {
+      if (tx.code !== 0) throw new Error(tx.rawLog)
+      return tx
+    }
+
+    if (Date.now() - start >= timeoutMs) {
+      throw new Error(
+        `Transaction was submitted, but not found on the chain within ${timeoutSeconds} seconds.`,
+      )
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, intervalSeconds * 1000))
+  }
 }
