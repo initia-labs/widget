@@ -109,7 +109,7 @@ const BridgeHistoryItem = (history: TxIdentifier) => {
     )
   }
 
-  const type = getBridgeType(historyItemDetails)
+  const type = getBridgeType(route)
 
   const content = (
     <>

@@ -138,7 +138,7 @@ export function useTxStatusQuery(
   history: BridgeHistoryDetailedItem,
 ) {
   const skip = useSkip()
-  const isLz = getBridgeType(history) === BridgeType.LZ
+  const isLz = getBridgeType(history.route) === BridgeType.LZ
 
   return useQuery({
     queryKey: skipQueryKeys.txStatus(chainId, txHash, isLz).queryKey,
@@ -163,7 +163,7 @@ export enum BridgeType {
   SKIP = "Skip",
 }
 
-export function getBridgeType({ route }: BridgeHistoryDetailedItem) {
+export function getBridgeType(route: RouterRouteResponseJson) {
   const { operations, dest_asset_denom } = route
   if (has("op_init_transfer", head(operations)) && dest_asset_denom === "uinit") {
     return BridgeType.OP_WITHDRAW
@@ -175,5 +175,5 @@ export function getBridgeType({ route }: BridgeHistoryDetailedItem) {
 }
 
 export function shouldTrackBridgeHistory(history: BridgeHistoryDetailedItem) {
-  return !history.tracked && getBridgeType(history) !== BridgeType.LZ
+  return !history.tracked && getBridgeType(history.route) !== BridgeType.LZ
 }
