@@ -15,7 +15,7 @@ const wagmiConfig = createConfig({ chains: [mainnet], transports: { [mainnet.id]
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
 
 const WithInitiaWidget = ({ children }: PropsWithChildren) => {
-  const { address = "" } = useAccount()
+  const { address } = useAccount()
   const { disconnect } = useDisconnect()
   const { wallets } = useWallets()
   const wallet = wallets[0]
@@ -27,7 +27,7 @@ const WithInitiaWidget = ({ children }: PropsWithChildren) => {
   return (
     <InitiaWidgetProvider
       {...TESTNET}
-      wallet={wallet ? { ...wallet, address, disconnect } : undefined}
+      wallet={address ? { ...wallet, address, disconnect } : undefined}
     >
       {children}
     </InitiaWidgetProvider>
