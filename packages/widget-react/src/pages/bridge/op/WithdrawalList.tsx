@@ -4,6 +4,7 @@ import AsyncBoundary from "@/components/AsyncBoundary"
 import Status from "@/components/Status"
 import Loader from "@/components/Loader"
 import { useWithdrawals } from "./data"
+import { OpWithdrawalContext } from "./context"
 import WithdrawalAsset from "./WithdrawalAsset"
 import WithdrawalAction from "./WithdrawalAction"
 import styles from "./WithdrawalList.module.css"
@@ -28,7 +29,9 @@ const WithdrawalList = ({ chain }: { chain: NormalizedChain }) => {
             <WithdrawalAsset {...amount} />
 
             <AsyncBoundary suspenseFallback={null}>
-              <WithdrawalAction withdrawalTx={withdrawalTx} />
+              <OpWithdrawalContext.Provider value={{ chainId: chain.chainId, withdrawalTx }}>
+                <WithdrawalAction />
+              </OpWithdrawalContext.Provider>
             </AsyncBoundary>
           </div>
         )

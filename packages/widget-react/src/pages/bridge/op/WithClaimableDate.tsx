@@ -1,13 +1,14 @@
 import { addSeconds } from "date-fns"
 import { useMemo, type ReactNode } from "react"
-import { useOpBridge, useOutput, type WithdrawalTx } from "./data"
+import { useOpBridge, useOutput } from "./data"
+import { useOpWithdrawal } from "./context"
 
 interface Props {
-  withdrawalTx: WithdrawalTx
   children: (date: Date | null) => ReactNode
 }
 
-const WithClaimableDate = ({ withdrawalTx, children }: Props) => {
+const WithClaimableDate = ({ children }: Props) => {
+  const { withdrawalTx } = useOpWithdrawal()
   const bridge = useOpBridge(withdrawalTx.bridge_id)
   const output = useOutput(withdrawalTx)
 

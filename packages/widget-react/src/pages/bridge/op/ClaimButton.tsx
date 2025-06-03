@@ -4,15 +4,12 @@ import { MsgFinalizeTokenWithdrawal } from "@initia/opinit.proto/opinit/ophost/v
 import { IconCheckCircleFilled } from "@initia/icons-react"
 import { useInitiaAddress, useInitiaWidget } from "@/public/data/hooks"
 import { useLayer1 } from "@/data/chains"
-import type { WithdrawalTx } from "./data"
 import { computeWithdrawalHash, opQueryKeys, useOutputResponse, useWithdrawalClaimed } from "./data"
+import { useOpWithdrawal } from "./context"
 import styles from "./ClaimButton.module.css"
 
-interface Props {
-  withdrawalTx: WithdrawalTx
-}
-
-const ClaimButton = ({ withdrawalTx }: Props) => {
+const ClaimButton = () => {
+  const { withdrawalTx } = useOpWithdrawal()
   const {
     bridge_id,
     sequence,
