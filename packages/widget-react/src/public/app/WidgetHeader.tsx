@@ -3,6 +3,7 @@ import { IconCopy, IconSignOut } from "@initia/icons-react"
 import { Link } from "@/lib/router"
 import { truncate } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
+import { useClaimableModal } from "@/pages/bridge/op/reminder"
 import { useConfig } from "@/data/config"
 import { useWidgetVisibility } from "@/data/ui"
 import CopyButton from "@/components/CopyButton"
@@ -14,6 +15,9 @@ const WidgetHeader = () => {
   const { address, username } = useInitiaWidget()
   const { closeWidget } = useWidgetVisibility()
   const name = username ?? address
+
+  // Open claimable list modal
+  useClaimableModal()
 
   if (!wallet) {
     return null

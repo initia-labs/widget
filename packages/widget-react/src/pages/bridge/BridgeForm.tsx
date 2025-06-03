@@ -5,7 +5,6 @@ import { useQueryClient } from "@tanstack/react-query"
 import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { BalancesResponseJson } from "@skip-go/client"
-import { IconChevronRight } from "@initia/icons-react"
 import { useHistory, useNavigate } from "@/lib/router"
 import { useAddress } from "@/public/data/hooks"
 import { LocalStorageKey } from "@/data/constants"
@@ -22,7 +21,9 @@ import { useGetDefaultAddress, useValidateAddress } from "./data/address"
 import type { RouterAsset } from "./data/assets"
 import { useSkipAssets } from "./data/assets"
 import { skipQueryKeys } from "./data/skip"
+import { useClaimableReminders } from "./op/reminder"
 import BridgeFields from "./BridgeFields"
+import styles from "./BridgeForm.module.css"
 
 const BridgeForm = () => {
   const history = useHistory()
@@ -127,6 +128,8 @@ const BridgeForm = () => {
     )
   }
 
+  const { reminders } = useClaimableReminders()
+
   return (
     <Page
       title="Bridge/Swap"
@@ -141,9 +144,13 @@ const BridgeForm = () => {
               <path d="M9 5.5 H7.5 v3.75 h3.75 v-1.5 H9 V5.5 Z" />
             </svg>
           </Button.Small>
-          <Button.Small onClick={() => navigate("/op/withdrawals")} disabled={!address}>
+          <Button.Small
+            className={styles.link}
+            onClick={() => navigate("/op/withdrawals")}
+            disabled={!address}
+          >
             <span>Withdrawal status</span>
-            <IconChevronRight size={12} />
+            {reminders.length > 0 ? <div className={styles.badge} /> : null}
           </Button.Small>
         </>
       }

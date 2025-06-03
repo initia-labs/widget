@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { TxJson } from "@skip-go/client"
 import { aminoConverters, aminoTypes } from "@initia/amino-converter"
 import { Link, useNavigate } from "@/lib/router"
+import { Address } from "@/public/utils"
 import { DEFAULT_GAS_ADJUSTMENT } from "@/public/data/constants"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { useNotification } from "@/public/app/NotificationContext"
@@ -18,7 +19,8 @@ import { skipQueryKeys } from "./data/skip"
 import { useCosmosWallets } from "./data/cosmos"
 import { useChainType, useSkipChain } from "./data/chains"
 import { useFindSkipAsset } from "./data/assets"
-import { useBridgeHistory, useBridgePreviewState } from "./data/tx"
+import { BridgeType, getBridgeType, useBridgeHistory, useBridgePreviewState } from "./data/tx"
+import { useClaimableReminders } from "./op/reminder"
 import FooterWithError from "./FooterWithError"
 import styles from "./BridgePreviewFooter.module.css"
 
@@ -32,7 +34,7 @@ const BridgePreviewFooter = ({ tx }: Props) => {
   const [, setBridgeHistory] = useBridgeHistory()
 
   const { route, values } = useBridgePreviewState()
-  const { srcChainId, sender, cosmosWalletName } = values
+  const { srcChainId, sender, recipient, cosmosWalletName } = values
 
   const { wallet } = useConfig()
   const { requestTxSync, waitForTxConfirmation } = useInitiaWidget()
@@ -42,6 +44,7 @@ const BridgePreviewFooter = ({ tx }: Props) => {
   const findAsset = useFindSkipAsset(srcChainId)
   const queryClient = useQueryClient()
 
+  const { addReminder } = useClaimableReminders()
   const { mutate, isPending, error } = useMutation({
     mutationFn: async () => {
       try {
@@ -123,7 +126,8 @@ const BridgePreviewFooter = ({ tx }: Props) => {
       )
       wait
         .then(() => {
-          setBridgeHistory((prev = []) => [{ chainId: srcChainId, txHash }, ...prev])
+          const tx = { chainId: srcChainId, txHash }
+          setBridgeHistory((prev = []) => [tx, ...prev])
           localStorage.setItem(
             `${LocalStorageKey.BRIDGE_HISTORY}:${srcChainId}:${txHash}`,
             JSON.stringify({ timestamp: Date.now(), route, values }),
@@ -133,6 +137,15 @@ const BridgePreviewFooter = ({ tx }: Props) => {
             title: "Transaction sent",
             description: <>Check {link} for transaction status</>,
           })
+          if (getBridgeType(route) === BridgeType.OP_WITHDRAW) {
+            addReminder(tx, {
+              ...tx,
+              recipient: Address.toBech32(recipient),
+              claimableAt: Date.now() + route.estimated_route_duration_seconds * 1000,
+              amount: route.amount_out,
+              denom: route.dest_asset_denom,
+            })
+          }
         })
         .catch((error) => {
           updateNotification({

@@ -15,6 +15,7 @@ export function useGetDefaultAddress() {
       case "initia":
         // FIXME: If the field is a recipient address and the rollup is based on MiniEVM,
         // it might be desirable to auto-fill the hex address.
+        // However, since this address is also used as the sender, it's safer to use initiaAddress for now.
         return initiaAddress
       case "evm":
         return hexAddress

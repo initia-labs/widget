@@ -56,6 +56,7 @@ interface WithdrawalTxListResponse {
 }
 
 export interface WithdrawalTx {
+  tx_hash: string
   sequence: number
   to: string
   from: string

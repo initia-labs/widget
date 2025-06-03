@@ -1,3 +1,4 @@
+import { useEffect, useMemo } from "react"
 import { IconChevronDown } from "@initia/icons-react"
 import type { NormalizedChain } from "@/data/chains"
 import AsyncBoundary from "@/components/AsyncBoundary"
@@ -5,6 +6,7 @@ import Status from "@/components/Status"
 import Loader from "@/components/Loader"
 import { useWithdrawals } from "./data"
 import { OpWithdrawalContext } from "./context"
+import { useClaimableReminders } from "./reminder"
 import WithdrawalAsset from "./WithdrawalAsset"
 import WithdrawalAction from "./WithdrawalAction"
 import styles from "./WithdrawalList.module.css"
@@ -14,7 +16,16 @@ const WithdrawalList = ({ chain }: { chain: NormalizedChain }) => {
   if (!executorUrl) throw new Error("Executor URL is not defined")
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useWithdrawals(executorUrl)
-  const list = data?.pages.flat() ?? []
+  const list = useMemo(() => data?.pages.flat() ?? [], [data])
+
+  const { syncReminders } = useClaimableReminders()
+  useEffect(() => {
+    const txs = list.map((withdrawalTx) => ({
+      chainId: chain.chainId,
+      txHash: withdrawalTx.tx_hash,
+    }))
+    syncReminders(txs)
+  }, [chain.chainId, list, syncReminders])
 
   if (!list.length) {
     return <Status>No withdrawals</Status>
