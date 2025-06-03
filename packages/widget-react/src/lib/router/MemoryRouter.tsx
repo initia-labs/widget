@@ -1,6 +1,6 @@
 import { adjust, take } from "ramda"
 import type { PropsWithChildren } from "react"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import type { HistoryEntry } from "./RouterContext"
 import { RouterContext } from "./RouterContext"
 
@@ -12,7 +12,7 @@ const MemoryRouter = ({ children, initialEntry }: PropsWithChildren<MemoryRouter
   const [history, setHistory] = useState<HistoryEntry[]>([initialEntry ?? { path: "/" }])
   const location = history[history.length - 1]
 
-  const navigate = (to: string | number, state?: object) => {
+  const navigate = useCallback((to: string | number, state?: object) => {
     setHistory((prev) => {
       if (typeof to === "string") {
         return [...prev, { path: to, state }]
@@ -29,11 +29,11 @@ const MemoryRouter = ({ children, initialEntry }: PropsWithChildren<MemoryRouter
 
       return truncated
     })
-  }
+  }, [])
 
-  const reset = (path: string, state?: object) => {
+  const reset = useCallback((path: string, state?: object) => {
     setHistory([{ path, state }])
-  }
+  }, [])
 
   return (
     <RouterContext.Provider value={{ location, history, navigate, reset }}>

@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai"
-import { useState, type PropsWithChildren } from "react"
+import { useCallback, useState, type PropsWithChildren } from "react"
 import { txRequestHandlerAtom } from "@/data/tx"
 import Modal from "@/components/Modal"
 import TxRequest from "@/pages/tx/TxRequest"
@@ -11,15 +11,15 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
   const [{ title, content, path }, setOptions] = useState<ModalOptions>({})
   const [isOpen, setIsOpen] = useState(false)
 
-  const openModal = (options: ModalOptions) => {
+  const openModal = useCallback((options: ModalOptions) => {
     setOptions(options)
     setIsOpen(true)
-  }
+  }, [])
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setOptions({})
     setIsOpen(false)
-  }
+  }, [])
 
   return (
     <ModalContext.Provider value={{ openModal, closeModal }}>
