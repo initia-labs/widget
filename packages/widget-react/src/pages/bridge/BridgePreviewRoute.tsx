@@ -113,7 +113,11 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
 
         <Collapsible.Content className={styles.content}>
           {intermediateOperations.map((props, index) => (
-            <AsyncBoundary suspenseFallback={<OperationItem.Placeholder {...props} />} key={index}>
+            <AsyncBoundary
+              suspenseFallback={<OperationItem.Placeholder {...props} />}
+              errorBoundaryProps={{ fallback: <OperationItem.Placeholder {...props} /> }}
+              key={index}
+            >
               <OperationItem {...props} />
             </AsyncBoundary>
           ))}
