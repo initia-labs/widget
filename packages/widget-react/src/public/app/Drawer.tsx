@@ -21,39 +21,30 @@ import TxWatcher from "./TxWatcher"
 import styles from "./Drawer.module.css"
 
 const Drawer = ({ children }: PropsWithChildren) => {
-  const { setContainer } = useContext(PortalContext)
   const { isWidgetOpen, closeWidget } = useWidgetVisibility()
-  const txRequest = useAtomValue(txRequestHandlerAtom)
+  const { setContainer } = useContext(PortalContext)
+  const isSmall = useMedia("(max-width: 576px)")
 
-  const isPendingTransaction = useIsMutating({ mutationKey: [TX_APPROVAL_MUTATION_KEY] })
+  // Lock body scroll when the widget is open on small screens
+  useLockBodyScroll(isWidgetOpen && isSmall)
 
   // FIXME: React StrictMode causes a problem by unmounting the component once on purpose.
   // Should reject on unmount, but didn't work as expected.
   // Currently handled via drawer/modal close instead.
   // Would be nice to fix this properly later.
+  const txRequest = useAtomValue(txRequestHandlerAtom)
+  const isPendingTransaction = useIsMutating({ mutationKey: [TX_APPROVAL_MUTATION_KEY] })
   const handleOverlayClick = () => {
     const errorMessage = isPendingTransaction
       ? "User exited before response arrived. Transaction may succeed or fail."
       : "User rejected"
-
     // The drawer must be closed first.
     // This is because `reject` may re-throw the error after handling it.
     closeWidget()
     txRequest?.reject(new Error(errorMessage))
   }
 
-  const isSmall = useMedia("(max-width: 576px)")
-
-  // Lock body scroll when the widget is open on small screens
-  useLockBodyScroll(isWidgetOpen && isSmall)
-
-  const drawerTransition = useTransition(isWidgetOpen, {
-    from: { transform: isSmall ? "translateY(100%)" : "translateX(100%)" },
-    enter: { transform: isSmall ? "translateY(0%)" : "translateX(0%)" },
-    leave: { transform: isSmall ? "translateY(100%)" : "translateX(100%)" },
-    config: { duration: 150 },
-  })
-
+  // Error
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const errorBoundaryProps = {
@@ -74,6 +65,14 @@ const Drawer = ({ children }: PropsWithChildren) => {
       )
     },
   }
+
+  // Animation
+  const drawerTransition = useTransition(isWidgetOpen, {
+    from: { transform: isSmall ? "translateY(100%)" : "translateX(100%)" },
+    enter: { transform: isSmall ? "translateY(0%)" : "translateX(0%)" },
+    leave: { transform: isSmall ? "translateY(100%)" : "translateX(100%)" },
+    config: { duration: 150 },
+  })
 
   return createPortal(
     <>
