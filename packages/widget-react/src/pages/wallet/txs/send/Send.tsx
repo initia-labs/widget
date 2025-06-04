@@ -21,11 +21,7 @@ const FormValuesSchema = z.object({
   memo: z
     .string()
     .optional()
-    .refine((value) => !value || new Blob([value]).size <= 256, "Memo is too long")
-    .refine(
-      (value) => !value || !["<", ">"].some((ch) => value.includes(ch)),
-      `Memo must not contain "<" or ">"`,
-    ),
+    .refine((value) => !value || new Blob([value]).size <= 256, "Memo is too long"),
 })
 
 export type FormValues = z.infer<typeof FormValuesSchema>

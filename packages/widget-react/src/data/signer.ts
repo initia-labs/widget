@@ -9,7 +9,11 @@ import type {
   StdFee,
   StdSignDoc,
 } from "@cosmjs/amino"
-import { makeSignDoc as makeSignDocAmino, sortedJsonStringify } from "@cosmjs/amino/build/signdoc"
+import {
+  escapeCharacters,
+  makeSignDoc as makeSignDocAmino,
+  sortedJsonStringify,
+} from "@cosmjs/amino/build/signdoc"
 import { Secp256k1, Secp256k1Signature } from "@cosmjs/crypto"
 import { fromBase64, fromHex, toHex } from "@cosmjs/encoding"
 import { Int53 } from "@cosmjs/math"
@@ -86,7 +90,7 @@ export class OfflineSigner implements OfflineAminoSigner {
       throw new Error("Signer address does not match the provided address")
     }
 
-    const signDocAminoJSON = sortedJsonStringify(signDoc)
+    const signDocAminoJSON = escapeCharacters(sortedJsonStringify(signDoc))
     const signatureHex = await this.signMessage(signDocAminoJSON)
     const signatureFromHex = fromHex(signatureHex.replace("0x", "")).subarray(0, -1)
     const secp256signature = Secp256k1Signature.fromFixedLength(signatureFromHex)
