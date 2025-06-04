@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js"
 import type { StdFee } from "@cosmjs/amino"
 import { IconChevronDown } from "@initia/icons-react"
 import { formatAmount } from "@/public/utils"
-import { usePortalContainer } from "@/public/portal"
+import { usePortal } from "@/public/app/PortalContext"
 import { useChain } from "@/data/chains"
 import { useFindAsset } from "@/data/assets"
 import { useTxRequestHandler } from "@/data/tx"
@@ -16,7 +16,7 @@ interface Props {
 }
 
 const TxFee = ({ options, value, onChange }: Props) => {
-  const portalContainer = usePortalContainer()
+  const portalContainer = usePortal()
   const { txRequest } = useTxRequestHandler()
   const chain = useChain(txRequest.chainId)
   const findAsset = useFindAsset(chain)
