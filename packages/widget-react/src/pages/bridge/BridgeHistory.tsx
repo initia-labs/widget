@@ -1,27 +1,20 @@
 import { useToggle } from "react-use"
 import { useInitiaWidget } from "@/public/data/hooks"
-import { LocalStorageKey } from "@/data/constants"
 import Page from "@/components/Page"
 import Status from "@/components/Status"
 import AsyncBoundary from "@/components/AsyncBoundary"
 import CheckboxButton from "@/components/CheckboxButton"
-import type { BridgeHistoryDetailedItem } from "./data/tx"
-import { useBridgeHistory } from "./data/tx"
+import { useBridgeHistoryList } from "./data/history"
 import BridgeHistoryItem from "./BridgeHistoryItem"
 import styles from "./BridgeHistory.module.css"
 
 const BridgeHistory = () => {
   const { initiaAddress, hexAddress } = useInitiaWidget()
-  const [allHistory = []] = useBridgeHistory()
-  const myHistory = allHistory.filter(({ chainId, txHash }) => {
-    const storedHistoryItem = localStorage.getItem(
-      `${LocalStorageKey.BRIDGE_HISTORY}:${chainId}:${txHash}`,
-    )
-    if (!storedHistoryItem) return false
-    const { values } = JSON.parse(storedHistoryItem) as BridgeHistoryDetailedItem
-    return [values.sender, values.recipient].some((address) =>
-      [initiaAddress, hexAddress].includes(address),
-    )
+  const { history: allHistory, getHistoryDetails } = useBridgeHistoryList()
+  const myHistory = allHistory.filter((tx) => {
+    const { values } = getHistoryDetails(tx)
+    const { sender, recipient } = values
+    return [sender, recipient].some((address) => [initiaAddress, hexAddress].includes(address))
   })
 
   const [showAll, toggleShowAll] = useToggle(!myHistory.length)
@@ -44,10 +37,10 @@ const BridgeHistory = () => {
         {filteredHistory.length === 0 ? (
           <Status>No bridge/swap history</Status>
         ) : (
-          filteredHistory.map((historyItem, index) => (
+          filteredHistory.map((tx, index) => (
             <div className={styles.item} key={index}>
               <AsyncBoundary>
-                <BridgeHistoryItem {...historyItem} />
+                <BridgeHistoryItem tx={tx} />
               </AsyncBoundary>
             </div>
           ))

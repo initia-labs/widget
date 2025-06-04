@@ -1,11 +1,9 @@
 import { intlFormatDistance } from "date-fns"
 import { useEffect, useMemo } from "react"
-import { useLocalStorage } from "react-use"
 import type { StatusResponseJson } from "@skip-go/client"
 import { IconArrowDown, IconCheckCircleFilled, IconWarningFilled } from "@initia/icons-react"
 import { Link } from "@/lib/router"
 import { formatAmount, truncate } from "@/public/utils"
-import { LocalStorageKey } from "@/data/constants"
 import Loader from "@/components/Loader"
 import Image from "@/components/Image"
 import { formatFees } from "./data/format"
@@ -13,43 +11,42 @@ import type { RouterChainJson } from "./data/chains"
 import { useSkipChain } from "./data/chains"
 import type { RouterAsset } from "./data/assets"
 import { useSkipAsset } from "./data/assets"
-import type { TxIdentifier, BridgeHistoryDetailedItem } from "./data/tx"
 import { BridgeType, getBridgeType, useTrackTxQuery, useTxStatusQuery } from "./data/tx"
+import type { TxIdentifier } from "./data/history"
+import { useBridgeHistoryDetails } from "./data/history"
 import styles from "./BridgeHistoryItem.module.css"
 
-const BridgeHistoryItem = (history: TxIdentifier) => {
-  const { chainId, txHash } = history
+const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
+  const { chainId, txHash } = tx
 
-  const [historyItemDetails, setHistoryItemDetails] = useLocalStorage<BridgeHistoryDetailedItem>(
-    `${LocalStorageKey.BRIDGE_HISTORY}:${chainId}:${txHash}`,
-  )
+  // NOTE: Do not merge history details into one list. Keep them separate.
+  // Each transaction needs its own update when its state changes.
+  // Managing from a parent causes hooks to re-run on state changes.
+  const [details, setDetails] = useBridgeHistoryDetails(tx)
+  if (!details) throw new Error("Bridge history details not found")
+  const { route, values, timestamp } = details
 
-  if (!historyItemDetails)
-    throw new Error(
-      `Bridge history item details not found for chainId: ${chainId}, txHash: ${txHash}`,
-    )
-
-  const { timestamp, values, route } = historyItemDetails
-
-  const { data: trackedTxHash } = useTrackTxQuery(chainId, txHash, historyItemDetails)
-  const { data: txStatus } = useTxStatusQuery(chainId, trackedTxHash, historyItemDetails)
-  const state = historyItemDetails.state ?? getState(txStatus)
+  const { data: trackedTxHash = "" } = useTrackTxQuery(details)
+  const { data: txStatus } = useTxStatusQuery({ ...details, txHash: trackedTxHash })
+  const state = details.state ?? getState(txStatus)
 
   useEffect(() => {
-    if (!trackedTxHash) return
-    setHistoryItemDetails((prev) => {
-      if (!prev) return prev
-      return { ...prev, tracked: true }
-    })
-  }, [trackedTxHash, setHistoryItemDetails])
+    if (trackedTxHash) {
+      setDetails((prev) => {
+        if (!prev) throw new Error("Bridge history details not found")
+        return { ...prev, tracked: true }
+      })
+    }
+  }, [setDetails, trackedTxHash])
 
   useEffect(() => {
-    if (state === "loading") return
-    setHistoryItemDetails((prev) => {
-      if (!prev) return prev
-      return { ...prev, tracked: true, state }
-    })
-  }, [state, setHistoryItemDetails])
+    if (state !== "loading") {
+      setDetails((prev) => {
+        if (!prev) throw new Error("Bridge history details not found")
+        return { ...prev, tracked: true, state }
+      })
+    }
+  }, [setDetails, state, txHash])
 
   const renderIcon = () => {
     switch (state) {

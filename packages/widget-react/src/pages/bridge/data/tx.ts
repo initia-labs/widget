@@ -1,13 +1,11 @@
 import { has, head } from "ramda"
 import { AuthInfo, Tx, TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx"
 import { toBase64 } from "@cosmjs/encoding"
-import { useLocalStorage } from "react-use"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import type { RouteResponseJson, StatusResponseJson, TrackResponseJson } from "@skip-go/client"
+import type { StatusResponseJson, TrackResponseJson } from "@skip-go/client"
 import { aminoConverters, aminoTypes } from "@initia/amino-converter"
 import { useLocationState } from "@/lib/router"
 import { useInitiaAddress } from "@/public/data/hooks"
-import { LocalStorageKey } from "@/data/constants"
 import { normalizeError, STALE_TIMES } from "@/data/http"
 import { useSignWithEthSecp256k1 } from "@/data/signer"
 import { skipQueryKeys, useSkip } from "./skip"
@@ -15,6 +13,7 @@ import type { FormValues } from "./form"
 import { waitForAccountCreation } from "./account"
 import { useFindSkipChain } from "./chains"
 import type { RouterRouteResponseJson } from "./simulate"
+import type { HistoryDetails } from "./history"
 
 export interface BridgePreviewState {
   route: RouterRouteResponseJson
@@ -90,34 +89,14 @@ export function useSignOpHook() {
   })
 }
 
-export interface TxIdentifier {
-  chainId: string
-  txHash: string
-}
-
-export interface BridgeHistoryDetailedItem {
-  timestamp: number
-  route: RouteResponseJson
-  values: FormValues
-  tracked?: boolean
-  state?: "success" | "error"
-}
-
-export function useBridgeHistory() {
-  return useLocalStorage<TxIdentifier[]>(LocalStorageKey.BRIDGE_HISTORY, [])
-}
-
-export function useTrackTxQuery(
-  chainId: string,
-  txHash: string,
-  historyItem: BridgeHistoryDetailedItem,
-) {
+export function useTrackTxQuery(details: HistoryDetails) {
+  const { chainId, txHash } = details
   const skip = useSkip()
   return useQuery({
     queryKey: skipQueryKeys.txTrack(chainId, txHash).queryKey,
     queryFn: async () => {
       try {
-        if (!shouldTrackBridgeHistory(historyItem)) return { tx_hash: txHash }
+        if (!shouldTrackBridgeHistory(details)) return { tx_hash: txHash }
         return await skip
           .post("v2/tx/track", { json: { tx_hash: txHash, chain_id: chainId } })
           .json<TrackResponseJson>()
@@ -132,13 +111,10 @@ export function useTrackTxQuery(
   })
 }
 
-export function useTxStatusQuery(
-  chainId: string,
-  txHash: string = "",
-  history: BridgeHistoryDetailedItem,
-) {
+export function useTxStatusQuery(details: HistoryDetails) {
+  const { chainId, txHash, state } = details
   const skip = useSkip()
-  const isLz = getBridgeType(history.route) === BridgeType.LZ
+  const isLz = getBridgeType(details.route) === BridgeType.LZ
 
   return useQuery({
     queryKey: skipQueryKeys.txStatus(chainId, txHash, isLz).queryKey,
@@ -146,7 +122,7 @@ export function useTxStatusQuery(
       skip
         .get("v2/tx/status", { searchParams: { tx_hash: txHash, chain_id: chainId, is_lz: isLz } })
         .json<StatusResponseJson>(),
-    enabled: !!txHash && !history.state,
+    enabled: !!txHash && !state,
     refetchInterval: ({ state: { data } }) => {
       if (!data) return false
       const { status } = data
@@ -174,6 +150,6 @@ export function getBridgeType(route: RouterRouteResponseJson) {
   return BridgeType.SKIP
 }
 
-export function shouldTrackBridgeHistory(history: BridgeHistoryDetailedItem) {
-  return !history.tracked && getBridgeType(history.route) !== BridgeType.LZ
+export function shouldTrackBridgeHistory({ tracked, route }: HistoryDetails) {
+  return !tracked && getBridgeType(route) !== BridgeType.LZ
 }

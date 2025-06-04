@@ -9,7 +9,6 @@ import { Address } from "@/public/utils"
 import { DEFAULT_GAS_ADJUSTMENT } from "@/public/data/constants"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { useNotification } from "@/public/app/NotificationContext"
-import { LocalStorageKey } from "@/data/constants"
 import { useConfig } from "@/data/config"
 import { normalizeError } from "@/data/http"
 import { waitForTxConfirmationWithClient } from "@/data/tx"
@@ -19,7 +18,8 @@ import { skipQueryKeys } from "./data/skip"
 import { useCosmosWallets } from "./data/cosmos"
 import { useChainType, useSkipChain } from "./data/chains"
 import { useFindSkipAsset } from "./data/assets"
-import { BridgeType, getBridgeType, useBridgeHistory, useBridgePreviewState } from "./data/tx"
+import { BridgeType, getBridgeType, useBridgePreviewState } from "./data/tx"
+import { useBridgeHistoryList } from "./data/history"
 import { useClaimableReminders } from "./op/reminder"
 import FooterWithError from "./FooterWithError"
 import styles from "./BridgePreviewFooter.module.css"
@@ -31,7 +31,7 @@ interface Props {
 const BridgePreviewFooter = ({ tx }: Props) => {
   const navigate = useNavigate()
   const { showNotification, updateNotification, hideNotification } = useNotification()
-  const [, setBridgeHistory] = useBridgeHistory()
+  const { addHistoryItem } = useBridgeHistoryList()
 
   const { route, values } = useBridgePreviewState()
   const { srcChainId, sender, recipient, cosmosWalletName } = values
@@ -127,11 +127,7 @@ const BridgePreviewFooter = ({ tx }: Props) => {
       wait
         .then(() => {
           const tx = { chainId: srcChainId, txHash }
-          setBridgeHistory((prev = []) => [tx, ...prev])
-          localStorage.setItem(
-            `${LocalStorageKey.BRIDGE_HISTORY}:${srcChainId}:${txHash}`,
-            JSON.stringify({ timestamp: Date.now(), route, values }),
-          )
+          addHistoryItem(tx, { ...tx, timestamp: Date.now(), route, values })
           updateNotification({
             type: "success",
             title: "Transaction sent",

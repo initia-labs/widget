@@ -5,7 +5,7 @@ import { useNavigate } from "@/lib/router"
 import { useInitiaAddress } from "@/public/data/hooks"
 import { useModal } from "@/public/app/ModalContext"
 import { LocalStorageKey } from "@/data/constants"
-import type { TxIdentifier } from "../data/tx"
+import type { TxIdentifier } from "../data/history"
 import ClaimableList from "./ClaimableList"
 
 export interface ReminderDetails extends TxIdentifier {
