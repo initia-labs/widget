@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js"
+import { sentenceCase } from "change-case"
 import { useEffect, useMemo, useState } from "react"
 import { useDebounce, useLocalStorage } from "react-use"
-import { IconChevronDown, IconSettingFilled } from "@initia/icons-react"
+import { IconChevronDown, IconSettingFilled, IconWarningFilled } from "@initia/icons-react"
 import { useNavigate } from "@/lib/router"
 import { formatAmount, formatNumber, toQuantity } from "@/public/utils"
 import { useModal } from "@/public/app/ModalContext"
@@ -13,6 +14,7 @@ import QuantityInput from "@/components/form/QuantityInput"
 import Footer from "@/components/Footer"
 import ModalTrigger from "@/components/ModalTrigger"
 import FormHelp from "@/components/form/FormHelp"
+import PlainModalContent from "@/components/PlainModalContent"
 import { formatDuration, formatFees } from "./data/format"
 import type { FormValues } from "./data/form"
 import { FormValuesSchema, useBridgeForm } from "./data/form"
@@ -25,7 +27,6 @@ import BridgeAccount from "./BridgeAccount"
 import SlippageControl from "./SlippageControl"
 import type { RouteType } from "./SelectRouteOption"
 import SelectRouteOption from "./SelectRouteOption"
-import BridgeWarningModalContent from "./BridgeWarningModalContent"
 import styles from "./BridgeFields.module.css"
 
 const BridgeFields = () => {
@@ -80,16 +81,24 @@ const BridgeFields = () => {
   const { openModal, closeModal } = useModal()
   const submit = handleSubmit((values: FormValues) => {
     if (route?.warning) {
+      const { type = "", message } = route.warning ?? {}
       openModal({
         content: (
-          <BridgeWarningModalContent
-            warning={route.warning}
-            onOk={() => {
-              navigate("/bridge/preview", { route, values })
-              closeModal()
+          <PlainModalContent
+            type="warning"
+            icon={<IconWarningFilled size={40} />}
+            title={sentenceCase(type)}
+            primaryButton={{ label: "Cancel", onClick: closeModal }}
+            secondaryButton={{
+              label: "Proceed anyway",
+              onClick: () => {
+                navigate("/bridge/preview", { route, values })
+                closeModal()
+              },
             }}
-            onCancel={closeModal}
-          />
+          >
+            <p className={styles.warning}>{message}</p>
+          </PlainModalContent>
         ),
       })
       return

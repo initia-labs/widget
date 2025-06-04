@@ -9,38 +9,37 @@
   align-items: center;
   gap: 8px;
 
-  color: var(--warning);
-
   .title {
     font-size: 20px;
     font-weight: 600;
   }
 }
 
-.message {
-  color: var(--gray-1);
-  font-size: 16px;
-  font-weight: 500;
-  margin-top: 12px;
+.warning {
+  color: var(--warning);
+}
+
+.content {
+  margin-top: 20px;
 }
 
 .footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
 
-  margin-top: 20px;
+  margin-top: 40px;
   padding: 0 24px;
+}
 
-  .ok {
-    gap: 2px;
-    color: var(--gray-2);
-    font-size: 14px;
-    font-weight: 500;
-  }
+.secondary {
+  gap: 2px;
+  color: var(--gray-2);
+  font-size: 14px;
+  font-weight: 500;
 
-  .ok:hover {
+  &:hover {
     color: var(--gray-0);
   }
 }
