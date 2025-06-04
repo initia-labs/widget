@@ -1,4 +1,5 @@
 import { useEffect, type PropsWithChildren } from "react"
+import { Tooltip } from "radix-ui"
 import { MemoryRouter } from "@/lib/router"
 import { LocalStorageKey } from "@/data/constants"
 import type { Config } from "@/data/config"
@@ -73,11 +74,13 @@ const InitiaWidgetProvider = ({ children, ...config }: PropsWithChildren<Partial
           <PortalProvider>
             <NotificationProvider>
               <ModalProvider>
-                {children}
+                <Tooltip.Provider delayDuration={0} skipDelayDuration={0}>
+                  {children}
 
-                <Drawer>
-                  <Routes />
-                </Drawer>
+                  <Drawer>
+                    <Routes />
+                  </Drawer>
+                </Tooltip.Provider>
               </ModalProvider>
             </NotificationProvider>
           </PortalProvider>
