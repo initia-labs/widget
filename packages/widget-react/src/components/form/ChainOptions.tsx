@@ -18,7 +18,7 @@ const ChainOptions = ({ label, chains, value, onSelect }: Props) => {
       {label && <h2 className={styles.title}>{label}</h2>}
       <div className={styles.grid}>
         {chains.map(({ chainId, name, logoUrl }) => (
-          <WidgetTooltip label={name} key={chainId}>
+          <WidgetTooltip label={name} key={chainId} disableHoverableContent>
             <button
               type="button"
               className={clsx(styles.item, { [styles.active]: chainId === value })}
