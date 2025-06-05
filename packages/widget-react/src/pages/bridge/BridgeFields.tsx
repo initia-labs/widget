@@ -54,7 +54,7 @@ const BridgeFields = () => {
 
   // simulation
   const [debouncedQuantity, setDebouncedQuantity] = useState(quantity)
-  const [isReady] = useDebounce(() => setDebouncedQuantity(quantity), 300, [quantity])
+  useDebounce(() => setDebouncedQuantity(quantity), 300, [quantity])
 
   const isOpWithdrawable = useIsOpWithdrawable()
   const routeQueryDefault = useRouteQuery(debouncedQuantity)
@@ -65,9 +65,8 @@ const BridgeFields = () => {
   const routeQuery =
     isOpWithdrawable && selectedType === "op" ? routeQueryOpWithdrawal : routeQueryDefault
   const { data, isLoading, isFetching, error, isFetched } = routeQuery
-  const ready = isReady()
-  const route = ready && isFetched ? data : undefined
-  const isSimulating = debouncedQuantity && (!ready || isLoading || isFetching)
+  const route = isFetched ? data : undefined
+  const isSimulating = debouncedQuantity && (isLoading || isFetching)
 
   const flip = () => {
     setValue("srcChainId", dstChainId)
@@ -112,13 +111,14 @@ const BridgeFields = () => {
   const disabledMessage = useMemo(() => {
     if (!values.sender) return "Connect wallet"
     if (!values.quantity) return "Enter amount"
+    if (!debouncedQuantity) return "Enter amount"
     if (!values.recipient) return "Enter recipient address"
     if (formState.errors.quantity) return formState.errors.quantity.message
     const result = FormValuesSchema.safeParse(values)
     if (!result.success) return `Invalid ${result.error.issues[0].path}`
     if (!route) return "Route not found"
     if (feeErrorMessage) return // feeErrorMessage
-  }, [feeErrorMessage, formState, route, values])
+  }, [debouncedQuantity, feeErrorMessage, formState, route, values])
 
   // render
   const received = route ? formatAmount(route.amount_out, { decimals: dstAsset.decimals }) : "0"
