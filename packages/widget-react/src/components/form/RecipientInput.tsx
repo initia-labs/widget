@@ -24,7 +24,10 @@ const RecipientInput = (props: Props) => {
   const { mode = "onChange", myAddress, validate = Address.validate, onApply, ref } = props
   const autoFocusRef = useAutoFocus()
 
-  const { getValues, setValue, formState } = useFormContext<{ recipient: string }>()
+  const { getValues, setValue, formState } = useFormContext<{
+    recipient: string
+    recipientType?: string
+  }>()
   const initialValue = mode === "onChange" ? getValues("recipient") : ""
   const [inputValue, setInputValue] = useState<string>(initialValue)
   const client = useUsernameClient()
@@ -51,10 +54,12 @@ const RecipientInput = (props: Props) => {
 
   // onSubmit: update form value when button clicked
   const handleApply = () => {
-    if (!isLoading && !error) {
-      setValue("recipient", resolvedAddress, { shouldValidate: true })
-      onApply?.()
-    }
+    if (isLoading || error) return
+    const isMyAddress = myAddress && Address.equals(resolvedAddress, myAddress)
+    const recipientType = isMyAddress ? "auto" : "manual"
+    setValue("recipientType", recipientType, { shouldValidate: true })
+    setValue("recipient", resolvedAddress, { shouldValidate: true })
+    onApply?.()
   }
 
   const renderResult = () => {

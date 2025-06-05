@@ -46,4 +46,8 @@ export const Address = {
       return false
     }
   },
+
+  equals(address1: string, address2: string) {
+    return Address.toBech32(address1) === Address.toBech32(address2)
+  },
 }
