@@ -2,14 +2,12 @@ import ky from "ky"
 import { descend, path, uniq } from "ramda"
 import { useAtom } from "jotai"
 import { atomWithStorage } from "jotai/utils"
-import { useCallback } from "react"
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { createQueryKeys } from "@lukemorales/query-key-factory"
 import type { Chain, SecureEndpoint } from "@initia/initia-registry-types"
 import { LocalStorageKey } from "./constants"
 import { useConfig } from "./config"
 import { STALE_TIMES } from "./http"
-import { useAsset } from "./assets"
 
 export const chainQueryKeys = createQueryKeys("initia-widget:chain", {
   list: (registryUrl: string) => [registryUrl],
@@ -121,28 +119,4 @@ export function useManageChains() {
   }
 
   return { chains, addedChains, notAddedChains, addChain, removeChain }
-}
-
-export function useAddEthereumChain(chain: NormalizedChain) {
-  const { evm_chain_id, name, fees, jsonRpcUrl } = chain
-  const [{ denom }] = fees.fee_tokens
-  const { symbol, decimals } = useAsset(denom, chain)
-  const { wallet } = useConfig()
-  return useCallback(async () => {
-    if (!wallet) return
-    if (!evm_chain_id) throw new Error("EVM chain ID not found")
-    if (!jsonRpcUrl) throw new Error("JSON RPC URL not found")
-    const provider = await wallet.getEthereumProvider()
-    await provider.request({
-      method: "wallet_addEthereumChain",
-      params: [
-        {
-          chainId: `0x${BigInt(evm_chain_id).toString(16)}`,
-          chainName: name,
-          nativeCurrency: { symbol, decimals },
-          rpcUrls: [jsonRpcUrl],
-        },
-      ],
-    })
-  }, [decimals, evm_chain_id, jsonRpcUrl, name, symbol, wallet])
 }

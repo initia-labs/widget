@@ -1,4 +1,6 @@
-import { ethers } from "ethers"
+import type { Eip1193Provider } from "ethers"
+import { useAccount, useSignMessage } from "wagmi"
+import { BrowserProvider, ethers } from "ethers"
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing"
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx"
 import type {
@@ -169,9 +171,8 @@ export function useSignWithEthSecp256k1() {
 
 export function useOfflineSigner() {
   const address = useInitiaAddress()
-  const { wallet } = useConfig()
-  if (!wallet) return
-  return new OfflineSigner(address, wallet.sign)
+  const { signMessageAsync } = useSignMessage()
+  return new OfflineSigner(address, (message) => signMessageAsync({ message }))
 }
 
 // Keep one client per chain to avoid repeatedly establishing RPC connections.
@@ -201,5 +202,13 @@ export function useCreateSigningStargateClient() {
 
     clientCache.set(chainId, client)
     return client
+  }
+}
+
+export function useGetProvider() {
+  const { connector } = useAccount()
+  return async () => {
+    if (!connector) throw new Error("Wallet not connected")
+    return new BrowserProvider((await connector.getProvider()) as Eip1193Provider)
   }
 }

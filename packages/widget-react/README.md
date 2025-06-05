@@ -8,21 +8,14 @@ Below is a minimal example to demonstrate core capabilities: connecting a wallet
 
 ```tsx
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
-import { useConnectWallet, useWallets } from "@privy-io/react-auth"
 import { truncate, useAddress, useInitiaWidget } from "@initia/widget-react"
 
 const Example = () => {
   const address = useAddress()
-  const { connectWallet } = useConnectWallet()
-  const { ready } = useWallets()
-  const { username, openWallet, openBridge, requestTxBlock } = useInitiaWidget()
+  const { username, openConnect, openWallet, openBridge, requestTxBlock } = useInitiaWidget()
 
   if (!address) {
-    return (
-      <button onClick={connectWallet} disabled={!ready}>
-        {ready ? "Connect" : "Loading..."}
-      </button>
-    )
+    return <button onClick={openConnect}>Connect</button>
   }
 
   const send = async () => {
@@ -81,10 +74,9 @@ pnpm add @initia/widget-react
 ### Provider Setup
 
 You must install a wallet connector to inject a wallet into the app.
-This library also uses [@tanstack/react-query](https://tanstack.com/query/latest) internally, so you need to install it as well:
 
 ```bash
-pnpm add @tanstack/react-query
+pnpm add @tanstack/react-query wagmi
 ```
 
 ⚠️ Refer to the examples below.
@@ -220,8 +212,7 @@ interface TxRequest {
 ## Usage on Testnet
 
 ```tsx
-import { TESTNET } from "@privy-io/react-auth"
-import { InitiaWidgetProvider } from "@initia/widget-react"
+import { InitiaWidgetProvider, TESTNET } from "@initia/widget-react"
 
 const App = () => {
   return <InitiaWidgetProvider {...TESTNET}>{/* YOUR APP HERE */}</InitiaWidgetProvider>

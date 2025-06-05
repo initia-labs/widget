@@ -1,5 +1,4 @@
 import { has, head } from "ramda"
-import { BrowserProvider } from "ethers"
 import BigNumber from "bignumber.js"
 import { AuthInfo, Tx, TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx"
 import { toBase64 } from "@cosmjs/encoding"
@@ -13,9 +12,8 @@ import { DEFAULT_GAS_ADJUSTMENT } from "@/public/data/constants"
 import { Address } from "@/public/utils"
 import { useNotification } from "@/public/app/NotificationContext"
 import { useInitiaAddress, useInitiaWidget } from "@/public/data/hooks"
-import { useConfig } from "@/data/config"
 import { normalizeError, STALE_TIMES } from "@/data/http"
-import { useSignWithEthSecp256k1 } from "@/data/signer"
+import { useGetProvider, useSignWithEthSecp256k1 } from "@/data/signer"
 import { waitForTxConfirmationWithClient } from "@/data/tx"
 import { useClaimableReminders } from "../op/reminder"
 import { skipQueryKeys, useSkip } from "./skip"
@@ -58,7 +56,7 @@ export function useBridgeTx(tx: TxJson) {
   const { route, values } = useBridgePreviewState()
   const { srcChainId, sender, recipient, cosmosWalletName } = values
 
-  const { wallet } = useConfig()
+  const getProvider = useGetProvider()
   const { requestTxSync, waitForTxConfirmation } = useInitiaWidget()
   const { find } = useCosmosWallets()
   const srcChain = useSkipChain(srcChainId)
@@ -119,12 +117,11 @@ export function useBridgeTx(tx: TxJson) {
 
         if ("evm_tx" in tx) {
           const { chain_id: chainId, to, value, data } = tx.evm_tx
-          if (!wallet) throw new Error("Wallet not connected")
-          const provider = new BrowserProvider(await wallet.getEthereumProvider())
+          const provider = await getProvider()
+          const signer = await provider.getSigner()
           await provider.send("wallet_switchEthereumChain", [
             { chainId: `0x${Number(chainId).toString(16)}` },
           ])
-          const signer = await provider.getSigner()
           const response = await signer.sendTransaction({ chainId, to, value, data: `0x${data}` })
           // `wait()` is a getter on the response object. Destructuring breaks
           // its internal binding, so keep the original object intact.

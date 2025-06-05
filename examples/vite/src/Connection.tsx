@@ -1,15 +1,12 @@
 import { truncate, useInitiaWidget } from "@initia/widget-react"
-import { useConnectWallet, useWallets } from "@privy-io/react-auth"
 import styles from "./Connection.module.css"
 
 const Connection = () => {
-  const { connectWallet } = useConnectWallet()
-  const { ready } = useWallets()
-  const { address, username, openWallet } = useInitiaWidget()
+  const { address, username, openConnect, openWallet } = useInitiaWidget()
 
   if (!address) {
     return (
-      <button className={styles.button} onClick={connectWallet} disabled={!ready}>
+      <button className={styles.button} onClick={openConnect}>
         Connect
       </button>
     )

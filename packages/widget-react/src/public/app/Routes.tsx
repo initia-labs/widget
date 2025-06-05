@@ -1,5 +1,5 @@
 import { usePath } from "@/lib/router"
-import Status from "@/components/Status"
+import Connect from "@/pages/connect/Connect"
 import Home from "@/pages/wallet/tabs/Home"
 import Send from "@/pages/wallet/txs/send/Send"
 import CollectionDetails from "@/pages/wallet/tabs/nft/CollectionDetails"
@@ -17,6 +17,11 @@ const Routes = () => {
   const path = usePath()
   const address = useAddress()
 
+  if (path === "/connect") {
+    if (address) return null
+    return <Connect />
+  }
+
   switch (path) {
     case "/bridge":
       return <BridgeForm />
@@ -25,7 +30,7 @@ const Routes = () => {
   }
 
   if (!address) {
-    return <Status error>Wallet not connected</Status>
+    return null
   }
 
   switch (path) {

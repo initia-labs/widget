@@ -1,32 +1,20 @@
 import type { PropsWithChildren } from "react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { PrivyProvider, useWallets } from "@privy-io/react-auth"
-import { WagmiProvider } from "@privy-io/wagmi"
-import { createConfig, http, useAccount, useDisconnect } from "wagmi"
+import { createConfig, http, WagmiProvider } from "wagmi"
 import { mainnet } from "wagmi/chains"
-import { InitiaWidgetProvider, injectStyles, PRIVY_APP_ID, TESTNET } from "@initia/widget-react"
+import { InitiaWidgetProvider, injectStyles, TESTNET } from "@initia/widget-react"
 import css from "@initia/widget-react/styles.css?inline"
 import { isTestnet, useTheme } from "./data"
 
 injectStyles(css)
-const privyConfig = { appearance: { walletList: ["detected_wallets" as const] } }
 const wagmiConfig = createConfig({ chains: [mainnet], transports: { [mainnet.id]: http() } })
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
 
 const WithInitiaWidget = ({ children }: PropsWithChildren) => {
-  const { address } = useAccount()
-  const { disconnect } = useDisconnect()
-  const { wallets } = useWallets()
-  const wallet = wallets[0]
-
   const theme = useTheme()
 
   return (
-    <InitiaWidgetProvider
-      {...(isTestnet ? TESTNET : {})}
-      wallet={address ? { ...wallet, address, disconnect } : undefined}
-      theme={theme}
-    >
+    <InitiaWidgetProvider {...(isTestnet ? TESTNET : {})} theme={theme}>
       {children}
     </InitiaWidgetProvider>
   )
@@ -34,13 +22,11 @@ const WithInitiaWidget = ({ children }: PropsWithChildren) => {
 
 const Providers = ({ children }: PropsWithChildren) => {
   return (
-    <PrivyProvider appId={PRIVY_APP_ID} config={privyConfig}>
-      <QueryClientProvider client={queryClient}>
-        <WagmiProvider config={wagmiConfig}>
-          <WithInitiaWidget>{children}</WithInitiaWidget>
-        </WagmiProvider>
-      </QueryClientProvider>
-    </PrivyProvider>
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <WithInitiaWidget>{children}</WithInitiaWidget>
+      </WagmiProvider>
+    </QueryClientProvider>
   )
 }
 

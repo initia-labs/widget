@@ -1,6 +1,6 @@
+import { useAccount } from "wagmi"
 import { useQuery } from "@tanstack/react-query"
 import { useTx } from "@/data/tx"
-import { useConfig } from "@/data/config"
 import { useWidgetVisibility } from "@/data/ui"
 import { useDefaultChain } from "@/data/chains"
 import { accountQueryKeys, useUsernameClient } from "@/data/account"
@@ -9,15 +9,15 @@ import { STALE_TIMES } from "@/data/http"
 import { Address } from "../utils"
 
 export function useInitiaAddress() {
-  const { wallet } = useConfig()
-  if (!wallet) return ""
-  return Address.toBech32(wallet.address)
+  const hexAddress = useHexAddress()
+  if (!hexAddress) return ""
+  return Address.toBech32(hexAddress)
 }
 
 export function useHexAddress() {
-  const { wallet } = useConfig()
-  if (!wallet) return ""
-  return Address.toPrefixedHex(wallet.address)
+  const { address } = useAccount()
+  if (!address) return ""
+  return Address.toPrefixedHex(address)
 }
 
 export function useAddress() {
@@ -53,6 +53,10 @@ export function useInitiaWidget() {
     openWidget("/")
   }
 
+  const openConnect = () => {
+    openWidget("/connect")
+  }
+
   const openBridge = (defaultValues?: Partial<FormValues>) => {
     openWidget("/bridge", defaultValues)
   }
@@ -64,6 +68,7 @@ export function useInitiaWidget() {
     initiaAddress,
     hexAddress,
     username,
+    openConnect,
     openWallet,
     openBridge,
     ...tx,

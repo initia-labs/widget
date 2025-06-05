@@ -1,10 +1,10 @@
-import { useEffect, type PropsWithChildren } from "react"
+import type { PropsWithChildren } from "react"
 import { Tooltip } from "radix-ui"
 import { MemoryRouter } from "@/lib/router"
 import { LocalStorageKey } from "@/data/constants"
 import type { Config } from "@/data/config"
 import { ConfigContext } from "@/data/config"
-import { useAddEthereumChain, useDefaultChain, useInitiaRegistry, useLayer1 } from "@/data/chains"
+import { useInitiaRegistry, useLayer1 } from "@/data/chains"
 import AsyncBoundary from "@/components/AsyncBoundary"
 import { useSkipChains } from "@/pages/bridge/data/chains"
 import { useSkipAssets } from "@/pages/bridge/data/assets"
@@ -39,19 +39,6 @@ const Prefetch = () => {
   useSkipChains()
   useSkipAssets(localStorage.getItem(LocalStorageKey.BRIDGE_SRC_CHAIN_ID) ?? layer1.chainId)
   useSkipAssets(localStorage.getItem(LocalStorageKey.BRIDGE_DST_CHAIN_ID) ?? layer1.chainId)
-
-  // evm
-  const chain = useDefaultChain()
-  const isEthereumChain = !!chain.evm_chain_id
-  const addEthereumChain = useAddEthereumChain(chain)
-
-  useEffect(() => {
-    if (isEthereumChain) {
-      // Prompt the wallet to add the EVM chain so users aren't asked when
-      // submitting their first transaction.
-      addEthereumChain()
-    }
-  }, [addEthereumChain, isEthereumChain])
 
   return null
 }

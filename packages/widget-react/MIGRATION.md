@@ -18,10 +18,9 @@ All imports from `@initia/react-wallet-widget` should now come from `@initia/wid
 ### Provider Setup
 
 You must install a wallet connector to inject a wallet into the app.
-This library also uses [@tanstack/react-query](https://tanstack.com/query/latest) internally, so you need to install it as well:
 
 ```bash
-pnpm add @tanstack/react-query
+pnpm add @tanstack/react-query wagmi
 ```
 
 ⚠️ Refer to the examples below.
@@ -121,22 +120,15 @@ const App = () => {
 ```
 
 ```tsx
-// v2 (Initia Widget + Privy)
+// v2
 import { truncate } from "@initia/widget-react"
-import { useConnectWallet, useWallets } from "@privy-io/react-auth"
 import { InitiaWidgetProvider, useInitiaWidget } from "@initia/widget-react"
 
 const App = () => {
-  const { connectWallet } = useConnectWallet()
-  const { ready } = useWallets()
-  const { address, openWallet, openBridge } = useInitiaWidget()
+  const { address, openConnect, openWallet, openBridge } = useInitiaWidget()
 
   if (!address) {
-    return (
-      <button onClick={connectWallet} disabled={!ready}>
-        {ready ? "Connect" : "Loading..."}
-      </button>
-    )
+    return <button onClick={openConnect}>Connect</button>
   }
 
   return (

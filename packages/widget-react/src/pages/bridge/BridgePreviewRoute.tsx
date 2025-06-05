@@ -1,8 +1,8 @@
 import { zipObj } from "ramda"
 import { useToggle } from "react-use"
 import { Collapsible } from "radix-ui"
+import { useAccount } from "wagmi"
 import { IconWallet } from "@initia/icons-react"
-import { useConfig } from "@/data/config"
 import AsyncBoundary from "@/components/AsyncBoundary"
 import CheckboxButton from "@/components/CheckboxButton"
 import Image from "@/components/Image"
@@ -62,7 +62,7 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
   const addressMap = zipObj(route.required_chain_addresses, addressList)
 
   const { find } = useCosmosWallets()
-  const { wallet } = useConfig()
+  const { connector } = useAccount()
 
   const [showAll, toggleShowAll] = useToggle(false)
   const canToggleShowAll = operations.length > 1
@@ -74,7 +74,7 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
     address: values.sender,
     walletIcon: (
       <Image
-        src={values.cosmosWalletName ? find(values.cosmosWalletName)?.image : wallet?.meta.icon}
+        src={values.cosmosWalletName ? find(values.cosmosWalletName)?.image : connector?.icon}
         width={12}
         height={12}
       />

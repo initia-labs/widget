@@ -8,8 +8,6 @@
   },
   "dependencies": {
     "@initia/widget-react": "workspace:^",
-    "@privy-io/react-auth": "^2",
-    "@privy-io/wagmi": "^1",
     "@tanstack/react-query": "^5",
     "next": "^15",
     "react": "^19",
