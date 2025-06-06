@@ -35,6 +35,7 @@ const BridgeFields = () => {
   const [selectedType, setSelectedType] = useLocalStorage<RouteType>(
     LocalStorageKey.BRIDGE_ROUTE_TYPE,
     "default",
+    { raw: true },
   )
 
   // form
