@@ -10,9 +10,12 @@ import styles from "./BridgeHistory.module.css"
 
 const BridgeHistory = () => {
   const { initiaAddress, hexAddress } = useInitiaWidget()
-  const { history: allHistory, getHistoryDetails } = useBridgeHistoryList()
+  const { history, getHistoryDetails } = useBridgeHistoryList()
+  const allHistory = history.filter((tx) => getHistoryDetails(tx))
   const myHistory = allHistory.filter((tx) => {
-    const { values } = getHistoryDetails(tx)
+    const details = getHistoryDetails(tx)
+    if (!details) return false
+    const { values } = details
     const { sender, recipient } = values
     return [sender, recipient].some((address) => [initiaAddress, hexAddress].includes(address))
   })

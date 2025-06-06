@@ -33,7 +33,7 @@ export function useBridgeHistoryList() {
 
   const getHistoryDetails = useCallback((tx: TxIdentifier) => {
     const item = localStorage.getItem(detailKeyOf(tx))
-    if (!item) throw new Error(`History item not found for ${tx.chainId}:${tx.txHash}`)
+    if (!item) return null
     return JSON.parse(item) as HistoryDetails
   }, [])
 
