@@ -1,6 +1,6 @@
 import clsx from "clsx"
 import type { PropsWithChildren } from "react"
-import { IconWarningFilled } from "@initia/icons-react"
+import { IconCheckCircleFilled, IconInfoFilled, IconWarningFilled } from "@initia/icons-react"
 import Loader from "../Loader"
 import styles from "./InputHelp.module.css"
 
@@ -12,11 +12,26 @@ interface Props {
 
 const InputHelp = ({ level, className, mt = 8, children }: PropsWithChildren<Props>) => {
   if (!children) return null
+
+  const getIcon = () => {
+    switch (level) {
+      case "loading":
+        return <Loader size={12} />
+      case "info":
+        return <IconInfoFilled size={12} />
+      case "warning":
+      case "error":
+        return <IconWarningFilled size={12} />
+      case "success":
+        return <IconCheckCircleFilled size={12} />
+      default:
+        return null
+    }
+  }
+
   return (
     <div className={clsx(styles.help, styles[level], className)} style={{ marginTop: mt }}>
-      <div className={styles.icon}>
-        {level === "loading" ? <Loader size={12} /> : <IconWarningFilled size={12} />}
-      </div>
+      <div className={styles.icon}>{getIcon()}</div>
       <p>{children}</p>
     </div>
   )

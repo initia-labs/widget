@@ -10,7 +10,7 @@
   flex: none;
   display: flex;
   align-items: center;
-  height: 16px; /* 12px * 150% */
+  height: calc(12px * 1.5);
 }
 
 .info {

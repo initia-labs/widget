@@ -1,6 +1,6 @@
 import clsx from "clsx"
 import { useTransition, animated } from "@react-spring/web"
-import { IconCheckCircleFilled, IconClose } from "@initia/icons-react"
+import { IconCheckCircleFilled, IconClose, IconCloseCircleFilled } from "@initia/icons-react"
 import type { InternalNotification } from "@/public/app/NotificationProvider"
 import type { NotificationType } from "@/public/app/NotificationContext"
 import Loader from "./Loader"
@@ -27,7 +27,7 @@ const Toast = ({ notification, onClose }: Props) => {
       case "success":
         return <IconCheckCircleFilled size={16} />
       case "error":
-        return <IconClose size={16} />
+        return <IconCloseCircleFilled size={16} />
       default:
         return null
     }
