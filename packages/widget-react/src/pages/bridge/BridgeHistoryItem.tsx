@@ -17,14 +17,12 @@ import { useBridgeHistoryDetails } from "./data/history"
 import styles from "./BridgeHistoryItem.module.css"
 
 const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
-  const { chainId, txHash } = tx
-
   // NOTE: Do not merge history details into one list. Keep them separate.
   // Each transaction needs its own update when its state changes.
   // Managing from a parent causes hooks to re-run on state changes.
   const [details, setDetails] = useBridgeHistoryDetails(tx)
   if (!details) throw new Error("Bridge history details not found")
-  const { route, values, timestamp } = details
+  const { chainId, txHash, route, values, timestamp } = details
 
   const { data: trackedTxHash = "" } = useTrackTxQuery(details)
   const { data: txStatus } = useTxStatusQuery({ ...details, txHash: trackedTxHash })
