@@ -56,6 +56,8 @@ const BridgeFields = () => {
 
   // simulation
   const [debouncedQuantity, setDebouncedQuantity] = useState(quantity)
+  // Avoid hitting the simulation API on every keystroke.  Wait a short period
+  // after the user stops typing before updating the debounced value.
   useDebounce(() => setDebouncedQuantity(quantity), 300, [quantity])
 
   const isOpWithdrawable = useIsOpWithdrawable()

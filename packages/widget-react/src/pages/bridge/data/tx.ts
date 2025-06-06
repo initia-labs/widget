@@ -126,7 +126,8 @@ export function useBridgeTx(tx: TxJson) {
           ])
           const signer = await provider.getSigner()
           const response = await signer.sendTransaction({ chainId, to, value, data: `0x${data}` })
-          // Do not use destructuring. It will break the behavior.
+          // `wait()` is a getter on the response object. Destructuring breaks
+          // its internal binding, so keep the original object intact.
           return { txHash: response.hash, wait: response.wait() }
         }
 

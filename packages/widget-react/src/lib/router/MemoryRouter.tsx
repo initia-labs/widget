@@ -1,6 +1,10 @@
 import { adjust, take } from "ramda"
 import type { PropsWithChildren } from "react"
 import { useCallback, useState } from "react"
+
+// A deliberately lightweight router used by the widget.  It keeps navigation
+// history entirely in memory so we don't interfere with the host application's
+// URL or history state.  Each navigation pushes or truncates this local array.
 import type { HistoryEntry } from "./RouterContext"
 import { RouterContext } from "./RouterContext"
 
@@ -18,12 +22,17 @@ const MemoryRouter = ({ children, initialEntry }: PropsWithChildren<MemoryRouter
         return [...prev, { path: to, state }]
       }
 
+      // When `to` is a number we treat it like `history.go()` in the browser.
+      // A negative value goes back N entries while a positive value would move
+      // forward (unused here but handled for completeness).
       const newLength = prev.length + to
       if (newLength < 1) return prev
 
+      // Drop any entries beyond the new length to mimic browser history
       const truncated = take(newLength, prev)
 
       if (state !== undefined) {
+        // Replace the state of the final entry if provided
         return adjust(newLength - 1, (entry) => ({ ...entry, state }), truncated)
       }
 

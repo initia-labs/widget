@@ -68,6 +68,8 @@ export function useTx() {
     txRequest: TxRequest
     broadcaster: Broadcaster<T>
   }): Promise<T> => {
+    // Fill unspecified fields with sane defaults so that the rest of the
+    // request logic can assume they exist.
     const defaultTxRequest = {
       memo: "",
       chainId: defaultChainId,
@@ -99,12 +101,15 @@ export function useTx() {
         },
       })
 
+      // Show the signing UI. External callers open a drawer while internal
+      // operations use a modal so the host app remains unaffected.
       if (!txRequest.internal) {
         openWidget("/tx")
       } else {
         openModal({ path: "/tx" })
       }
 
+      // Cleanup after the request resolves or rejects.
       const finalize = () => {
         if (!txRequest.internal) {
           navigate("/blank")
@@ -113,6 +118,7 @@ export function useTx() {
         }
 
         if (typeof txRequest.internal === "string") {
+          // Internal requests can redirect to a different route after signing.
           navigate(txRequest.internal)
         }
         closeModal()
@@ -133,6 +139,8 @@ export function useTx() {
       })
 
       if (txRequest.internal && typeof txRequest.internal !== "number") {
+        // For internal calls we show the transaction status inside the widget.
+        // Update state while waiting for the confirmation to arrive.
         setTxStatus({ txHash, chainId, status: "loading" })
         waitForTxConfirmation({ txHash, chainId: txRequest.chainId })
           .then((tx) => {

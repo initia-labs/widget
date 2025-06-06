@@ -29,6 +29,8 @@ const Fonts = () => {
   )
 }
 
+// The widget fetches registry information and other essentials before rendering
+// its children.  This keeps the UI responsive when the drawer first opens.
 const Prefetch = () => {
   useInitiaRegistry()
 
@@ -45,6 +47,8 @@ const Prefetch = () => {
 
   useEffect(() => {
     if (isEthereumChain) {
+      // Prompt the wallet to add the EVM chain so users aren't asked when
+      // submitting their first transaction.
       addEthereumChain()
     }
   }, [addEthereumChain, isEthereumChain])

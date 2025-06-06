@@ -1,8 +1,12 @@
 import { useEffect } from "react"
 import { useConfig } from "@/data/config"
 
+// A dedicated host element ensures the widget's Shadow DOM stays isolated even
+// if multiple instances are rendered.
 const WIDGET_ELEMENT_TAG = "initia-widget"
 
+// Create or fetch the Shadow DOM root used by the widget. The Shadow DOM keeps
+// our styles from leaking out to the host page.
 function getShadowRoot() {
   const host =
     document.querySelector(WIDGET_ELEMENT_TAG) ||
@@ -22,6 +26,8 @@ export function usePortalContainer() {
     host?.setAttribute("data-theme", theme)
   }, [theme])
 
+  // During development we skip the Shadow DOM so hot module replacement works
+  // seamlessly with the host page.
   if (import.meta.env.DEV) {
     return document.body
   }

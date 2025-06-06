@@ -47,12 +47,18 @@ export class OfflineSigner implements OfflineAminoSigner {
     private signMessage: (message: string) => Promise<string>,
   ) {}
 
+  // Cache the public key so we don't have to ask the wallet to sign the
+  // identification message every time a transaction is built.
   private cachedPublicKey: Uint8Array | null = null
   private async getCachedPublicKey() {
     if (this.cachedPublicKey) {
       return this.cachedPublicKey
     }
 
+    // Persist the derived key in localStorage so reloads don't trigger another
+    // sign request. Note that the host page can also access this key since
+    // localStorage is scoped to the embedding origin. The key itself is not
+    // secret.
     const storageKey = `${LocalStorageKey.PUBLIC_KEY}:${this.address}`
     const localPublicKey = localStorage.getItem(storageKey)
     if (localPublicKey) {
@@ -68,6 +74,11 @@ export class OfflineSigner implements OfflineAminoSigner {
   }
 
   private async getPublicKey() {
+    // Recover the public key by having the wallet sign a fixed message once.
+    // EIP-191 is supported across wallets and doesn't require a prior key
+    // exchange. Because the message is constant it could be reused by a
+    // malicious host to derive the user's public key without explicit consent.
+    // The key itself is not sensitive.
     const message = "Sign this message to identify your Initia account."
     const signature = await this.signMessage(message)
     const messageHash = ethers.hashMessage(message)
@@ -163,6 +174,7 @@ export function useOfflineSigner() {
   return new OfflineSigner(address, wallet.sign)
 }
 
+// Keep one client per chain to avoid repeatedly establishing RPC connections.
 const clientCache = new Map<string, SigningStargateClient>()
 
 export function useCreateSigningStargateClient() {

@@ -29,6 +29,8 @@ export function createUsernameClient({ restUrl, moduleAddress }: Params) {
       .post(path, { json: payload })
       .json<{ data: string; message?: string }>()
     if (message) throw new Error(message)
+    // The REST API responds with JSON embedded in a string. Parse it before
+    // returning to keep the external API clean.
     return JSON.parse(data) as T
   }
 
