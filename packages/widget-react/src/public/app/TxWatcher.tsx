@@ -3,7 +3,6 @@ import { useEffect } from "react"
 import { txStatusAtom } from "@/data/tx"
 import ExplorerLink from "@/components/ExplorerLink"
 import { useNotification } from "./NotificationContext"
-import styles from "./TxWatcher.module.css"
 
 const TxWatcher = () => {
   const [txStatus, setTxStatus] = useAtom(txStatusAtom)
@@ -17,13 +16,7 @@ const TxWatcher = () => {
     const description = error ? (
       error.message
     ) : txHash ? (
-      <ExplorerLink
-        txHash={txHash}
-        chainId={chainId}
-        className={styles.link}
-        onClick={hideNotification}
-        showIcon
-      >
+      <ExplorerLink txHash={txHash} chainId={chainId} onClick={hideNotification} showIcon>
         View on Initia Scan
       </ExplorerLink>
     ) : null

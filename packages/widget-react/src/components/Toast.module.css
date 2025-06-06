@@ -51,6 +51,17 @@
   }
 }
 
+.description a,
+.description button {
+  display: inline-flex;
+  text-decoration: underline;
+  color: inherit;
+
+  &:hover {
+    color: var(--gray-1);
+  }
+}
+
 .close {
   color: var(--gray-4);
   padding: 16px;
