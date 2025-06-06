@@ -1,4 +1,4 @@
-import { formatAmount, formatPercent, toAmount } from "./format"
+import { formatAmount, formatPercent, toAmount, toQuantity } from "./format"
 
 test("formatAmount", () => {
   expect(formatAmount("1234567890")).toBe("1,234,567,890")
@@ -21,6 +21,16 @@ test("toAmount", () => {
   expect(toAmount("")).toBe("0")
   expect(toAmount("NaN")).toBe("0")
   expect(toAmount(undefined)).toBe("0")
+})
+
+test("toQuantity", () => {
+  expect(toQuantity("1234567890")).toBe("1234.567890")
+  expect(toQuantity("1234567890", 0)).toBe("1234567890")
+  expect(toQuantity("1234567890", 7)).toBe("123.456789")
+  expect(toQuantity("1234567890", 4)).toBe("123456.7890")
+  expect(toQuantity("")).toBe("0")
+  expect(toQuantity("NaN")).toBe("0")
+  expect(toQuantity(undefined)).toBe("0")
 })
 
 test("formatPercent", () => {

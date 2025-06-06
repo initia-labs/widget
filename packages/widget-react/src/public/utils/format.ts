@@ -36,10 +36,11 @@ export function toAmount(value?: BigNumber.Value, decimals = 6) {
 
 export function toQuantity(value?: BigNumber.Value, decimals = 6) {
   if (!value || BigNumber(value).isNaN()) return "0"
+  const dp = Math.min(decimals, 6)
   return new BigNumber(value)
     .integerValue()
     .div(new BigNumber(10).pow(decimals))
-    .toFixed(6, BigNumber.ROUND_DOWN)
+    .toFixed(dp, BigNumber.ROUND_DOWN)
 }
 
 /* percent */
