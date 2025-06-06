@@ -12,7 +12,7 @@ function getShadowRoot() {
 }
 
 // Portal container for rendering Drawer components.
-// In local development, elements are injected diectly into the body.
+// In local development, elements are injected directly into the body.
 // In production, they are injected into a shadow root.
 export function usePortalContainer() {
   const { theme } = useConfig()

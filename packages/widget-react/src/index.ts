@@ -11,7 +11,7 @@ export * from "./public/data/constants"
 // useInitiaWidget()
 export * from "./public/data/hooks"
 
-// <WidgetWidgetProvider />
+// <InitiaWidgetProvider />
 export { default as InitiaWidgetProvider } from "./public/app/InitiaWidgetProvider"
 
 // <Widget />

@@ -127,6 +127,7 @@ const BridgeFields = () => {
     const result = FormValuesSchema.safeParse(values)
     if (!result.success) return `Invalid ${result.error.issues[0].path}`
     if (!route) return "Route not found"
+    // This should be enabled later when the fee behavior is defined by the backend
     if (feeErrorMessage) return // feeErrorMessage
   }, [debouncedQuantity, feeErrorMessage, formState, route, values])
 

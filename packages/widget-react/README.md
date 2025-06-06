@@ -90,7 +90,7 @@ pnpm add @tanstack/react-query
 ⚠️ Refer to the examples below.
 
 - **Vite**: [examples/vite/src/Providers.tsx](https://github.com/initia-labs/widget/blob/main/examples/vite/src/Providers.tsx)
-- **Next.js**: [examples/nextjs/src/app/providers/index.tsx](https://github.com/initia-labs/widget/blob/main/examples/nextjs/src/app/providers.tsx)
+- **Next.js**: [examples/nextjs/src/app/providers.tsx](https://github.com/initia-labs/widget/blob/main/examples/nextjs/src/app/providers.tsx)
 
 ```tsx
 import { InitiaWidgetProvider } from "@initia/widget-react"
