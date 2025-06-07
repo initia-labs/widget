@@ -21,7 +21,7 @@
     "wagmi": "^2"
   },
   "devDependencies": {
-    "@tsconfig/vite-react": "^3",
+    "@tsconfig/vite-react": "^6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react-swc": "^3",
