@@ -32,15 +32,16 @@ import { encodeEthSecp256k1Signature } from "./patches/signature"
 import { LocalStorageKey } from "./constants"
 import { useConfig } from "./config"
 import { useFindChain } from "./chains"
+import { wasmAminoConverters, wasmRegistry } from "./msgs/wasm"
 
 export const useRegistry = () => {
   const config = useConfig()
-  return new Registry([...protoRegistry, ...(config.protoTypes ?? [])])
+  return new Registry([...protoRegistry, ...wasmRegistry, ...(config.protoTypes ?? [])])
 }
 
 export const useAminoTypes = () => {
   const config = useConfig()
-  return new AminoTypes({ ...aminoConverters, ...config.aminoConverters })
+  return new AminoTypes({ ...aminoConverters, ...wasmAminoConverters, ...config.aminoConverters })
 }
 
 export class OfflineSigner implements OfflineAminoSigner {
