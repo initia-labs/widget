@@ -1,6 +1,7 @@
 import { Tabs } from "radix-ui"
 import { IconArrowRight, IconSwap } from "@initia/icons-react"
 import { Link, useNavigate, usePath } from "@/lib/router"
+import { useClaimableModal } from "@/pages/bridge/op/reminder"
 import Scrollable from "@/components/Scrollable"
 import Assets from "./assets/Assets"
 import Nfts from "./nft/Nfts"
@@ -8,6 +9,8 @@ import Activity from "./activity/Activity"
 import styles from "./Home.module.css"
 
 const Home = () => {
+  useClaimableModal()
+
   const navigate = useNavigate()
   const path = usePath()
 

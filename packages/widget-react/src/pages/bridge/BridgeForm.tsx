@@ -21,11 +21,13 @@ import { useGetDefaultAddress, useValidateAddress } from "./data/address"
 import type { RouterAsset } from "./data/assets"
 import { useSkipAssets } from "./data/assets"
 import { skipQueryKeys } from "./data/skip"
-import { useClaimableReminders } from "./op/reminder"
+import { useClaimableModal, useClaimableReminders } from "./op/reminder"
 import BridgeFields from "./BridgeFields"
 import styles from "./BridgeForm.module.css"
 
 const BridgeForm = () => {
+  useClaimableModal()
+
   const history = useHistory()
   const navigate = useNavigate()
   const { closeWidget } = useWidgetVisibility()
