@@ -1,6 +1,6 @@
 import ky from "ky"
 import clsx from "clsx"
-import { Address } from "@/public/utils"
+import { AddressUtils } from "@/public/utils"
 import { useAminoTypes } from "@/data/signer"
 import type { AminoMsg } from "@cosmjs/amino"
 import { useFormContext } from "react-hook-form"
@@ -41,7 +41,7 @@ const SendNftFields = () => {
         {
           from_address: initiaAddress,
           from_chain_id: srcChain.chainId,
-          to_address: Address.toBech32(recipient),
+          to_address: AddressUtils.toBech32(recipient),
           to_chain_id: dstChainId,
           collection_address: collection.object_addr,
           token_ids: [nft.token_id],

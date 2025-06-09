@@ -3,7 +3,7 @@ import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 import { useMutation } from "@tanstack/react-query"
 import { useFormContext } from "react-hook-form"
 import { useChain, usePricesQuery } from "@/data/chains"
-import { Address, formatAmount, formatNumber, toAmount, toQuantity } from "@/public/utils"
+import { AddressUtils, formatAmount, formatNumber, toAmount, toQuantity } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { useAsset } from "@/data/assets"
 import { useBalances } from "@/data/account"
@@ -44,7 +44,7 @@ export const SendFields = () => {
           typeUrl: "/cosmos.bank.v1beta1.MsgSend",
           value: MsgSend.fromPartial({
             fromAddress: initiaAddress,
-            toAddress: Address.toBech32(recipient),
+            toAddress: AddressUtils.toBech32(recipient),
             amount: [{ denom, amount }],
           }),
         },

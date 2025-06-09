@@ -2,7 +2,7 @@ import ky from "ky"
 import { Interface } from "ethers"
 import { toBytes, utf8ToBytes } from "@noble/hashes/utils"
 import { toBase64 } from "@cosmjs/encoding"
-import { Address } from "@/public/utils"
+import { AddressUtils } from "@/public/utils"
 import type { NormalizedChain } from "@/data/chains"
 import { generateSeededAddress } from "@/data/assets"
 import type { NormalizedCollection, NormalizedNft } from "../../tabs/nft/queries"
@@ -61,7 +61,7 @@ async function handleMinievm(
   // Non-IBC: hex-based EVM class ID
   if (!name.startsWith("ibc/")) {
     return {
-      class_id: `evm/${Address.toHex(objectAddr)}`,
+      class_id: `evm/${AddressUtils.toHex(objectAddr)}`,
       class_trace: null,
     }
   }
@@ -77,7 +77,7 @@ async function handleMinievm(
   }
 
   return {
-    class_id: `evm/${Address.toHex(objectAddr)}`,
+    class_id: `evm/${AddressUtils.toHex(objectAddr)}`,
     class_trace: null,
   }
 }
@@ -97,8 +97,8 @@ async function fetchCollectionNameMinievm(objectAddr: string, restUrl: string) {
     .create({ prefixUrl: restUrl })
     .post("minievm/evm/v1/call", {
       json: {
-        sender: Address.toBech32("0x1"),
-        contract_addr: Address.toPrefixedHex(objectAddr),
+        sender: AddressUtils.toBech32("0x1"),
+        contract_addr: AddressUtils.toPrefixedHex(objectAddr),
         input: abi.encodeFunctionData("name"),
       },
     })

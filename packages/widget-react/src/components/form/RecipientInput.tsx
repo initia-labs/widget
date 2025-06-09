@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import { mergeRefs } from "react-merge-refs"
 import { useFormContext } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
-import { Address } from "@/public/utils"
+import { AddressUtils } from "@/public/utils"
 import { STALE_TIMES } from "@/data/http"
 import { accountQueryKeys, useUsernameClient } from "@/data/account"
 import Footer from "../Footer"
@@ -21,7 +21,7 @@ interface Props {
 }
 
 const RecipientInput = (props: Props) => {
-  const { mode = "onChange", myAddress, validate = Address.validate, onApply, ref } = props
+  const { mode = "onChange", myAddress, validate = AddressUtils.validate, onApply, ref } = props
   const autoFocusRef = useAutoFocus()
 
   const { getValues, setValue, formState } = useFormContext<{
@@ -55,7 +55,7 @@ const RecipientInput = (props: Props) => {
   // onSubmit: update form value when button clicked
   const handleApply = () => {
     if (isLoading || error) return
-    const isMyAddress = myAddress && Address.equals(resolvedAddress, myAddress)
+    const isMyAddress = myAddress && AddressUtils.equals(resolvedAddress, myAddress)
     const recipientType = isMyAddress ? "auto" : "manual"
     setValue("recipientType", recipientType, { shouldValidate: true })
     setValue("recipient", resolvedAddress, { shouldValidate: true })

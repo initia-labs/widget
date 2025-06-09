@@ -9,7 +9,7 @@ import type { StatusResponseJson, TrackResponseJson, TxJson } from "@skip-go/cli
 import { aminoConverters, aminoTypes } from "@initia/amino-converter"
 import { Link, useLocationState, useNavigate } from "@/lib/router"
 import { DEFAULT_GAS_ADJUSTMENT } from "@/public/data/constants"
-import { Address } from "@/public/utils"
+import { AddressUtils } from "@/public/utils"
 import { useNotification } from "@/public/app/NotificationContext"
 import { useInitiaAddress, useInitiaWidget } from "@/public/data/hooks"
 import { normalizeError, STALE_TIMES } from "@/data/http"
@@ -162,7 +162,7 @@ export function useBridgeTx(tx: TxJson) {
           if (getBridgeType(route) === BridgeType.OP_WITHDRAW) {
             addReminder(tx, {
               ...tx,
-              recipient: Address.toBech32(recipient),
+              recipient: AddressUtils.toBech32(recipient),
               claimableAt: Date.now() + route.estimated_route_duration_seconds * 1000,
               amount: route.amount_out,
               denom: route.dest_asset_denom,

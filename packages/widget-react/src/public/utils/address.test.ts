@@ -1,4 +1,4 @@
-import { Address } from "./address"
+import { AddressUtils } from "./address"
 
 const cases = [
   {
@@ -22,19 +22,19 @@ describe("Address module", () => {
   cases.forEach(({ description, hex, bech32 }) => {
     describe(description, () => {
       test("should recognize valid bech32 address", () => {
-        expect(Address.validate(bech32)).toBe(true)
+        expect(AddressUtils.validate(bech32)).toBe(true)
       })
 
       test("should recognize valid hex address", () => {
-        expect(Address.validate(hex)).toBe(true)
+        expect(AddressUtils.validate(hex)).toBe(true)
       })
 
       test("should convert hex to bech32 format correctly", () => {
-        expect(Address.toBech32(hex)).toBe(bech32)
+        expect(AddressUtils.toBech32(hex)).toBe(bech32)
       })
 
       test("should convert bech32 to hex format correctly", () => {
-        expect(Address.toPrefixedHex(bech32)).toBe(hex)
+        expect(AddressUtils.toPrefixedHex(bech32)).toBe(hex)
       })
     })
   })

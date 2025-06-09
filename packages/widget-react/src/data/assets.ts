@@ -7,7 +7,7 @@ import { toHex } from "@cosmjs/encoding"
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { createQueryKeys } from "@lukemorales/query-key-factory"
 import type { Asset, AssetList } from "@initia/initia-registry-types"
-import { Address } from "@/public/utils"
+import { AddressUtils } from "@/public/utils"
 import type { BaseAsset } from "@/components/form/types"
 import { STALE_TIMES } from "./http"
 import type { NormalizedChain } from "./chains"
@@ -134,15 +134,15 @@ export function useGetLayer1Denom(chain: NormalizedChain) {
 
 export function generateDerivedAddress(owner: string, metadata: string) {
   const OBJECT_DERIVED_SCHEME = 0xfc
-  const ownerBytes = Address.toBytes(owner, 32)
-  const metadataBytes = Address.toBytes(metadata, 32)
+  const ownerBytes = AddressUtils.toBytes(owner, 32)
+  const metadataBytes = AddressUtils.toBytes(metadata, 32)
   const bytes = new Uint8Array([...ownerBytes, ...metadataBytes, OBJECT_DERIVED_SCHEME])
   return toHex(sha3_256.create().update(bytes).digest())
 }
 
 export function generateSeededAddress(creator: string, symbol: string) {
   const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe
-  const creatorBytes = Address.toBytes(creator, 32)
+  const creatorBytes = AddressUtils.toBytes(creator, 32)
   const seed = toBytes(symbol)
   const bytes = new Uint8Array([...creatorBytes, ...seed, OBJECT_FROM_SEED_ADDRESS_SCHEME])
   return toHex(sha3_256.create().update(bytes).digest())

@@ -1,6 +1,6 @@
 import { isAddress } from "ethers"
 import { fromBech32 } from "@cosmjs/encoding"
-import { Address } from "@/public/utils"
+import { AddressUtils } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { useFindSkipChain, useFindChainType } from "./chains"
 
@@ -34,7 +34,7 @@ export function useValidateAddress() {
     const chainType = findChainType(chain)
     switch (chainType) {
       case "initia":
-        return Address.validate(address)
+        return AddressUtils.validate(address)
       case "evm":
         return isAddress(address)
       case "cosmos": {
@@ -70,17 +70,17 @@ export function useGetAddressForBalance() {
     const chain = findChain(chainId)
     const chainType = findChainType(chain)
     if (initialChainType === "evm" && chainType === "initia") {
-      return Address.toBech32(initialAddress)
+      return AddressUtils.toBech32(initialAddress)
     }
     if (initialChainType === "initia" && chainType === "evm") {
-      return Address.toPrefixedHex(initialAddress)
+      return AddressUtils.toPrefixedHex(initialAddress)
     }
     if (initialChainType === chainType) {
       return initialAddress
     }
     if (fallbackAddress) {
-      if (chainType === "initia") return Address.toBech32(fallbackAddress)
-      if (chainType === "evm") return Address.toPrefixedHex(fallbackAddress)
+      if (chainType === "initia") return AddressUtils.toBech32(fallbackAddress)
+      if (chainType === "evm") return AddressUtils.toPrefixedHex(fallbackAddress)
     }
     return ""
   }

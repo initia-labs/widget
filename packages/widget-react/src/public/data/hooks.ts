@@ -6,18 +6,18 @@ import { useDefaultChain } from "@/data/chains"
 import { accountQueryKeys, useUsernameClient } from "@/data/account"
 import type { FormValues } from "@/pages/bridge/data/form"
 import { STALE_TIMES } from "@/data/http"
-import { Address } from "../utils"
+import { AddressUtils } from "../utils"
 
 export function useInitiaAddress() {
   const hexAddress = useHexAddress()
   if (!hexAddress) return ""
-  return Address.toBech32(hexAddress)
+  return AddressUtils.toBech32(hexAddress)
 }
 
 export function useHexAddress() {
   const { address } = useAccount()
   if (!address) return ""
-  return Address.toPrefixedHex(address)
+  return AddressUtils.toPrefixedHex(address)
 }
 
 export function useAddress() {

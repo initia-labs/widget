@@ -1,7 +1,7 @@
 import { getAddress } from "ethers"
 import { fromBech32, fromHex, toBech32, toHex } from "@cosmjs/encoding"
 
-export const Address = {
+export const AddressUtils = {
   toBytes(address: string, byteLength: number = 20) {
     if (!address) throw new Error("address is required")
 
@@ -17,18 +17,18 @@ export const Address = {
 
   toBech32(address: string, prefix: string = "init") {
     if (!address) return ""
-    return toBech32(prefix, Address.toBytes(address))
+    return toBech32(prefix, AddressUtils.toBytes(address))
   },
 
   toHex(address: string) {
     if (!address) return ""
-    return toHex(Address.toBytes(address))
+    return toHex(AddressUtils.toBytes(address))
   },
 
   toPrefixedHex(address: string) {
     if (!address) return ""
-    const checksummed = getAddress(Address.toHex(address))
-    const bytes = Address.toBytes(address)
+    const checksummed = getAddress(AddressUtils.toHex(address))
+    const bytes = AddressUtils.toBytes(address)
     const last = bytes[bytes.length - 1]
     const isSpecial = bytes.subarray(0, bytes.length - 1).every((byte) => byte === 0) && last < 0x10
     if (isSpecial) return checksummed.replace(/^0x0+/, "0x")
@@ -48,6 +48,6 @@ export const Address = {
   },
 
   equals(address1: string, address2: string) {
-    return Address.toBech32(address1) === Address.toBech32(address2)
+    return AddressUtils.toBech32(address1) === AddressUtils.toBech32(address2)
   },
 }
