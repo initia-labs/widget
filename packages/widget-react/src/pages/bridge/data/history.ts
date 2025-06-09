@@ -20,13 +20,18 @@ export interface HistoryDetails extends TxIdentifier {
 const detailKeyOf = ({ chainId, txHash }: TxIdentifier) =>
   `${LocalStorageKey.BRIDGE_HISTORY}:${chainId}:${txHash}`
 
+export const BRIDGE_HISTORY_LIMIT = 100
+
 export function useBridgeHistoryList() {
   const [list = [], setList] = useLocalStorage<TxIdentifier[]>(LocalStorageKey.BRIDGE_HISTORY, [])
 
   const addHistoryItem = useCallback(
     (tx: TxIdentifier, details: HistoryDetails) => {
       localStorage.setItem(detailKeyOf(tx), JSON.stringify(details))
-      setList((prev = []) => [tx, ...prev])
+      setList((prev = []) => {
+        prev.slice(BRIDGE_HISTORY_LIMIT - 1).map((tx) => localStorage.removeItem(detailKeyOf(tx))) // Remove old items from localStorage
+        return [tx, ...prev.slice(0, BRIDGE_HISTORY_LIMIT - 1)] // Keep only the last 100 items
+      })
     },
     [setList],
   )

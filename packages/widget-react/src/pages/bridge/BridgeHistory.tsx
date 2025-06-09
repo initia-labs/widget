@@ -4,7 +4,7 @@ import Page from "@/components/Page"
 import Status from "@/components/Status"
 import AsyncBoundary from "@/components/AsyncBoundary"
 import CheckboxButton from "@/components/CheckboxButton"
-import { useBridgeHistoryList } from "./data/history"
+import { BRIDGE_HISTORY_LIMIT, useBridgeHistoryList } from "./data/history"
 import BridgeHistoryItem from "./BridgeHistoryItem"
 import styles from "./BridgeHistory.module.css"
 
@@ -47,6 +47,13 @@ const BridgeHistory = () => {
               </AsyncBoundary>
             </div>
           ))
+        )}
+
+        {filteredHistory.length >= BRIDGE_HISTORY_LIMIT && (
+          <Status>
+            Only the latest {BRIDGE_HISTORY_LIMIT} items are stored. Older entries will be removed
+            automatically.
+          </Status>
         )}
       </div>
     </Page>
