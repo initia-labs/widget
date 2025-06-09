@@ -49,7 +49,7 @@ const BridgeHistory = () => {
           ))
         )}
 
-        {filteredHistory.length >= BRIDGE_HISTORY_LIMIT && (
+        {history.length >= BRIDGE_HISTORY_LIMIT && (
           <Status>
             Only the latest {BRIDGE_HISTORY_LIMIT} items are stored. Older entries will be removed
             automatically.
