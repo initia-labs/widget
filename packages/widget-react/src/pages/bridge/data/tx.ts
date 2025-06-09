@@ -13,7 +13,7 @@ import { Address } from "@/public/utils"
 import { useNotification } from "@/public/app/NotificationContext"
 import { useInitiaAddress, useInitiaWidget } from "@/public/data/hooks"
 import { normalizeError, STALE_TIMES } from "@/data/http"
-import { useGetProvider, useSignWithEthSecp256k1 } from "@/data/signer"
+import { useAminoTypes, useGetProvider, useRegistry, useSignWithEthSecp256k1 } from "@/data/signer"
 import { waitForTxConfirmationWithClient } from "@/data/tx"
 import { useClaimableReminders } from "../op/reminder"
 import { skipQueryKeys, useSkip } from "./skip"
@@ -59,6 +59,8 @@ export function useBridgeTx(tx: TxJson) {
   const getProvider = useGetProvider()
   const { requestTxSync, waitForTxConfirmation } = useInitiaWidget()
   const { find } = useCosmosWallets()
+  const registry = useRegistry()
+  const aminoTypes = useAminoTypes()
   const srcChain = useSkipChain(srcChainId)
   const srcChainType = useChainType(srcChain)
   const findAsset = useFindSkipAsset(srcChainId)
@@ -89,7 +91,14 @@ export function useBridgeTx(tx: TxJson) {
           const provider = find(cosmosWalletName)?.getProvider()
           if (!provider) throw new Error("Wallet not connected")
           const offlineSigner = provider.getOfflineSignerOnlyAmino(srcChainId)
-          const client = await SigningStargateClient.connectWithSigner(srcChain.rpc, offlineSigner)
+          const client = await SigningStargateClient.connectWithSigner(
+            srcChain.rpc,
+            offlineSigner,
+            {
+              registry,
+              aminoTypes,
+            },
+          )
           const balances = await client.getAllBalances(sender)
           const availableFeeAsset = srcChain.fee_assets.find((asset) =>
             balances.some(
