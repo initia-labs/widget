@@ -45,10 +45,14 @@ const BridgeFields = () => {
 
   const srcChain = useSkipChain(srcChainId)
   const srcChainType = useChainType(srcChain)
+  const dstChain = useSkipChain(dstChainId)
+  const dstChainType = useChainType(dstChain)
   const srcAsset = useSkipAsset(srcDenom, srcChainId)
   const dstAsset = useSkipAsset(dstDenom, dstChainId)
   const { data: balances } = useSkipBalancesQuery(sender, srcChainId)
   const srcBalance = useSkipBalance(sender, srcChainId, srcDenom)
+
+  const isExternalRoute = srcChainType !== "initia" && dstChainType !== "initia"
 
   useEffect(() => {
     if (Number(quantity)) trigger()
@@ -61,7 +65,9 @@ const BridgeFields = () => {
   useDebounce(() => setDebouncedQuantity(quantity), 300, [quantity])
 
   const isOpWithdrawable = useIsOpWithdrawable()
-  const routeQueryDefault = useRouteQuery(debouncedQuantity)
+  const routeQueryDefault = useRouteQuery(debouncedQuantity, {
+    disabled: isExternalRoute,
+  })
   const routeQueryOpWithdrawal = useRouteQuery(debouncedQuantity, {
     isOpWithdraw: true,
     disabled: !isOpWithdrawable,
@@ -219,6 +225,11 @@ const BridgeFields = () => {
                   {warning}
                 </FormHelp>
               ))}
+              {isExternalRoute && (
+                <FormHelp level="error">
+                  Only transfers to or from Initia or a L2 are supported, try a different route.
+                </FormHelp>
+              )}
               {/* In this case, the route option component above will show an error. */}
               {BigNumber(quantity).gt(0) && isOpWithdrawable ? null : (
                 <FormHelp level="error">{error?.message}</FormHelp>
