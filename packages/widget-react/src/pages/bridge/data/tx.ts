@@ -94,10 +94,7 @@ export function useBridgeTx(tx: TxJson) {
           const client = await SigningStargateClient.connectWithSigner(
             srcChain.rpc,
             offlineSigner,
-            {
-              registry,
-              aminoTypes,
-            },
+            { registry, aminoTypes },
           )
           const balances = await client.getAllBalances(sender)
           const availableFeeAsset = srcChain.fee_assets.find((asset) =>
