@@ -28,11 +28,15 @@ export function useBridgeHistoryList() {
   const addHistoryItem = useCallback(
     (tx: TxIdentifier, details: HistoryDetails) => {
       localStorage.setItem(detailKeyOf(tx), JSON.stringify(details))
-      // Remove old txs from localStorage
-      list.slice(BRIDGE_HISTORY_LIMIT - 1).forEach((tx) => localStorage.removeItem(detailKeyOf(tx)))
-      setList((prev = []) => [tx, ...prev.slice(0, BRIDGE_HISTORY_LIMIT - 1)]) // Keep only the last 100 txs
+
+      // Remove the oldest item if we exceed the limit
+      for (const item of list.slice(BRIDGE_HISTORY_LIMIT - 1)) {
+        localStorage.removeItem(detailKeyOf(item))
+      }
+
+      setList((prev = []) => [tx, ...prev.slice(0, BRIDGE_HISTORY_LIMIT - 1)])
     },
-    [setList, list],
+    [list, setList],
   )
 
   const getHistoryDetails = useCallback((tx: TxIdentifier) => {
