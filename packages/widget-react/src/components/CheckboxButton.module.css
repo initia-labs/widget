@@ -18,6 +18,8 @@
   width: 14px;
   height: 14px;
 
+  transition: background-color var(--transition) ease;
+
   .button:hover &:not(.checked) {
     background-color: var(--gray-4);
   }

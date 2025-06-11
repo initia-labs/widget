@@ -57,6 +57,8 @@
   text-decoration: underline;
   color: inherit;
 
+  transition: color var(--transition) ease;
+
   &:hover {
     color: var(--gray-1);
   }
@@ -68,6 +70,8 @@
   margin: -16px;
 
   height: calc(21px + 2 * 16px);
+
+  transition: color var(--transition) ease;
 
   &:hover {
     color: var(--gray-1);

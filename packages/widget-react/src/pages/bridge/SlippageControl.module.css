@@ -24,6 +24,8 @@
   font-size: 14px;
   font-weight: 500;
 
+  transition: all var(--transition) ease;
+
   &:hover:not(.active) {
     background-color: var(--gray-6);
     color: var(--gray-1);

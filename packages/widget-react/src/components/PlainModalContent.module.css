@@ -39,6 +39,8 @@
   font-size: 14px;
   font-weight: 500;
 
+  transition: color var(--transition) ease;
+
   &:hover {
     color: var(--gray-0);
   }

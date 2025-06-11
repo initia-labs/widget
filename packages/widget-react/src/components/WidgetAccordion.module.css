@@ -29,6 +29,8 @@
   padding: var(--accordion-padding);
   width: 100%;
 
+  transition: background-color var(--transition) ease;
+
   &:hover {
     background-color: var(--gray-6);
   }

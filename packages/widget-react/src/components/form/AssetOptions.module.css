@@ -17,6 +17,8 @@
   font-weight: 500;
   padding: 12px var(--padding);
 
+  transition: background-color var(--transition) ease;
+
   &:hover {
     background-color: var(--border);
   }

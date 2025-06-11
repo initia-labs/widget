@@ -87,6 +87,8 @@
 .close {
   color: var(--gray-4);
 
+  transition: color var(--transition) ease;
+
   &:hover {
     color: var(--gray-1);
   }

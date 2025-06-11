@@ -9,6 +9,8 @@
   height: 56px;
   padding: 0 16px;
 
+  transition: background-color var(--transition) ease;
+
   &:hover {
     background-color: var(--gray-1);
   }
@@ -56,6 +58,8 @@
   svg {
     fill: var(--gray-1);
   }
+
+  transition: border-color var(--transition) ease;
 
   &:hover:not(:disabled) {
     border-color: var(--gray-4);

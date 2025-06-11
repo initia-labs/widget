@@ -15,6 +15,8 @@
     font-weight: 600;
   }
 
+  transition: background-color var(--transition) ease;
+
   &:hover:not(:disabled) {
     background-color: var(--gray-8);
   }

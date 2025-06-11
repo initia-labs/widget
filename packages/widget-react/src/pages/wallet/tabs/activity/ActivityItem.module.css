@@ -3,6 +3,8 @@
   padding: 0 var(--padding);
   white-space: nowrap;
 
+  transition: all var(--transition) ease;
+
   &:hover {
     color: inherit;
     background: var(--gray-8);
