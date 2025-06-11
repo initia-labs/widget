@@ -52,8 +52,6 @@ const BridgeFields = () => {
   const { data: balances } = useSkipBalancesQuery(sender, srcChainId)
   const srcBalance = useSkipBalance(sender, srcChainId, srcDenom)
 
-  const isExternalRoute = srcChainType !== "initia" && dstChainType !== "initia"
-
   useEffect(() => {
     if (Number(quantity)) trigger()
   }, [srcBalance, quantity, trigger])
@@ -64,6 +62,7 @@ const BridgeFields = () => {
   // after the user stops typing before updating the debounced value.
   useDebounce(() => setDebouncedQuantity(quantity), 300, [quantity])
 
+  const isExternalRoute = srcChainType !== "initia" && dstChainType !== "initia"
   const isOpWithdrawable = useIsOpWithdrawable()
   const routeQueryDefault = useRouteQuery(debouncedQuantity, {
     disabled: isExternalRoute,
@@ -74,7 +73,7 @@ const BridgeFields = () => {
   })
   const routeQuery =
     isOpWithdrawable && selectedType === "op" ? routeQueryOpWithdrawal : routeQueryDefault
-  const { data, isLoading, isFetching, error, isFetched } = routeQuery
+  const { data, isLoading, isFetching, isFetched } = routeQuery
   const route = isFetched ? data : undefined
   const isSimulating = debouncedQuantity && (isLoading || isFetching)
 
@@ -225,15 +224,6 @@ const BridgeFields = () => {
                   {warning}
                 </FormHelp>
               ))}
-              {isExternalRoute && (
-                <FormHelp level="error">
-                  Only transfers to or from Initia or a L2 are supported, try a different route.
-                </FormHelp>
-              )}
-              {/* In this case, the route option component above will show an error. */}
-              {BigNumber(quantity).gt(0) && isOpWithdrawable ? null : (
-                <FormHelp level="error">{error?.message}</FormHelp>
-              )}
             </FormHelp.Stack>
 
             <div className={styles.meta}>
