@@ -16,3 +16,6 @@ export { default as InitiaWidgetProvider } from "./public/app/InitiaWidgetProvid
 
 // <Widget />
 export { default as Widget } from "./public/app/Widget"
+
+// connectors
+export * from "./public/data/connectors"
