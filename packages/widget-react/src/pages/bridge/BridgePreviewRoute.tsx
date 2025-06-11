@@ -6,6 +6,7 @@ import { IconWallet } from "@initia/icons-react"
 import AsyncBoundary from "@/components/AsyncBoundary"
 import CheckboxButton from "@/components/CheckboxButton"
 import Image from "@/components/Image"
+import { AddressUtils } from "@/public/utils"
 import type { RouterOperationJson } from "./data/simulate"
 import { useBridgePreviewState } from "./data/tx"
 import { useCosmosWallets } from "./data/cosmos"
@@ -62,7 +63,7 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
   const addressMap = zipObj(route.required_chain_addresses, addressList)
 
   const { find } = useCosmosWallets()
-  const { connector } = useAccount()
+  const { connector, address: connectedAddress } = useAccount()
 
   const [showAll, toggleShowAll] = useToggle(false)
   const canToggleShowAll = operations.length > 1
@@ -92,7 +93,18 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
       denom: denom_out,
       chainId: to_chain_id,
       address,
-      walletIcon: index === operations.length - 1 ? <IconWallet size={11} /> : null,
+      walletIcon:
+        index === operations.length - 1 ? (
+          AddressUtils.equals(address, connectedAddress || "") ? (
+            <Image
+              src={values.cosmosWalletName ? find(values.cosmosWalletName)?.image : connector?.icon}
+              width={12}
+              height={12}
+            />
+          ) : (
+            <IconWallet size={11} />
+          )
+        ) : null,
     }
   }
 
