@@ -74,6 +74,7 @@
   --font-family: "Pilat Wide", sans-serif;
   --monospace: "Roboto Mono", monospace;
 
+  --transition: 150ms;
   --z-index: 9999;
 }
 

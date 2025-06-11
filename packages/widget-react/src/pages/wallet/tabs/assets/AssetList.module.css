@@ -22,10 +22,10 @@
 .content {
   will-change: height;
   &[data-state="open"] {
-    animation: slideDown 150ms cubic-bezier(0.87, 0, 0.13, 1);
+    animation: slideDown var(--transition) cubic-bezier(0.87, 0, 0.13, 1);
   }
   &[data-state="closed"] {
-    animation: slideUp 150ms cubic-bezier(0.87, 0, 0.13, 1);
+    animation: slideUp var(--transition) cubic-bezier(0.87, 0, 0.13, 1);
   }
 }
 

@@ -13,7 +13,7 @@
 
   border-radius: var(--border-radius);
   padding: var(--padding);
-  transition: background-color 150ms ease-in-out;
+  transition: background-color var(--transition) ease-in-out;
 
   svg {
     fill: var(--gray-2);

@@ -15,11 +15,11 @@
 }
 
 .content[data-state="open"] {
-  animation: slideDown 150ms ease-out;
+  animation: slideDown var(--transition) ease-out;
 }
 
 .content[data-state="closed"] {
-  animation: slideUp 150ms ease-out;
+  animation: slideUp var(--transition) ease-out;
 }
 
 @keyframes slideDown {
