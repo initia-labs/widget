@@ -45,6 +45,8 @@ const BridgeFields = () => {
 
   const srcChain = useSkipChain(srcChainId)
   const srcChainType = useChainType(srcChain)
+  const dstChain = useSkipChain(dstChainId)
+  const dstChainType = useChainType(dstChain)
   const srcAsset = useSkipAsset(srcDenom, srcChainId)
   const dstAsset = useSkipAsset(dstDenom, dstChainId)
   const { data: balances } = useSkipBalancesQuery(sender, srcChainId)
@@ -60,15 +62,18 @@ const BridgeFields = () => {
   // after the user stops typing before updating the debounced value.
   useDebounce(() => setDebouncedQuantity(quantity), 300, [quantity])
 
+  const isExternalRoute = srcChainType !== "initia" && dstChainType !== "initia"
   const isOpWithdrawable = useIsOpWithdrawable()
-  const routeQueryDefault = useRouteQuery(debouncedQuantity)
+  const routeQueryDefault = useRouteQuery(debouncedQuantity, {
+    disabled: isExternalRoute,
+  })
   const routeQueryOpWithdrawal = useRouteQuery(debouncedQuantity, {
     isOpWithdraw: true,
     disabled: !isOpWithdrawable,
   })
   const routeQuery =
     isOpWithdrawable && selectedType === "op" ? routeQueryOpWithdrawal : routeQueryDefault
-  const { data, isLoading, isFetching, error, isFetched } = routeQuery
+  const { data, isLoading, isFetching, isFetched } = routeQuery
   const route = isFetched ? data : undefined
   const isSimulating = debouncedQuantity && (isLoading || isFetching)
 
@@ -219,10 +224,6 @@ const BridgeFields = () => {
                   {warning}
                 </FormHelp>
               ))}
-              {/* In this case, the route option component above will show an error. */}
-              {BigNumber(quantity).gt(0) && isOpWithdrawable ? null : (
-                <FormHelp level="error">{error?.message}</FormHelp>
-              )}
             </FormHelp.Stack>
 
             <div className={styles.meta}>
