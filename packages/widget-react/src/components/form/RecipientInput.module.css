@@ -2,4 +2,27 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 6px;
+}
+
+.myAddress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  svg {
+    color: var(--gray-6);
+    margin-left: -4px;
+  }
+}
+
+.active {
+  border-color: var(--gray-0);
+  svg {
+    color: var(--gray-0);
+  }
+}
+
+.warning {
+  margin-top: 16px;
 }
