@@ -3,6 +3,7 @@ import { useToggle } from "react-use"
 import { Collapsible } from "radix-ui"
 import { useAccount } from "wagmi"
 import { IconWallet } from "@initia/icons-react"
+import { AddressUtils } from "@/public/utils"
 import AsyncBoundary from "@/components/AsyncBoundary"
 import CheckboxButton from "@/components/CheckboxButton"
 import Image from "@/components/Image"
@@ -62,23 +63,30 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
   const addressMap = zipObj(route.required_chain_addresses, addressList)
 
   const { find } = useCosmosWallets()
-  const { connector } = useAccount()
+  const { connector, address: connectedAddress = "" } = useAccount()
 
   const [showAll, toggleShowAll] = useToggle(false)
   const canToggleShowAll = operations.length > 1
+
+  const connectedWalletIcon = (
+    <Image
+      src={values.cosmosWalletName ? find(values.cosmosWalletName)?.image : connector?.icon}
+      width={12}
+      height={12}
+    />
+  )
 
   const firstOperationProps = {
     amount: amount_in,
     denom: source_asset_denom,
     chainId: source_asset_chain_id,
     address: values.sender,
-    walletIcon: (
-      <Image
-        src={values.cosmosWalletName ? find(values.cosmosWalletName)?.image : connector?.icon}
-        width={12}
-        height={12}
-      />
-    ),
+    walletIcon: connectedWalletIcon,
+  }
+
+  const getWalletIcon = (address: string) => {
+    if (AddressUtils.equals(address, connectedAddress)) return connectedWalletIcon
+    return <IconWallet size={11} />
   }
 
   const toProps = (normalizedOperation: ReturnType<typeof normalizeOperation>, index: number) => {
@@ -92,7 +100,7 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
       denom: denom_out,
       chainId: to_chain_id,
       address,
-      walletIcon: index === operations.length - 1 ? <IconWallet size={11} /> : null,
+      walletIcon: index === operations.length - 1 ? getWalletIcon(address) : null,
     }
   }
 
