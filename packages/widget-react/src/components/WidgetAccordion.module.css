@@ -27,8 +27,9 @@
   font-size: 13px;
   font-weight: 500;
   padding: var(--accordion-padding);
-  transition: border-radius 150ms ease-in-out;
   width: 100%;
+
+  transition: background-color var(--transition) ease;
 
   &:hover {
     background-color: var(--gray-6);
@@ -45,10 +46,10 @@
 
   will-change: height;
   &[data-state="open"] {
-    animation: slideDown 150ms cubic-bezier(0.87, 0, 0.13, 1);
+    animation: slideDown var(--transition) cubic-bezier(0.87, 0, 0.13, 1);
   }
   &[data-state="closed"] {
-    animation: slideUp 150ms cubic-bezier(0.87, 0, 0.13, 1);
+    animation: slideUp var(--transition) cubic-bezier(0.87, 0, 0.13, 1);
   }
 }
 

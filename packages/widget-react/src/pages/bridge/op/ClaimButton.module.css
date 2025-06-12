@@ -6,6 +6,8 @@
   height: 38px;
   padding: 0 24px;
 
+  transition: border-color var(--transition) ease;
+
   &:hover {
     border-color: var(--gray-0);
   }

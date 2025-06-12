@@ -6,6 +6,8 @@
 
   .icon {
     color: var(--dimmed);
+
+    transition: color var(--transition) ease;
   }
 
   &:hover .icon {

@@ -74,6 +74,7 @@
   --font-family: "Pilat Wide", sans-serif;
   --monospace: "Roboto Mono", monospace;
 
+  --transition: 150ms;
   --z-index: 9999;
 }
 
@@ -83,6 +84,8 @@
 
 :where(a) {
   color: var(--info);
+
+  transition: color var(--transition) ease;
 
   &:hover {
     color: var(--info-light);
@@ -108,6 +111,8 @@
   &::placeholder {
     color: var(--gray-4);
   }
+
+  transition: border-color var(--transition) ease;
 
   &:hover {
     border-color: var(--gray-4);

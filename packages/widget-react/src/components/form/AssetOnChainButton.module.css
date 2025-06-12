@@ -55,6 +55,8 @@
   flex: none;
   color: var(--gray-4);
 
+  transition: color var(--transition) ease;
+
   .root:hover & {
     color: var(--gray-1);
   }

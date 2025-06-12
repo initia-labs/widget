@@ -24,6 +24,8 @@
 .link {
   color: var(--dimmed);
 
+  transition: color var(--transition) ease;
+
   &:hover {
     color: var(--gray-1);
   }
@@ -38,6 +40,8 @@
 .button {
   color: var(--dimmed);
   padding: 4px;
+
+  transition: color var(--transition) ease;
 
   &:hover {
     color: var(--gray-1);

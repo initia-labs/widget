@@ -11,6 +11,8 @@
   padding-top: 16px;
   text-decoration: none;
 
+  transition: background-color var(--transition) ease;
+
   &:hover {
     background-color: var(--gray-8);
     color: inherit;

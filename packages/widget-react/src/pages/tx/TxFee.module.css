@@ -4,6 +4,8 @@
 
   .icon {
     color: var(--dimmed);
+
+    transition: color var(--transition) ease;
   }
 
   &:hover .icon {
@@ -29,6 +31,8 @@
   text-align: right;
   padding: 4px 12px;
   width: 152px;
+
+  transition: background-color var(--transition) ease;
 
   &:hover {
     background-color: var(--gray-7);

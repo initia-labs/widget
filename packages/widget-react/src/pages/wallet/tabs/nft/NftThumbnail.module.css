@@ -21,6 +21,8 @@
 .clickable {
   border: 1px solid transparent;
 
+  transition: border-color var(--transition) ease;
+
   &:hover {
     border-color: var(--gray-4);
   }

@@ -13,6 +13,8 @@
   border-bottom: 1px solid var(--border);
   padding: 12px var(--padding);
 
+  transition: background-color var(--transition) ease;
+
   &:hover {
     background-color: var(--gray-8);
   }

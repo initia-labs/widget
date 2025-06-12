@@ -18,6 +18,8 @@
   height: 32px;
   padding: 0 12px;
 
+  transition: background-color var(--transition) ease;
+
   button&:hover {
     background-color: var(--gray-6);
   }
