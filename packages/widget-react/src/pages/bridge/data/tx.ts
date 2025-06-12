@@ -295,7 +295,7 @@ export function useTxStatusQuery(details: HistoryDetails) {
       if (!data) return false
       const { status } = data
       if (status === "STATE_COMPLETED") return false
-      return 1000
+      return details.route.estimated_route_duration_seconds < 10 * 60 ? 3_000 : 60_000
     },
     staleTime: STALE_TIMES.INFINITY,
   })
