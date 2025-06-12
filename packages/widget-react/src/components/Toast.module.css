@@ -4,6 +4,7 @@
   left: 0;
   right: 0;
   padding: var(--padding);
+  z-index: var(--z-index);
 }
 
 .toast {
