@@ -1,6 +1,6 @@
+import clsx from "clsx"
 import type { Ref } from "react"
 import { useState, useEffect } from "react"
-import clsx from "clsx"
 import { mergeRefs } from "react-merge-refs"
 import { useFormContext } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
@@ -11,9 +11,9 @@ import { accountQueryKeys, useUsernameClient } from "@/data/account"
 import Footer from "../Footer"
 import Button from "../Button"
 import { useAutoFocus } from "./hooks"
+import FormHelp from "./FormHelp"
 import InputHelp from "./InputHelp"
 import styles from "./RecipientInput.module.css"
-import FormHelp from "./FormHelp"
 
 interface Props {
   mode?: "onChange" | "onSubmit" // onSubmit: for Bridge
@@ -91,10 +91,11 @@ const RecipientInput = (props: Props) => {
         {myAddress && (
           <Button.Small
             type="button"
+            className={clsx(styles.my, { [styles.active]: isMyAddress })}
             onClick={() => setInputValue(myAddress)}
-            className={clsx(styles.myAddress, { [styles.active]: isMyAddress })}
+            readOnly={isMyAddress}
           >
-            <IconCheck size={14} />
+            <IconCheck size={14} className={styles.icon} />
             {isMyAddress ? "This is my address" : "Enter my address"}
           </Button.Small>
         )}
@@ -111,17 +112,18 @@ const RecipientInput = (props: Props) => {
 
       {renderResult()}
 
-      {!isMyAddress && !!resolvedAddress && (
-        <div className={styles.warning}>
-          <FormHelp level="warning">
-            You've entered a custom address. Do not enter an exchange address. Tokens lost during
-            the transfer will not be retrievable.
-          </FormHelp>
-        </div>
-      )}
-
       {mode === "onSubmit" && (
-        <Footer>
+        <Footer
+          extra={
+            !!resolvedAddress &&
+            !isMyAddress && (
+              <FormHelp level="warning">
+                Do not enter an exchange address. Tokens lost during the transfer will not be
+                retrievable.
+              </FormHelp>
+            )
+          }
+        >
           <Button.White
             type="button"
             onClick={handleApply}

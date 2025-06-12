@@ -27,8 +27,6 @@ const BridgeAccount = ({ type }: Props) => {
   const getDefaultRecipientAddress = useGetDefaultAddress()
   const validateRecipientAddress = useValidateAddress()
 
-  const isDstMyAddress = AddressUtils.equals(address, getDefaultRecipientAddress(dstChainId))
-
   const content = (
     <>
       {type === "src" && connected && <Image src={connected.image} width={18} height={18} />}
@@ -74,11 +72,14 @@ const BridgeAccount = ({ type }: Props) => {
     }
 
     case "dst": {
+      const myAddress = getDefaultRecipientAddress(dstChainId)
+      const isMyAddress = AddressUtils.equals(address, myAddress)
+
       return (
-        <div className={styles.container}>
-          {!isDstMyAddress && (
-            <WidgetTooltip label="This is not your address. Make sure it's correct.">
-              <IconWarningFilled size={14} className={styles.warningIcon} />
+        <div className={styles.wrapper}>
+          {!isMyAddress && (
+            <WidgetTooltip label="This is not my address">
+              <IconWarningFilled size={14} className="warning" />
             </WidgetTooltip>
           )}
 
@@ -88,7 +89,7 @@ const BridgeAccount = ({ type }: Props) => {
               <Scrollable>
                 <RecipientInput
                   mode="onSubmit"
-                  myAddress={getDefaultRecipientAddress(dstChainId)}
+                  myAddress={myAddress}
                   validate={(address) => validateRecipientAddress(address, dstChainId)}
                   onApply={close}
                 />

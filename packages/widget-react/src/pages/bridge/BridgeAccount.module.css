@@ -1,3 +1,10 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
 .account {
   display: flex;
   align-items: center;
@@ -28,15 +35,4 @@
 .warning {
   margin-top: 0;
   margin-bottom: 20px;
-}
-
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
-  .warningIcon {
-    color: var(--warning);
-  }
 }

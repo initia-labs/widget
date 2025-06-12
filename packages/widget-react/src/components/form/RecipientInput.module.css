@@ -2,27 +2,25 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
 }
 
-.myAddress {
+.my {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
-  svg {
+
+  padding-left: 8px;
+
+  .icon {
     color: var(--gray-6);
-    margin-left: -4px;
   }
 }
 
 .active {
   border-color: var(--gray-0);
-  svg {
+
+  .icon {
     color: var(--gray-0);
   }
-}
-
-.warning {
-  margin-top: 16px;
 }
