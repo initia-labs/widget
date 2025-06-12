@@ -210,45 +210,49 @@ export function useSignOpHook() {
 
   return useMutation({
     mutationFn: async () => {
-      const { chain_id, hook } = await skip
-        .post("op-hook", {
-          json: {
-            source_address: initiaAddress,
-            source_asset_chain_id: route.source_asset_chain_id,
-            source_asset_denom: route.source_asset_denom,
-            dest_address: values.recipient,
-            dest_asset_chain_id: route.dest_asset_chain_id,
-            dest_asset_denom: route.dest_asset_denom,
-          },
+      try {
+        const { chain_id, hook } = await skip
+          .post("op-hook", {
+            json: {
+              source_address: initiaAddress,
+              source_asset_chain_id: route.source_asset_chain_id,
+              source_asset_denom: route.source_asset_denom,
+              dest_address: values.recipient,
+              dest_asset_chain_id: route.dest_asset_chain_id,
+              dest_asset_denom: route.dest_asset_denom,
+            },
+          })
+          .json<OpHookResponse>()
+
+        await waitForAccountCreation(initiaAddress, findSkipChain(route.dest_asset_chain_id).rest)
+
+        const messages = hook.map(({ msg_type_url, msg }) => {
+          // Note: `typeUrl` comes in proto format, but `msg` is in amino format.
+          // Weird, but that's how the Skip API responds.
+          return aminoTypes.fromAmino({
+            type: aminoConverters[msg_type_url].aminoType,
+            value: JSON.parse(msg),
+          })
         })
-        .json<OpHookResponse>()
 
-      await waitForAccountCreation(initiaAddress, findSkipChain(route.dest_asset_chain_id).rest)
+        const signed = await signWithEthSecp256k1(
+          chain_id,
+          initiaAddress,
+          messages,
+          { amount: [], gas: "1" },
+          "",
+        )
 
-      const messages = hook.map(({ msg_type_url, msg }) => {
-        // Note: `typeUrl` comes in proto format, but `msg` is in amino format.
-        // Weird, but that's how the Skip API responds.
-        return aminoTypes.fromAmino({
-          type: aminoConverters[msg_type_url].aminoType,
-          value: JSON.parse(msg),
+        const tx = Tx.fromPartial({
+          body: TxBody.decode(signed.bodyBytes),
+          authInfo: AuthInfo.decode(signed.authInfoBytes),
+          signatures: signed.signatures,
         })
-      })
 
-      const signed = await signWithEthSecp256k1(
-        chain_id,
-        initiaAddress,
-        messages,
-        { amount: [], gas: "1" },
-        "",
-      )
-
-      const tx = Tx.fromPartial({
-        body: TxBody.decode(signed.bodyBytes),
-        authInfo: AuthInfo.decode(signed.authInfoBytes),
-        signatures: signed.signatures,
-      })
-
-      return { signer: initiaAddress, hook: toBase64(Tx.encode(tx).finish()) }
+        return { signer: initiaAddress, hook: toBase64(Tx.encode(tx).finish()) }
+      } catch (error) {
+        throw new Error(await normalizeError(error))
+      }
     },
   })
 }
