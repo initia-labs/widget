@@ -14,9 +14,9 @@ interface Props {
 const Toast = ({ notification, onClose }: Props) => {
   const transition = useTransition(notification, {
     keys: (notification) => notification?.id || "empty",
-    from: { transform: "translateY(-100%)", opacity: 0 },
-    enter: { transform: "translateY(0%)", opacity: 1 },
-    leave: { transform: "translateY(-100%)", opacity: 0 },
+    from: { transform: "translateY(-52px)", opacity: 0 },
+    enter: { transform: "translateY(0px)", opacity: 1 },
+    leave: { transform: "translateY(-52px)", opacity: 0 },
     config: { duration: 150 },
   })
 
