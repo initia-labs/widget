@@ -11,11 +11,12 @@ import Withdrawals from "@/pages/bridge/op/Withdrawals"
 import BridgePreview from "@/pages/bridge/BridgePreview"
 import BridgeHistory from "@/pages/bridge/BridgeHistory"
 import TxRequest from "@/pages/tx/TxRequest"
-import { useAddress } from "../data/hooks"
+import { useAddress, useRedirectOnAccountChange } from "../data/hooks"
 
 const Routes = () => {
   const path = usePath()
   const address = useAddress()
+  useRedirectOnAccountChange()
 
   if (path === "/connect") {
     if (address) return null
