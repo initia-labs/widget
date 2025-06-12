@@ -1,12 +1,12 @@
 import clsx from "clsx"
-import { IconChevronRight, IconEdit } from "@initia/icons-react"
-import { truncate } from "@/public/utils"
+import { IconChevronRight, IconEdit, IconWarningFilled } from "@initia/icons-react"
+import { AddressUtils, truncate } from "@/public/utils"
 import Image from "@/components/Image"
 import ModalTrigger from "@/components/ModalTrigger"
 import Scrollable from "@/components/Scrollable"
 import List from "@/components/List"
 import RecipientInput from "@/components/form/RecipientInput"
-import InputHelp from "@/components/form/InputHelp"
+import WidgetTooltip from "@/components/WidgetTooltip"
 import { useGetDefaultAddress, useValidateAddress } from "./data/address"
 import { useBridgeForm } from "./data/form"
 import { useCosmosWallets } from "./data/cosmos"
@@ -72,27 +72,34 @@ const BridgeAccount = ({ type }: Props) => {
     }
 
     case "dst": {
+      const myAddress = getDefaultRecipientAddress(dstChainId)
+      const isMyAddress = AddressUtils.equals(address, myAddress)
+
       return (
-        <ModalTrigger
-          title="Recipient address"
-          content={(close) => (
-            <Scrollable>
-              <InputHelp level="warning" className={styles.warning}>
-                Do not enter an exchange address. Tokens lost during the transfer will not be
-                retrievable.
-              </InputHelp>
-              <RecipientInput
-                mode="onSubmit"
-                myAddress={getDefaultRecipientAddress(dstChainId)}
-                validate={(address) => validateRecipientAddress(address, dstChainId)}
-                onApply={close}
-              />
-            </Scrollable>
+        <div className={styles.wrapper}>
+          {!isMyAddress && (
+            <WidgetTooltip label="This is not my address">
+              <IconWarningFilled size={14} className="warning" />
+            </WidgetTooltip>
           )}
-          className={styles.account}
-        >
-          {content}
-        </ModalTrigger>
+
+          <ModalTrigger
+            title="Recipient"
+            content={(close) => (
+              <Scrollable>
+                <RecipientInput
+                  mode="onSubmit"
+                  myAddress={myAddress}
+                  validate={(address) => validateRecipientAddress(address, dstChainId)}
+                  onApply={close}
+                />
+              </Scrollable>
+            )}
+            className={styles.account}
+          >
+            {content}
+          </ModalTrigger>
+        </div>
       )
     }
   }

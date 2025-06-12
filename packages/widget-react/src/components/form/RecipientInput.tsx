@@ -1,14 +1,17 @@
+import clsx from "clsx"
 import type { Ref } from "react"
 import { useState, useEffect } from "react"
 import { mergeRefs } from "react-merge-refs"
 import { useFormContext } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
+import { IconCheck } from "@initia/icons-react"
 import { AddressUtils } from "@/public/utils"
 import { STALE_TIMES } from "@/data/http"
 import { accountQueryKeys, useUsernameClient } from "@/data/account"
 import Footer from "../Footer"
 import Button from "../Button"
 import { useAutoFocus } from "./hooks"
+import FormHelp from "./FormHelp"
 import InputHelp from "./InputHelp"
 import styles from "./RecipientInput.module.css"
 
@@ -44,6 +47,7 @@ const RecipientInput = (props: Props) => {
   })
 
   const resolvedAddress = usernameAddress ?? (validate(inputValue) ? inputValue : "")
+  const isMyAddress = myAddress && AddressUtils.equals(resolvedAddress, myAddress)
 
   // onChange: update form value on every valid input change
   useEffect(() => {
@@ -55,7 +59,6 @@ const RecipientInput = (props: Props) => {
   // onSubmit: update form value when button clicked
   const handleApply = () => {
     if (isLoading || error) return
-    const isMyAddress = myAddress && AddressUtils.equals(resolvedAddress, myAddress)
     const recipientType = isMyAddress ? "auto" : "manual"
     setValue("recipientType", recipientType, { shouldValidate: true })
     setValue("recipient", resolvedAddress, { shouldValidate: true })
@@ -83,11 +86,17 @@ const RecipientInput = (props: Props) => {
   return (
     <div>
       <label htmlFor="recipient" className={styles.label}>
-        <span>Recipient address</span>
+        <span>Recipient</span>
 
         {myAddress && (
-          <Button.Small type="button" onClick={() => setInputValue(myAddress)}>
-            My address
+          <Button.Small
+            type="button"
+            className={clsx(styles.my, { [styles.active]: isMyAddress })}
+            onClick={() => setInputValue(myAddress)}
+            readOnly={!!isMyAddress}
+          >
+            <IconCheck size={14} className={styles.icon} />
+            {isMyAddress ? "This is my address" : "Enter my address"}
           </Button.Small>
         )}
       </label>
@@ -104,7 +113,17 @@ const RecipientInput = (props: Props) => {
       {renderResult()}
 
       {mode === "onSubmit" && (
-        <Footer>
+        <Footer
+          extra={
+            !!resolvedAddress &&
+            !isMyAddress && (
+              <FormHelp level="warning">
+                Do not enter an exchange address. Tokens lost during the transfer will not be
+                retrievable.
+              </FormHelp>
+            )
+          }
+        >
           <Button.White
             type="button"
             onClick={handleApply}

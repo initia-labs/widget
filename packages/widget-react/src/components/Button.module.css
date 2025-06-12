@@ -61,12 +61,16 @@
 
   transition: border-color var(--transition) ease;
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled):not(.span) {
     border-color: var(--gray-4);
   }
 
   &:disabled {
     color: var(--gray-4);
+  }
+
+  &.span {
+    cursor: default;
   }
 
   &.unpadded {

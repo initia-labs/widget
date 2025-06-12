@@ -3,3 +3,24 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.my {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  padding-left: 8px;
+
+  .icon {
+    color: var(--gray-6);
+  }
+}
+
+.active {
+  border-color: var(--gray-0);
+
+  .icon {
+    color: var(--gray-0);
+  }
+}
