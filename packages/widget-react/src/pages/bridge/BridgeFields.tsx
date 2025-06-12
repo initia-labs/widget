@@ -15,6 +15,7 @@ import Footer from "@/components/Footer"
 import ModalTrigger from "@/components/ModalTrigger"
 import FormHelp from "@/components/form/FormHelp"
 import PlainModalContent from "@/components/PlainModalContent"
+import AnimatedCollapse from "@/components/AnimatedCollapse"
 import { formatDuration, formatFees } from "./data/format"
 import type { FormValues } from "./data/form"
 import { FormValuesSchema, useBridgeForm } from "./data/form"
@@ -189,7 +190,7 @@ const BridgeFields = () => {
       <Footer
         extra={
           <>
-            {BigNumber(quantity).gt(0) && isOpWithdrawable ? (
+            <AnimatedCollapse isOpen={!!(BigNumber(quantity).gt(0) && isOpWithdrawable)}>
               <SelectRouteOption.Stack>
                 <SelectRouteOption
                   label="Minitswap"
@@ -206,42 +207,51 @@ const BridgeFields = () => {
                   checked={selectedType === "op"}
                 />
               </SelectRouteOption.Stack>
-            ) : null}
+            </AnimatedCollapse>
 
             <FormHelp.Stack>
-              {isOpWithdrawable && selectedType === "op" && route && (
+              <AnimatedCollapse isOpen={!!(isOpWithdrawable && selectedType === "op" && route)}>
                 <FormHelp level="info">
                   Withdraw transaction is required when using the Optimistic bridge. Status of all
                   withdrawals can be viewed on the {withdrawalStatusLink} page.
                 </FormHelp>
-              )}
-              {isMaxAmount && (
+              </AnimatedCollapse>
+
+              <AnimatedCollapse isOpen={isMaxAmount}>
                 <FormHelp level="warning">Make sure to leave enough for fees</FormHelp>
-              )}
-              <FormHelp level="warning">{route?.warning?.message}</FormHelp>
-              {route?.extra_warnings?.map((warning) => (
-                <FormHelp level="warning" key={warning}>
-                  {warning}
-                </FormHelp>
-              ))}
+              </AnimatedCollapse>
+
+              <AnimatedCollapse isOpen={!!route?.warning?.message}>
+                <FormHelp level="warning">{route?.warning?.message}</FormHelp>
+              </AnimatedCollapse>
+
+              <AnimatedCollapse isOpen={!!route?.extra_warnings?.length}>
+                {route?.extra_warnings?.map((warning) => (
+                  <FormHelp level="warning" key={warning}>
+                    {warning}
+                  </FormHelp>
+                ))}
+              </AnimatedCollapse>
             </FormHelp.Stack>
 
             <div className={styles.meta}>
-              {route && formatFees(route.estimated_fees) && (
+              <AnimatedCollapse isOpen={!!(route && formatFees(route.estimated_fees))}>
                 <div className={styles.row}>
                   <span className={styles.title}>Estimated fees</span>
-                  <span className={styles.description}>{formatFees(route.estimated_fees)}</span>
+                  <span className={styles.description}>{formatFees(route?.estimated_fees)}</span>
                 </div>
-              )}
+              </AnimatedCollapse>
 
-              {route && formatDuration(route.estimated_route_duration_seconds) && (
+              <AnimatedCollapse
+                isOpen={!!(route && formatDuration(route.estimated_route_duration_seconds))}
+              >
                 <div className={styles.row}>
                   <span className={styles.title}>Estimated route duration</span>
                   <span className={styles.description}>
-                    {formatDuration(route.estimated_route_duration_seconds)}
+                    {route && formatDuration(route.estimated_route_duration_seconds)}
                   </span>
                 </div>
-              )}
+              </AnimatedCollapse>
 
               <div className={styles.row}>
                 <span className={styles.title}>Slippage</span>
