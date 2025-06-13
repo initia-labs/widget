@@ -15,6 +15,7 @@ import Footer from "@/components/Footer"
 import ModalTrigger from "@/components/ModalTrigger"
 import FormHelp from "@/components/form/FormHelp"
 import PlainModalContent from "@/components/PlainModalContent"
+import AnimatedHeight from "@/components/AnimatedHeight"
 import { formatDuration, formatFees } from "./data/format"
 import type { FormValues } from "./data/form"
 import { FormValuesSchema, useBridgeForm } from "./data/form"
@@ -189,24 +190,26 @@ const BridgeFields = () => {
       <Footer
         extra={
           <>
-            {BigNumber(quantity).gt(0) && isOpWithdrawable ? (
-              <SelectRouteOption.Stack>
-                <SelectRouteOption
-                  label="Minitswap"
-                  query={routeQueryDefault}
-                  value="default"
-                  onSelect={setSelectedType}
-                  checked={selectedType === "default"}
-                />
-                <SelectRouteOption
-                  label="Optimistic bridge"
-                  query={routeQueryOpWithdrawal}
-                  value="op"
-                  onSelect={setSelectedType}
-                  checked={selectedType === "op"}
-                />
-              </SelectRouteOption.Stack>
-            ) : null}
+            <AnimatedHeight>
+              {BigNumber(quantity).gt(0) && isOpWithdrawable ? (
+                <SelectRouteOption.Stack>
+                  <SelectRouteOption
+                    label="Minitswap"
+                    query={routeQueryDefault}
+                    value="default"
+                    onSelect={setSelectedType}
+                    checked={selectedType === "default"}
+                  />
+                  <SelectRouteOption
+                    label="Optimistic bridge"
+                    query={routeQueryOpWithdrawal}
+                    value="op"
+                    onSelect={setSelectedType}
+                    checked={selectedType === "op"}
+                  />
+                </SelectRouteOption.Stack>
+              ) : null}
+            </AnimatedHeight>
 
             <FormHelp.Stack>
               {isOpWithdrawable && selectedType === "op" && route && (

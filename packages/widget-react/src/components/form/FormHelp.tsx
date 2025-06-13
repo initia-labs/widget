@@ -1,5 +1,6 @@
 import clsx from "clsx"
 import type { PropsWithChildren } from "react"
+import AnimatedHeight from "../AnimatedHeight"
 import InputHelp from "./InputHelp"
 import styles from "./FormHelp.module.css"
 
@@ -9,7 +10,11 @@ interface Props {
 
 const FormHelpStack = ({ children }: PropsWithChildren) => {
   if (!children) return null
-  return <div className={styles.stack}>{children}</div>
+  return (
+    <AnimatedHeight>
+      <div className={styles.stack}>{children}</div>
+    </AnimatedHeight>
+  )
 }
 
 const FormHelp = (props: PropsWithChildren<Props>) => {
