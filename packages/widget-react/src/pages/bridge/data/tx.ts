@@ -280,7 +280,7 @@ export function useTrackTxQuery(details: HistoryDetails) {
 }
 
 export function useTxStatusQuery(details: HistoryDetails) {
-  const { chainId, txHash, state } = details
+  const { timestamp, chainId, txHash, state } = details
   const skip = useSkip()
   const isLz = getBridgeType(details.route) === BridgeType.LZ
 
@@ -295,7 +295,14 @@ export function useTxStatusQuery(details: HistoryDetails) {
       if (!data) return false
       const { status } = data
       if (status === "STATE_COMPLETED") return false
-      return details.route.estimated_route_duration_seconds < 10 * 60 ? 3_000 : 60_000
+
+      const eta = timestamp + details.route.estimated_route_duration_seconds * 1000
+      const now = Date.now()
+      const secondsLeft = Math.floor((eta - now) / 1000)
+
+      if (secondsLeft <= 0) return 1000 // overdue
+      if (secondsLeft <= 5 * 60) return 5000 // ≤5 min
+      return 60 * 1000
     },
     staleTime: STALE_TIMES.INFINITY,
   })
