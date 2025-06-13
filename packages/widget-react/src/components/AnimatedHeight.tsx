@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from "react"
 import { useRef, useState, useEffect } from "react"
-import { useSpring, animated } from "@react-spring/web"
+import { useSpring, animated, config } from "@react-spring/web"
 
 const AnimatedHeight = ({ children }: PropsWithChildren) => {
   const contentRef = useRef<HTMLDivElement>(null)
@@ -8,7 +8,7 @@ const AnimatedHeight = ({ children }: PropsWithChildren) => {
 
   const style = useSpring({
     height: contentHeight,
-    config: { duration: 150 },
+    config: { ...config.stiff, clamp: true },
   })
 
   useEffect(() => {

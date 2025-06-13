@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import { useTransition, animated } from "@react-spring/web"
+import { useTransition, animated, config } from "@react-spring/web"
 import { IconCheckCircleFilled, IconClose, IconCloseCircleFilled } from "@initia/icons-react"
 import type { InternalNotification } from "@/public/app/NotificationProvider"
 import type { NotificationType } from "@/public/app/NotificationContext"
@@ -17,7 +17,7 @@ const Toast = ({ notification, onClose }: Props) => {
     from: { transform: "translateY(-52px)", opacity: 0 },
     enter: { transform: "translateY(0px)", opacity: 1 },
     leave: { transform: "translateY(-52px)", opacity: 0 },
-    config: { duration: 150 },
+    config: { ...config.wobbly, clamp: true },
   })
 
   const getIcon = (type?: NotificationType) => {
