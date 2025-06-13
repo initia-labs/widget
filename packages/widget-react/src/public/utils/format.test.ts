@@ -13,6 +13,9 @@ test("formatAmount", () => {
   expect(formatAmount("")).toBe("0")
   expect(formatAmount("NaN")).toBe("0")
   expect(formatAmount(undefined)).toBe("0")
+  expect(formatAmount("988288776786318571428571", { decimals: 0 })).toBe(
+    "988,288,776,786,318,571,428,571",
+  )
 })
 
 test("toAmount", () => {

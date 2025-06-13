@@ -8,11 +8,7 @@ export function formatNumber(value: BigNumber.Value, options: FormatNumberOption
   const number = BigNumber(value)
   if (number.isZero() || number.isNaN()) return "0"
   const { dp = 2 } = options
-  const numberFormatter = new Intl.NumberFormat("en-US", {
-    minimumFractionDigits: dp,
-    maximumFractionDigits: dp,
-  })
-  return numberFormatter.format(number.decimalPlaces(dp, BigNumber.ROUND_DOWN).toNumber())
+  return number.toFormat(dp, BigNumber.ROUND_DOWN)
 }
 
 /* amount */
