@@ -88,7 +88,6 @@ const BridgeForm = () => {
   const validateAddress = useValidateAddress()
   const isValidRecipient = validateAddress(recipient, dstChainId)
   useEffect(() => {
-    setValue("cosmosWalletName", undefined)
     setValue("sender", defaultSenderAddress)
   }, [srcChainId, defaultSenderAddress, setValue])
   useEffect(() => {

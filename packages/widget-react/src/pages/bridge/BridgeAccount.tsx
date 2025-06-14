@@ -17,13 +17,13 @@ interface Props {
 }
 
 const BridgeAccount = ({ type }: Props) => {
-  const { watch, setValue } = useBridgeForm()
-  const { srcChainId, dstChainId, cosmosWalletName } = watch()
+  const { watch } = useBridgeForm()
+  const { dstChainId } = watch()
   const addressKey = type === "src" ? "sender" : "recipient"
   const address = watch(addressKey)
 
-  const { list, find } = useCosmosWallets()
-  const connected = find(cosmosWalletName)
+  const { list, cosmosWallet, connectCosmosWallet } = useCosmosWallets()
+  const connected = cosmosWallet
   const getDefaultRecipientAddress = useGetDefaultAddress()
   const validateRecipientAddress = useValidateAddress()
 
@@ -43,12 +43,7 @@ const BridgeAccount = ({ type }: Props) => {
           content={(close) => (
             <List
               onSelect={async (item) => {
-                const provider = item.getProvider()
-                if (!provider) return window.open(item.fallbackUrl, "_blank")
-                const offlineSigner = provider.getOfflineSigner(srcChainId)
-                const [{ address }] = await offlineSigner.getAccounts()
-                setValue("sender", address)
-                setValue("cosmosWalletName", item.name)
+                connectCosmosWallet(item.name)
                 close()
               }}
               list={list}

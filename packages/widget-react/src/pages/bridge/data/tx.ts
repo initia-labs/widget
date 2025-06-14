@@ -54,11 +54,11 @@ export function useBridgeTx(tx: TxJson) {
   const { addHistoryItem } = useBridgeHistoryList()
 
   const { route, values } = useBridgePreviewState()
-  const { srcChainId, sender, recipient, cosmosWalletName } = values
+  const { srcChainId, sender, recipient } = values
 
   const getProvider = useGetProvider()
   const { requestTxSync, waitForTxConfirmation } = useInitiaWidget()
-  const { find } = useCosmosWallets()
+  const { cosmosWallet } = useCosmosWallets()
   const registry = useRegistry()
   const aminoTypes = useAminoTypes()
   const srcChain = useSkipChain(srcChainId)
@@ -88,7 +88,7 @@ export function useBridgeTx(tx: TxJson) {
             return { txHash, wait }
           }
 
-          const provider = find(cosmosWalletName)?.getProvider()
+          const provider = cosmosWallet?.getProvider()
           if (!provider) throw new Error("Wallet not connected")
           const offlineSigner = provider.getOfflineSignerOnlyAmino(srcChainId)
           const client = await SigningStargateClient.connectWithSigner(

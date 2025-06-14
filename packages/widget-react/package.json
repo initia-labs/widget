@@ -101,7 +101,7 @@
     "date-fns": "^4",
     "eslint": "^9",
     "ethers": "^6",
-    "jotai": "^2",
+    "jotai": "^2.12.5",
     "ky": "^1",
     "nanoid": "^5",
     "postcss": "^8",

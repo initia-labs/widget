@@ -17,7 +17,6 @@ export const FormValuesSchema = z.object({
   dstDenom: z.string().nonempty(),
   quantity: z.string().nonempty("Amount is required"),
   sender: z.string().nonempty(),
-  cosmosWalletName: z.string().optional(),
   recipient: z.string().nonempty("Recipient address is required"),
   recipientType: z.enum(["auto", "manual"]),
   slippagePercent: z.string().nonempty(),
@@ -38,7 +37,6 @@ export function useDefaultValues(): Partial<FormValues> {
     quantity: "",
     slippagePercent: "0.5",
     sender: "",
-    cosmosWalletName: "",
     recipient: "",
     recipientType: "auto",
   }
