@@ -3,9 +3,11 @@ import { fromBech32 } from "@cosmjs/encoding"
 import { AddressUtils } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { useFindSkipChain, useFindChainType } from "./chains"
+import { useCosmosAddress } from "./cosmos"
 
 export function useGetDefaultAddress() {
   const { initiaAddress, hexAddress } = useInitiaWidget()
+  const cosmosAddress = useCosmosAddress()
   const findSkipChain = useFindSkipChain()
   const findChainType = useFindChainType()
   return (chainId: string) => {
@@ -19,6 +21,8 @@ export function useGetDefaultAddress() {
         return initiaAddress
       case "evm":
         return hexAddress
+      case "cosmos":
+        return cosmosAddress(chain.bech32_prefix)
       default:
         return ""
     }
