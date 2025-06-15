@@ -1,7 +1,5 @@
 import { useAccount } from "wagmi"
-import { useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { useNavigate, usePath } from "@/lib/router"
 import { useTx } from "@/data/tx"
 import { useWidgetVisibility } from "@/data/ui"
 import { useDefaultChain } from "@/data/chains"
@@ -75,23 +73,4 @@ export function useInitiaWidget() {
     openBridge,
     ...tx,
   }
-}
-
-export function useRedirectOnAccountChange() {
-  const { address } = useAccount()
-  const navigate = useNavigate()
-  const path = usePath()
-
-  const redirectPaths: Record<string, string> = {
-    "/bridge/preview": "/bridge",
-    "/collection": "/nfts",
-    "/nft": "/nfts",
-    "/nft/send": "/nfts",
-  }
-
-  useEffect(() => {
-    const redirectPath = redirectPaths[path]
-    if (redirectPath) navigate(redirectPath)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address])
 }

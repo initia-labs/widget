@@ -1,4 +1,5 @@
-import { usePath } from "@/lib/router"
+import { useEffect } from "react"
+import { useNavigate, usePath } from "@/lib/router"
 import Connect from "@/pages/connect/Connect"
 import Home from "@/pages/wallet/tabs/Home"
 import Send from "@/pages/wallet/txs/send/Send"
@@ -11,12 +12,26 @@ import Withdrawals from "@/pages/bridge/op/Withdrawals"
 import BridgePreview from "@/pages/bridge/BridgePreview"
 import BridgeHistory from "@/pages/bridge/BridgeHistory"
 import TxRequest from "@/pages/tx/TxRequest"
-import { useAddress, useRedirectOnAccountChange } from "../data/hooks"
+import { useAddress } from "../data/hooks"
 
 const Routes = () => {
+  const navigate = useNavigate()
   const path = usePath()
   const address = useAddress()
-  useRedirectOnAccountChange()
+
+  // whenever address changes, navigate to the appropriate path
+  useEffect(() => {
+    if (path.startsWith("/bridge/")) {
+      navigate("/bridge")
+    }
+
+    if (path === "/collection" || path.startsWith("/nft")) {
+      navigate("/nfts")
+    }
+
+    // Run only on address changes, preventing navigation from triggering on path updates.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address])
 
   if (path === "/connect") {
     if (address) return null
