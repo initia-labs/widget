@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from "react"
 import { Tooltip } from "radix-ui"
+import { Provider as JotaiProvider } from "jotai"
 import { MemoryRouter } from "@/lib/router"
 import { LocalStorageKey } from "@/data/constants"
 import type { Config } from "@/data/config"
@@ -61,21 +62,23 @@ const InitiaWidgetProvider = ({ children, ...config }: PropsWithChildren<Partial
           <Prefetch />
         </AsyncBoundary>
 
-        <MemoryRouter>
-          <PortalProvider>
-            <NotificationProvider>
-              <ModalProvider>
-                <Tooltip.Provider delayDuration={0} skipDelayDuration={0}>
-                  {children}
+        <JotaiProvider>
+          <MemoryRouter>
+            <PortalProvider>
+              <NotificationProvider>
+                <ModalProvider>
+                  <Tooltip.Provider delayDuration={0} skipDelayDuration={0}>
+                    {children}
 
-                  <Drawer>
-                    <Routes />
-                  </Drawer>
-                </Tooltip.Provider>
-              </ModalProvider>
-            </NotificationProvider>
-          </PortalProvider>
-        </MemoryRouter>
+                    <Drawer>
+                      <Routes />
+                    </Drawer>
+                  </Tooltip.Provider>
+                </ModalProvider>
+              </NotificationProvider>
+            </PortalProvider>
+          </MemoryRouter>
+        </JotaiProvider>
       </ConfigContext.Provider>
     </>
   )

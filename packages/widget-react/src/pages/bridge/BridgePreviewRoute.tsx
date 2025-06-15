@@ -9,7 +9,7 @@ import CheckboxButton from "@/components/CheckboxButton"
 import Image from "@/components/Image"
 import type { RouterOperationJson } from "./data/simulate"
 import { useBridgePreviewState } from "./data/tx"
-import { useCosmosWallets } from "./data/cosmos"
+import { useCosmosAddress, useCosmosWallets } from "./data/cosmos"
 import OperationItem from "./OperationItem"
 import styles from "./BridgePreviewRoute.module.css"
 
@@ -62,31 +62,29 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
   const { source_asset_denom, source_asset_chain_id, amount_in, operations } = route
   const addressMap = zipObj(route.required_chain_addresses, addressList)
 
-  const { find } = useCosmosWallets()
+  const { cosmosWallet } = useCosmosWallets()
+  const getCosmosAddress = useCosmosAddress()
   const { connector, address: connectedAddress = "" } = useAccount()
 
   const [showAll, toggleShowAll] = useToggle(false)
   const canToggleShowAll = operations.length > 1
 
-  const connectedWalletIcon = (
-    <Image
-      src={values.cosmosWalletName ? find(values.cosmosWalletName)?.image : connector?.icon}
-      width={12}
-      height={12}
-    />
-  )
+  const getWalletIcon = (address: string) => {
+    if (AddressUtils.equals(address, connectedAddress))
+      return <Image src={connector?.icon} width={12} height={12} />
+
+    if (AddressUtils.equals(address, getCosmosAddress("init")))
+      return <Image src={cosmosWallet?.image} width={12} height={12} />
+
+    return <IconWallet size={11} />
+  }
 
   const firstOperationProps = {
     amount: amount_in,
     denom: source_asset_denom,
     chainId: source_asset_chain_id,
     address: values.sender,
-    walletIcon: connectedWalletIcon,
-  }
-
-  const getWalletIcon = (address: string) => {
-    if (AddressUtils.equals(address, connectedAddress)) return connectedWalletIcon
-    return <IconWallet size={11} />
+    walletIcon: getWalletIcon(values.sender),
   }
 
   const toProps = (normalizedOperation: ReturnType<typeof normalizeOperation>, index: number) => {
