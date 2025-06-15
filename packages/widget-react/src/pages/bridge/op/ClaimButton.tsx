@@ -24,7 +24,7 @@ const ClaimButton = () => {
 
   const layer1 = useLayer1()
   const address = useInitiaAddress()
-  const { requestTxSync } = useInitiaWidget()
+  const { requestTxSync, waitForTxConfirmation } = useInitiaWidget()
   const outputResponse = useOutputResponse(withdrawalTx)
   const withdrawalHash = toBase64(computeWithdrawalHash(withdrawalTx))
   const claimed = useWithdrawalClaimed(withdrawalTx, withdrawalHash)
@@ -58,7 +58,8 @@ const ClaimButton = () => {
         internal: true,
       })
     },
-    onSuccess: () => {
+    onSuccess: async (txHash) => {
+      await waitForTxConfirmation({ chainId: layer1.chain_id, txHash })
       queryClient.invalidateQueries({
         queryKey: opQueryKeys.withdrawalClaimed(bridge_id, withdrawalHash).queryKey,
       })
