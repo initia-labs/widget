@@ -12,7 +12,7 @@ import { LocalStorageKey } from "@/data/constants"
 import { useBalances } from "@/data/account"
 import { chainQueryKeys, useChain } from "@/data/chains"
 import { useSignWithEthSecp256k1, useOfflineSigner } from "@/data/signer"
-import { STALE_TIMES } from "@/data/http"
+import { normalizeError, STALE_TIMES } from "@/data/http"
 import { TX_APPROVAL_MUTATION_KEY, useTxRequestHandler } from "@/data/tx"
 import WidgetAccordion from "@/components/WidgetAccordion"
 import Scrollable from "@/components/Scrollable"
@@ -99,9 +99,9 @@ const TxRequest = () => {
     onMutate: () => {
       localStorage.setItem(localStorageKey, feeDenom)
     },
-    onError: (error: Error) => {
+    onError: async (error: Error) => {
       console.trace(error)
-      reject(error)
+      reject(new Error(await normalizeError(error)))
     },
   })
 

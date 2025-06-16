@@ -7,6 +7,7 @@ import { DEFAULT_GAS_ADJUSTMENT } from "@/public/data/constants"
 import { useInitiaAddress } from "@/public/data/hooks"
 import { useModal } from "@/public/app/ModalContext"
 import { useConfig } from "./config"
+import { normalizeError } from "./http"
 import { useCreateSigningStargateClient } from "./signer"
 import { useWidgetVisibility } from "./ui"
 
@@ -56,8 +57,12 @@ export function useTx() {
   const createSigningStargateClient = useCreateSigningStargateClient()
 
   const estimateGas = async ({ messages, memo, chainId = defaultChainId }: TxRequest) => {
-    const client = await createSigningStargateClient(chainId)
-    return client.simulate(address, messages, memo)
+    try {
+      const client = await createSigningStargateClient(chainId)
+      return await client.simulate(address, messages, memo)
+    } catch (error) {
+      throw new Error(await normalizeError(error))
+    }
   }
 
   type Broadcaster<T> = (client: SigningStargateClient, signedTxBytes: Uint8Array) => Promise<T>
