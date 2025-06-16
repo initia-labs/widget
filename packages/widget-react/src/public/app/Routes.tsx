@@ -1,5 +1,7 @@
 import { useEffect } from "react"
-import { useNavigate, usePath } from "@/lib/router"
+import { useTransition, animated } from "@react-spring/web"
+import { useNavigate, usePath, useHistory } from "@/lib/router"
+import { useAddress } from "../data/hooks"
 import Connect from "@/pages/connect/Connect"
 import Home from "@/pages/wallet/tabs/Home"
 import Send from "@/pages/wallet/txs/send/Send"
@@ -12,67 +14,91 @@ import Withdrawals from "@/pages/bridge/op/Withdrawals"
 import BridgePreview from "@/pages/bridge/BridgePreview"
 import BridgeHistory from "@/pages/bridge/BridgeHistory"
 import TxRequest from "@/pages/tx/TxRequest"
-import { useAddress } from "../data/hooks"
+
+const routes = [
+  { path: "/connect", component: <Connect /> },
+  { path: "/", component: <Home /> },
+  { path: "/send", component: <Send /> },
+  { path: "/collection", component: <CollectionDetails /> },
+  { path: "/nft", component: <NftDetails /> },
+  { path: "/nft/send", component: <SendNft /> },
+  { path: "/rollups", component: <ManageChains /> },
+  { path: "/bridge", component: <BridgeForm /> },
+  { path: "/bridge/preview", component: <BridgePreview /> },
+  { path: "/bridge/history", component: <BridgeHistory /> },
+  { path: "/op/withdrawals", component: <Withdrawals /> },
+  { path: "/tx", component: <TxRequest /> },
+]
 
 const Routes = () => {
+  const rawPath = usePath()
   const navigate = useNavigate()
-  const path = usePath()
+  const history = useHistory()
   const address = useAddress()
+
+  const path = ["/nfts", "/activity"].includes(rawPath) ? "/" : rawPath
+  const prevPath = history[history.length - 2]?.path ?? path
 
   // whenever address changes, navigate to the appropriate path
   useEffect(() => {
     if (path.startsWith("/bridge/")) {
       navigate("/bridge")
     }
-
     if (path === "/collection" || path.startsWith("/nft")) {
       navigate("/nfts")
     }
-
     // Run only on address changes, preventing navigation from triggering on path updates.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address])
 
-  if (path === "/connect") {
-    if (address) return null
-    return <Connect />
-  }
+  // Compute transition direction
+  const currentIndex = routes.findIndex((r) => r.path === path)
+  const prevIndex = routes.findIndex((r) => r.path === prevPath)
+  const direction = currentIndex > prevIndex ? 1 : -1
 
-  switch (path) {
-    case "/bridge":
-      return <BridgeForm />
-    case "/bridge/history":
-      return <BridgeHistory />
-  }
+  const transitions = useTransition(path, {
+    from:
+      direction > 0
+        ? { opacity: 1, transform: "translateX(100%)" }
+        : { opacity: 0, transform: "translateX(0%)" },
+    enter: { opacity: 1, transform: "translateX(0%)" },
+    leave:
+      direction > 0
+        ? { opacity: 0, transform: "translateX(0%)" }
+        : { opacity: 1, transform: "translateX(100%)" },
+    config: { tension: 250, friction: 30 },
+  })
 
-  if (!address) {
-    return null
-  }
+  // Gate: block app unless connected
+  if (path === "/connect" && !address) return <Connect />
 
-  switch (path) {
-    case "/":
-    case "/nfts":
-    case "/activity":
-      return <Home />
-    case "/send":
-      return <Send />
-    case "/collection":
-      return <CollectionDetails />
-    case "/nft":
-      return <NftDetails />
-    case "/nft/send":
-      return <SendNft />
-    case "/rollups":
-      return <ManageChains />
-    case "/bridge/preview":
-      return <BridgePreview />
-    case "/op/withdrawals":
-      return <Withdrawals />
-    case "/tx":
-      return <TxRequest />
-    case "/blank":
-      return null
-  }
+  // FIXME: block only selected routes
+  if (!address) return null
+
+  return (
+    <div style={{ position: "relative", height: "100%", overflow: "hidden" }}>
+      {transitions((style, animatedPath) => {
+        const route = routes.find((r) => r.path === animatedPath)
+        if (!route) return null
+        return (
+          <animated.div
+            key={animatedPath}
+            style={{
+              ...style,
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              willChange: "transform, opacity",
+              zIndex: 10 + currentIndex,
+              backgroundColor: "var(--bg)",
+            }}
+          >
+            {route.component}
+          </animated.div>
+        )
+      })}
+    </div>
+  )
 }
 
 export default Routes
