@@ -1,0 +1,48 @@
+.list {
+  display: grid;
+  gap: 16px;
+  font-size: 12px;
+  padding: 16px 20px;
+}
+
+.key {
+  font-weight: 600;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.encoded,
+.value {
+  color: var(--gray-2);
+  font-family: var(--monospace);
+  font-weight: 500;
+  word-break: break-all;
+  padding-left: 8px;
+}
+
+.decoded {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.arg {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  padding-top: 16px;
+}
+
+.arg:not(:first-child) {
+  border-top: 1px solid var(--gray-6);
+}
+
+.key {
+  color: var(--gray-1);
+}
+
+.value {
+  color: var(--gray-3);
+  word-break: break-all;
+}

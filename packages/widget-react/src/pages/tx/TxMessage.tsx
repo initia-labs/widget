@@ -1,8 +1,9 @@
 import { toBase64 } from "@cosmjs/encoding"
 import type { EncodeObject } from "@cosmjs/proto-signing"
 import styles from "./TxMessage.module.css"
+import MsgExecuteArgs from "./MsgExecuteArgs"
 
-const TxMessage = ({ value }: EncodeObject) => {
+const TxMessage = ({ value, typeUrl, chainId }: EncodeObject & { chainId: string }) => {
   const renderValue = (value: unknown): string => {
     switch (typeof value) {
       case "string":
@@ -28,14 +29,23 @@ const TxMessage = ({ value }: EncodeObject) => {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const msgValues = value as Record<string, any>
+
   return (
     <div className={styles.list}>
-      {Object.entries(value).map(([key, value]) => (
-        <div key={key}>
-          <div className={styles.key}>{key}</div>
-          <p className={styles.value}>{renderValue(value)}</p>
-        </div>
-      ))}
+      {Object.entries(msgValues).map(([key, value]) => {
+        if (typeUrl === "/initia.move.v1.MsgExecute" && key === "args") {
+          return <MsgExecuteArgs msg={msgValues} chainId={chainId} />
+        }
+
+        return (
+          <div key={key}>
+            <div className={styles.key}>{key}</div>
+            <p className={styles.value}>{renderValue(value)}</p>
+          </div>
+        )
+      })}
     </div>
   )
 }

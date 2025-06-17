@@ -125,7 +125,7 @@ const TxRequest = () => {
           renderHeader={({ typeUrl }) =>
             sentenceCase(typeUrl.split(".").pop()!.replace(/^Msg/, ""))
           }
-          renderContent={(message) => <TxMessage {...message} />}
+          renderContent={(message) => <TxMessage {...message} chainId={chainId} />}
         />
       </Scrollable>
 
