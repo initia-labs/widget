@@ -18,6 +18,10 @@ const AnimatedHeight = ({ children }: PropsWithChildren) => {
     }
   }, [children])
 
+  if (!children) {
+    return null
+  }
+
   return (
     <animated.div style={{ overflow: "hidden", ...style }}>
       <div ref={contentRef}>{children}</div>

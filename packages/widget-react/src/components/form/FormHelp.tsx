@@ -10,6 +10,7 @@ interface Props {
 
 const FormHelpStack = ({ children }: PropsWithChildren) => {
   if (!children) return null
+  if (Array.isArray(children) && children.filter(Boolean).length === 0) return null
   return (
     <AnimatedHeight>
       <div className={styles.stack}>{children}</div>

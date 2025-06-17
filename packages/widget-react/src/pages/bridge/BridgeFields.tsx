@@ -75,7 +75,14 @@ const BridgeFields = () => {
   const routeQuery =
     isOpWithdrawable && selectedType === "op" ? routeQueryOpWithdrawal : routeQueryDefault
   const { data, isLoading, isFetching, isFetched } = routeQuery
-  const route = isFetched ? data : undefined
+
+  // Local state to retain the last successful simulated route
+  const [previousData, setPreviousData] = useState(data)
+  useEffect(() => {
+    if (!data) return
+    setPreviousData(data)
+  }, [data])
+  const route = isFetched ? data : debouncedQuantity ? previousData : undefined
   const isSimulating = debouncedQuantity && (isLoading || isFetching)
 
   const flip = () => {
@@ -212,7 +219,7 @@ const BridgeFields = () => {
             </AnimatedHeight>
 
             <FormHelp.Stack>
-              {isOpWithdrawable && selectedType === "op" && route && (
+              {route && isOpWithdrawable && selectedType === "op" && (
                 <FormHelp level="info">
                   Withdraw transaction is required when using the Optimistic bridge. Status of all
                   withdrawals can be viewed on the {withdrawalStatusLink} page.
@@ -221,7 +228,7 @@ const BridgeFields = () => {
               {isMaxAmount && (
                 <FormHelp level="warning">Make sure to leave enough for fees</FormHelp>
               )}
-              <FormHelp level="warning">{route?.warning?.message}</FormHelp>
+              {route?.warning && <FormHelp level="warning">{route.warning.message}</FormHelp>}
               {route?.extra_warnings?.map((warning) => (
                 <FormHelp level="warning" key={warning}>
                   {warning}
@@ -229,38 +236,44 @@ const BridgeFields = () => {
               ))}
             </FormHelp.Stack>
 
-            <div className={styles.meta}>
-              {route && formatFees(route.estimated_fees) && (
-                <div className={styles.row}>
-                  <span className={styles.title}>Estimated fees</span>
-                  <span className={styles.description}>{formatFees(route.estimated_fees)}</span>
+            <AnimatedHeight>
+              {route && (
+                <div className={styles.meta}>
+                  {formatFees(route.estimated_fees) && (
+                    <div className={styles.row}>
+                      <span className={styles.title}>Estimated fees</span>
+                      <span className={styles.description}>{formatFees(route.estimated_fees)}</span>
+                    </div>
+                  )}
+
+                  {formatDuration(route.estimated_route_duration_seconds) && (
+                    <div className={styles.row}>
+                      <span className={styles.title}>Estimated route duration</span>
+                      <span className={styles.description}>
+                        {formatDuration(route.estimated_route_duration_seconds)}
+                      </span>
+                    </div>
+                  )}
+
+                  {route.does_swap && (
+                    <div className={styles.row}>
+                      <span className={styles.title}>Slippage</span>
+                      <span className={styles.description}>
+                        <span>{slippagePercent}%</span>
+
+                        <ModalTrigger
+                          title="Slippage tolerance"
+                          content={(close) => <SlippageControl afterConfirm={close} />}
+                          className={styles.edit}
+                        >
+                          <IconSettingFilled size={12} />
+                        </ModalTrigger>
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
-
-              {route && formatDuration(route.estimated_route_duration_seconds) && (
-                <div className={styles.row}>
-                  <span className={styles.title}>Estimated route duration</span>
-                  <span className={styles.description}>
-                    {formatDuration(route.estimated_route_duration_seconds)}
-                  </span>
-                </div>
-              )}
-
-              <div className={styles.row}>
-                <span className={styles.title}>Slippage</span>
-                <span className={styles.description}>
-                  <span>{slippagePercent}%</span>
-
-                  <ModalTrigger
-                    title="Slippage tolerance"
-                    content={(close) => <SlippageControl afterConfirm={close} />}
-                    className={styles.edit}
-                  >
-                    <IconSettingFilled size={12} />
-                  </ModalTrigger>
-                </span>
-              </div>
-            </div>
+            </AnimatedHeight>
           </>
         }
       >
