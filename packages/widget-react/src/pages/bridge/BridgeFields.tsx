@@ -80,7 +80,11 @@ const BridgeFields = () => {
   const [previousData, setPreviousData] = useState(data)
   useEffect(() => {
     if (!data) return
-    setPreviousData(data)
+    // When the user changes only the `amount`, we still re-fetch the `route` each time.
+    // Changing the `chain` or `asset` can affect estimated fees, time, or warnings.
+    // But changing only the `amount` affects only the received amount and its USD value.
+    // So, it is okay to keep showing the old simulation result for a short time.
+    setPreviousData({ ...data, amount_out: "0", usd_amount_in: "0", usd_amount_out: "0" })
   }, [data])
   const route = isFetched ? data : debouncedQuantity ? previousData : undefined
   const isSimulating = debouncedQuantity && (isLoading || isFetching)
