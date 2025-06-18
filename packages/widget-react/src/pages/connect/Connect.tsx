@@ -11,7 +11,7 @@ const Connect = () => {
   const { closeWidget } = useWidgetVisibility()
   const { connectors, connectAsync } = useConnect()
   const [pendingConnectorId, setPendingConnectorId] = useState<string | null>(null)
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: async (connector: Connector) => {
       setPendingConnectorId(connector.id)
       try {
@@ -38,6 +38,7 @@ const Connect = () => {
         getName={({ name }) => name}
         getKey={({ id }) => id}
         getIsLoading={({ id }) => id === pendingConnectorId}
+        getDisabled={() => isPending}
       />
     </>
   )

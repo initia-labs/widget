@@ -22,4 +22,8 @@
   &:hover {
     background-color: var(--gray-8);
   }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 }

@@ -10,14 +10,28 @@ interface Props<Item> {
   getName: (item: Item) => string
   getKey: (item: Item) => string
   getIsLoading?: (item: Item) => boolean
+  getDisabled?: (item: Item) => boolean
 }
 
-function List<Item>({ onSelect, list, getImage, getName, getKey, getIsLoading }: Props<Item>) {
+function List<Item>({
+  onSelect,
+  list,
+  getImage,
+  getName,
+  getKey,
+  getIsLoading,
+  getDisabled,
+}: Props<Item>) {
   return (
     <Scrollable className={styles.scrollable}>
       <div className={styles.list}>
         {list.map((item) => (
-          <button className={styles.item} onClick={() => onSelect(item)} key={getKey(item)}>
+          <button
+            className={styles.item}
+            onClick={() => onSelect(item)}
+            key={getKey(item)}
+            disabled={getDisabled?.(item)}
+          >
             <Image src={getImage(item)} width={32} height={32} />
             <span className={styles.name}>{getName(item)}</span>
             {getIsLoading?.(item) && <Loader size={16} />}
