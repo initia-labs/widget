@@ -7,8 +7,12 @@
 }
 
 .item {
-  justify-content: flex-start;
+  flex: 1;
   gap: 8px;
+
+  .name {
+    flex: 1;
+  }
 
   border-bottom: 1px solid var(--border);
   padding: 12px var(--padding);
