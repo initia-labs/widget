@@ -1,10 +1,9 @@
-import clsx from "clsx"
 import type { Ref } from "react"
 import { useState, useEffect } from "react"
 import { mergeRefs } from "react-merge-refs"
 import { useFormContext } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
-import { IconCheck } from "@initia/icons-react"
+import { IconCloseCircleFilled } from "@initia/icons-react"
 import { AddressUtils } from "@/public/utils"
 import { STALE_TIMES } from "@/data/http"
 import { accountQueryKeys, useUsernameClient } from "@/data/account"
@@ -88,36 +87,45 @@ const RecipientInput = (props: Props) => {
       <label htmlFor="recipient" className={styles.label}>
         <span>Recipient</span>
 
-        {myAddress && (
-          <Button.Small
-            type="button"
-            className={clsx(styles.my, { [styles.active]: isMyAddress })}
-            onClick={() => setInputValue(myAddress)}
-            readOnly={!!isMyAddress}
-          >
-            <IconCheck size={14} className={styles.icon} />
-            {isMyAddress ? "This is my address" : "Enter my address"}
-          </Button.Small>
-        )}
+        <Button.Small
+          type="button"
+          className={styles.paste}
+          onClick={async () => setInputValue(await navigator.clipboard.readText())}
+          readOnly={!!isMyAddress}
+        >
+          Paste
+        </Button.Small>
       </label>
 
-      <input
-        id="recipient"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value.trim())}
-        placeholder="Address or username"
-        autoComplete="off"
-        ref={mode === "onSubmit" ? mergeRefs([ref, autoFocusRef]) : ref}
-      />
+      <div className={styles.input}>
+        <input
+          id="recipient"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value.trim())}
+          placeholder="Address or username"
+          autoComplete="off"
+          ref={mode === "onSubmit" ? mergeRefs([ref, autoFocusRef]) : ref}
+        />
+        {!!inputValue && (
+          <button className={styles.reset} onClick={() => setInputValue("")}>
+            <IconCloseCircleFilled size={16} />
+          </button>
+        )}
+      </div>
 
       {renderResult()}
+
+      {isMyAddress && (
+        <InputHelp level="success" className={styles.myAddress}>
+          This is my address
+        </InputHelp>
+      )}
 
       {mode === "onSubmit" && (
         <Footer
           extra={
-            !!resolvedAddress &&
-            !isMyAddress && (
-              <FormHelp level="warning">
+            (!myAddress || (!!resolvedAddress && !isMyAddress)) && (
+              <FormHelp level="info">
                 Do not enter an exchange address. Tokens lost during the transfer will not be
                 retrievable.
               </FormHelp>

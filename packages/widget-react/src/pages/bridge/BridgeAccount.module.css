@@ -24,6 +24,14 @@
     background-color: var(--gray-6);
   }
 
+  .reset:hover {
+    color: var(--gray-1);
+
+    /* incerase button hitbox */
+    padding: 4px;
+    margin: -4px;
+  }
+
   &.white {
     background-color: var(--gray-0);
     color: var(--gray-8);
