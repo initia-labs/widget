@@ -4,10 +4,10 @@ import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
 import { normalizeError } from "@/data/http"
 import { useWidgetVisibility } from "@/data/ui"
+import Scrollable from "@/components/Scrollable"
 import Image from "@/components/Image"
 import Loader from "@/components/Loader"
 import styles from "./Connect.module.css"
-import Scrollable from "@/components/Scrollable"
 
 const Connect = () => {
   const { closeWidget } = useWidgetVisibility()
