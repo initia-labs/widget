@@ -1,29 +1,24 @@
+import clsx from "clsx"
 import type { PropsWithChildren } from "react"
 import { Tooltip } from "radix-ui"
 import { usePortal } from "@/public/app/PortalContext"
 import styles from "./WidgetTooltip.module.css"
-import clsx from "clsx"
 
-interface Props {
+interface Props extends Tooltip.TooltipProps {
   label: string
-  disableHoverableContent?: boolean
   small?: boolean
 }
 
-const WidgetTooltip = ({
-  label,
-  children,
-  disableHoverableContent,
-  small,
-}: PropsWithChildren<Props>) => {
+const WidgetTooltip = ({ label, children, small, ...props }: PropsWithChildren<Props>) => {
   return (
-    <Tooltip.Root disableHoverableContent={disableHoverableContent}>
+    <Tooltip.Root {...props}>
       <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
       <Tooltip.Portal container={usePortal()}>
         <Tooltip.Content
           className={clsx(styles.tooltip, { small })}
           collisionBoundary={usePortal()}
           collisionPadding={8}
+          sideOffset={4}
         >
           {label}
           <Tooltip.Arrow className={styles.arrow} />
