@@ -84,8 +84,8 @@ const BridgeForm = () => {
     setValue("sender", defaultSenderAddress)
   }, [srcChainId, defaultSenderAddress, setValue])
   useEffect(() => {
-    if (!isValidRecipient) setValue("recipient", "")
-  }, [address, defaultRecipientAddress, isValidRecipient, setValue])
+    if (!isValidRecipient) setValue("recipient", defaultRecipientAddress)
+  }, [defaultRecipientAddress, isValidRecipient, setValue])
 
   // assets
   const srcAssets = useSkipAssets(srcChainId)
