@@ -1,27 +1,7 @@
-.list {
-  display: grid;
-  gap: 4px;
-}
-
-.connector {
-  gap: 12px;
-
-  border-radius: 12px;
-  padding: 10px;
-
-  .name {
-    flex: 1;
-    font-size: 14px;
-    font-weight: 600;
-  }
-
-  transition: background-color var(--transition) ease;
-
-  &:hover:not(:disabled) {
-    background-color: var(--gray-8);
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-  }
+.title {
+  border-bottom: 1px solid var(--border);
+  font-size: 20px;
+  font-weight: 600;
+  padding: 24px;
+  padding-bottom: 20px;
 }
