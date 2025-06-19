@@ -19,6 +19,10 @@ const NftDetails = () => {
         <h2 className={styles.name}>{name}</h2>
       </header>
 
+      <Footer>
+        <Button.White onClick={() => navigate("/nft/send", state)}>Send</Button.White>
+      </Footer>
+
       {attributes && (
         <div className={styles.attributes}>
           <header className={styles.title}>Traits ({attributes.length})</header>
@@ -33,10 +37,6 @@ const NftDetails = () => {
           </div>
         </div>
       )}
-
-      <Footer>
-        <Button.White onClick={() => navigate("/nft/send", state)}>Send</Button.White>
-      </Footer>
     </Page>
   )
 }
