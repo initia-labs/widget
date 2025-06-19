@@ -32,20 +32,12 @@ const OutlineButton = ({ className, ...props }: Props) => {
 }
 
 interface SmallButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  readOnly?: boolean
   unpadded?: boolean
 }
 
-const SmallButton = ({ className, readOnly, unpadded, ...attrs }: SmallButtonProps) => {
+const SmallButton = ({ className, unpadded, ...attrs }: SmallButtonProps) => {
   return (
-    <button
-      {...attrs}
-      className={clsx(
-        styles.small,
-        { [styles.span]: readOnly, [styles.unpadded]: unpadded },
-        className,
-      )}
-    />
+    <button {...attrs} className={clsx(styles.small, { [styles.unpadded]: unpadded }, className)} />
   )
 }
 
