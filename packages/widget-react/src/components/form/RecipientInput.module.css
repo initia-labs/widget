@@ -7,6 +7,10 @@
 .wrapper {
   position: relative;
 
+  input {
+    padding-right: 42px;
+  }
+
   .clear {
     position: absolute;
     right: 6px;

@@ -76,7 +76,11 @@ const RecipientInput = (props: Props) => {
       return <InputHelp level="error">{error.message}</InputHelp>
     }
     if (usernameAddress) {
-      return <InputHelp level="success">{usernameAddress}</InputHelp>
+      return (
+        <InputHelp level="success" className="mono">
+          {usernameAddress}
+        </InputHelp>
+      )
     }
     if (mode === "onSubmit" && inputValue && !resolvedAddress) {
       return <InputHelp level="error">Invalid address</InputHelp>

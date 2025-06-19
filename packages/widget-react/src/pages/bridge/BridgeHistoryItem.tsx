@@ -98,7 +98,7 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
             <span>{symbol}</span>
           </div>
           <div className={styles.chain}>
-            on {pretty_name || chain_name} ({truncate(address)})
+            on {pretty_name || chain_name} <span className="mono">({truncate(address)})</span>
           </div>
         </div>
       </div>

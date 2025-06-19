@@ -63,7 +63,7 @@ const BridgeAccount = ({ type }: Props) => {
         ) : (
           <>
             {connected && <Image src={connected.image} width={18} height={18} />}
-            <span>{truncate(address)}</span>
+            <span className="mono">{truncate(address)}</span>
           </>
         )}
       </ModalTrigger>
@@ -101,7 +101,7 @@ const BridgeAccount = ({ type }: Props) => {
 
         return (
           <div className={styles.account}>
-            <span>{truncate(address)}</span>
+            <span className="mono">{truncate(address)}</span>
             <button
               type="button"
               className={styles.clear}
@@ -117,7 +117,7 @@ const BridgeAccount = ({ type }: Props) => {
       case "cosmos": {
         return renderDstModalTrigger(
           <>
-            <span>{address ? truncate(address) : "Recipient"}</span>
+            <span className="mono">{address ? truncate(address) : "Recipient"}</span>
             <IconEdit size={14} />
           </>,
         )
