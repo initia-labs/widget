@@ -103,6 +103,7 @@ const RecipientInput = (props: Props) => {
       <div className={styles.wrapper}>
         <input
           id="recipient"
+          className={styles.input}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value.trim())}
           placeholder="Address or username"
