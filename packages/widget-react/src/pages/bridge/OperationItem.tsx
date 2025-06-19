@@ -56,7 +56,11 @@ const OperationItemComponent = (props: ComponentProps) => {
                 {({ copy, copied }) => (
                   <button className={styles.address} onClick={copy}>
                     {walletIcon}
-                    <span className="monospace">{copied ? "Copied!" : truncate(address)}</span>
+                    {copied ? (
+                      <span>Copied!</span>
+                    ) : (
+                      <span className="monospace">{truncate(address)}</span>
+                    )}
                   </button>
                 )}
               </CopyButton>

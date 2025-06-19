@@ -117,7 +117,11 @@ const BridgeAccount = ({ type }: Props) => {
       case "cosmos": {
         return renderDstModalTrigger(
           <>
-            <span className="monospace">{address ? truncate(address) : "Recipient"}</span>
+            {address ? (
+              <span className="monospace">{truncate(address)}</span>
+            ) : (
+              <span>Recipient</span>
+            )}
             <IconEdit size={14} />
           </>,
         )
