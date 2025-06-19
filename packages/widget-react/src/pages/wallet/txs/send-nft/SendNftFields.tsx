@@ -1,5 +1,6 @@
 import ky from "ky"
 import clsx from "clsx"
+import { VisuallyHidden } from "radix-ui"
 import { createQueryKeys } from "@lukemorales/query-key-factory"
 import { AddressUtils } from "@/public/utils"
 import { useAminoTypes } from "@/data/signer"
@@ -101,25 +102,27 @@ const SendNftFields = () => {
       </header>
 
       <div className={styles.fields}>
-        <div>
-          <div className="label">Destination rollup</div>
+        <VisuallyHidden.Root>
+          <div>
+            <div className="label">Destination rollup</div>
 
-          <ModalTrigger
-            title="Destination rollup"
-            content={(close) => (
-              <AddedChainList
-                onSelect={(chainId) => {
-                  setValue("dstChainId", chainId)
-                  close()
-                }}
-              />
-            )}
-            className={clsx("input", styles.chain)}
-          >
-            <Image src={dstChain.logoUrl} width={20} height={20} />
-            <span>{dstChain.name}</span>
-          </ModalTrigger>
-        </div>
+            <ModalTrigger
+              title="Destination rollup"
+              content={(close) => (
+                <AddedChainList
+                  onSelect={(chainId) => {
+                    setValue("dstChainId", chainId)
+                    close()
+                  }}
+                />
+              )}
+              className={clsx("input", styles.chain)}
+            >
+              <Image src={dstChain.logoUrl} width={20} height={20} />
+              <span>{dstChain.name}</span>
+            </ModalTrigger>
+          </div>
+        </VisuallyHidden.Root>
 
         <RecipientInput myAddress={address} ref={useAutoFocus()} />
       </div>
