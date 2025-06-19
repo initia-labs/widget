@@ -1,5 +1,4 @@
 import ky from "ky"
-import clsx from "clsx"
 import { createQueryKeys } from "@lukemorales/query-key-factory"
 import { AddressUtils } from "@/public/utils"
 import { useAminoTypes } from "@/data/signer"
@@ -9,14 +8,11 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { useLocationState } from "@/lib/router"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { useConfig } from "@/data/config"
-import { useChain, useLayer1 } from "@/data/chains"
+import { useLayer1 } from "@/data/chains"
 import { useAutoFocus } from "@/components/form/hooks"
-import ModalTrigger from "@/components/ModalTrigger"
 import RecipientInput from "@/components/form/RecipientInput"
 import Button from "@/components/Button"
-import Image from "@/components/Image"
 import Footer from "@/components/Footer"
-import AddedChainList from "../../components/AddedChainList"
 import type { ChainCollectionNftCollectionState } from "../../tabs/nft/queries"
 import NftThumbnail from "../../tabs/nft/NftThumbnail"
 import { createNftTransferParams } from "./tx"
@@ -35,10 +31,9 @@ const SendNftFields = () => {
   const layer1 = useLayer1()
   const { address, initiaAddress: sender, requestTxSync } = useInitiaWidget()
 
-  const { watch, setValue, handleSubmit, formState } = useFormContext<FormValues>()
+  const { watch, handleSubmit, formState } = useFormContext<FormValues>()
   const values = watch()
   const { recipient, dstChainId } = values
-  const dstChain = useChain(dstChainId)
 
   const simulation = useQuery({
     queryKey: queryKeys.simulation({
@@ -101,26 +96,6 @@ const SendNftFields = () => {
       </header>
 
       <div className={styles.fields}>
-        <div>
-          <div className="label">Destination rollup</div>
-
-          <ModalTrigger
-            title="Destination rollup"
-            content={(close) => (
-              <AddedChainList
-                onSelect={(chainId) => {
-                  setValue("dstChainId", chainId)
-                  close()
-                }}
-              />
-            )}
-            className={clsx("input", styles.chain)}
-          >
-            <Image src={dstChain.logoUrl} width={20} height={20} />
-            <span>{dstChain.name}</span>
-          </ModalTrigger>
-        </div>
-
         <RecipientInput myAddress={address} ref={useAutoFocus()} />
       </div>
 
