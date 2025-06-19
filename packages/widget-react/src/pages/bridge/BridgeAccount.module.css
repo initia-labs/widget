@@ -24,12 +24,15 @@
     background-color: var(--gray-6);
   }
 
+  .reset {
+    padding: 12px;
+    margin: -12px;
+
+    transition: color var(--transition) ease;
+  }
+
   .reset:hover {
     color: var(--gray-1);
-
-    /* incerase button hitbox */
-    padding: 4px;
-    margin: -4px;
   }
 
   &.white {

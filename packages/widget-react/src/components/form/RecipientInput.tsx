@@ -30,8 +30,8 @@ const RecipientInput = (props: Props) => {
     recipient: string
     recipientType?: string
   }>()
-  const initialValue = mode === "onChange" ? getValues("recipient") : ""
-  const [inputValue, setInputValue] = useState<string>(initialValue)
+  const initialValue = getValues("recipient")
+  const [inputValue, setInputValue] = useState(initialValue)
   const client = useUsernameClient()
 
   const {
@@ -47,6 +47,15 @@ const RecipientInput = (props: Props) => {
 
   const resolvedAddress = usernameAddress ?? (validate(inputValue) ? inputValue : "")
   const isMyAddress = myAddress && AddressUtils.equals(resolvedAddress, myAddress)
+
+  const handlePaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText()
+      setInputValue(text.trim())
+    } catch {
+      // ignore clipboard read errors
+    }
+  }
 
   // onChange: update form value on every valid input change
   useEffect(() => {
@@ -64,7 +73,7 @@ const RecipientInput = (props: Props) => {
     onApply?.()
   }
 
-  const renderResult = () => {
+  const renderUsernameQueryResult = () => {
     if (isLoading) {
       return <InputHelp level="loading">Resolving username...</InputHelp>
     }
@@ -87,17 +96,12 @@ const RecipientInput = (props: Props) => {
       <label htmlFor="recipient" className={styles.label}>
         <span>Recipient</span>
 
-        <Button.Small
-          type="button"
-          className={styles.paste}
-          onClick={async () => setInputValue(await navigator.clipboard.readText())}
-          readOnly={!!isMyAddress}
-        >
+        <Button.Small type="button" onClick={handlePaste} readOnly={!!isMyAddress}>
           Paste
         </Button.Small>
       </label>
 
-      <div className={styles.input}>
+      <div className={styles.wrapper}>
         <input
           id="recipient"
           value={inputValue}
@@ -106,20 +110,16 @@ const RecipientInput = (props: Props) => {
           autoComplete="off"
           ref={mode === "onSubmit" ? mergeRefs([ref, autoFocusRef]) : ref}
         />
+
         {!!inputValue && (
-          <button className={styles.reset} onClick={() => setInputValue("")}>
+          <button className={styles.clear} onClick={() => setInputValue("")}>
             <IconCloseCircleFilled size={16} />
           </button>
         )}
       </div>
 
-      {renderResult()}
-
-      {isMyAddress && (
-        <InputHelp level="success" className={styles.myAddress}>
-          This is my address
-        </InputHelp>
-      )}
+      {renderUsernameQueryResult()}
+      {isMyAddress && <InputHelp>This is my address</InputHelp>}
 
       {mode === "onSubmit" && (
         <Footer

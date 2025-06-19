@@ -82,7 +82,7 @@ export const SendFields = () => {
 
           <div className={styles.divider} />
 
-          <RecipientInput myAddress={import.meta.env.DEV ? address : undefined} />
+          <RecipientInput myAddress={address} />
 
           <div>
             <label htmlFor="memo">Memo (optional)</label>

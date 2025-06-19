@@ -4,31 +4,20 @@
   align-items: center;
 }
 
-.paste {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-
-  .icon {
-    color: var(--gray-6);
-  }
-}
-
-.myAddress {
-  color: var(--gray-1);
-}
-
-.input {
+.wrapper {
   position: relative;
-  .reset {
+
+  .clear {
     position: absolute;
-    padding: 10px;
     right: 6px;
     top: 50%;
     transform: translateY(-50%);
+
     color: var(--gray-3);
     background-color: var(--gray-7);
+    padding: 10px;
+
+    transition: color var(--transition) ease;
 
     &:hover {
       color: var(--gray-1);
