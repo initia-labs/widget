@@ -64,16 +64,8 @@ const BridgeForm = () => {
   })
 
   const { watch, setValue } = form
-  const {
-    srcChainId,
-    dstChainId,
-    srcDenom,
-    dstDenom,
-    quantity,
-    slippagePercent,
-    recipient,
-    recipientType,
-  } = watch()
+  const { srcChainId, dstChainId, srcDenom, dstDenom, quantity, slippagePercent, recipient } =
+    watch()
 
   watch((_, { name }) => {
     if (name === "srcChainId" || name === "srcDenom") {
@@ -92,27 +84,8 @@ const BridgeForm = () => {
     setValue("sender", defaultSenderAddress)
   }, [srcChainId, defaultSenderAddress, setValue])
   useEffect(() => {
-    /**
-     * UX decision
-     *
-     * When the user:
-     *   1. Starts with a wallet-derived address (hexA).
-     *   2. Manually enters a different address (hexB), disabling auto-fill.
-     *   3. Switches to a non-EVM chain (e.g., Osmosis), clearing the field.
-     *   4. Switches back to an EVM chain (e.g., Ethereum),
-     * we keep the recipient field empty.
-     *
-     * Rationale:
-     *   1. Safety first – avoids re-filling an address that the user may not notice.
-     *   2. Clear rules – auto-fill only runs when the user has never typed a value.
-     *   3. Simple state – no need to store multiple historical addresses.
-     *
-     * The user must now confirm or re-enter the intended recipient, making the
-     * action explicit and predictable.
-     */
-    if (recipientType === "auto") setValue("recipient", defaultRecipientAddress)
-    else if (!isValidRecipient) setValue("recipient", "")
-  }, [address, defaultRecipientAddress, isValidRecipient, recipientType, setValue])
+    if (!isValidRecipient) setValue("recipient", "")
+  }, [address, defaultRecipientAddress, isValidRecipient, setValue])
 
   // assets
   const srcAssets = useSkipAssets(srcChainId)

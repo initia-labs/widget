@@ -24,14 +24,14 @@
     background-color: var(--gray-6);
   }
 
-  .reset {
+  .clear {
     padding: 12px;
     margin: -12px;
 
     transition: color var(--transition) ease;
   }
 
-  .reset:hover {
+  .clear:hover {
     color: var(--gray-1);
   }
 

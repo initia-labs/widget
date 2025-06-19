@@ -26,10 +26,7 @@ const RecipientInput = (props: Props) => {
   const { mode = "onChange", myAddress, validate = AddressUtils.validate, onApply, ref } = props
   const autoFocusRef = useAutoFocus()
 
-  const { getValues, setValue, formState } = useFormContext<{
-    recipient: string
-    recipientType?: string
-  }>()
+  const { getValues, setValue, formState } = useFormContext<{ recipient: string }>()
   const initialValue = getValues("recipient")
   const [inputValue, setInputValue] = useState(initialValue)
   const client = useUsernameClient()
@@ -67,8 +64,6 @@ const RecipientInput = (props: Props) => {
   // onSubmit: update form value when button clicked
   const handleApply = () => {
     if (isLoading || error) return
-    const recipientType = isMyAddress ? "auto" : "manual"
-    setValue("recipientType", recipientType, { shouldValidate: true })
     setValue("recipient", resolvedAddress, { shouldValidate: true })
     onApply?.()
   }
@@ -96,7 +91,7 @@ const RecipientInput = (props: Props) => {
       <label htmlFor="recipient" className={styles.label}>
         <span>Recipient</span>
 
-        <Button.Small type="button" onClick={handlePaste} readOnly={!!isMyAddress}>
+        <Button.Small type="button" onClick={handlePaste}>
           Paste
         </Button.Small>
       </label>
@@ -112,7 +107,12 @@ const RecipientInput = (props: Props) => {
         />
 
         {!!inputValue && (
-          <button className={styles.clear} onClick={() => setInputValue("")}>
+          <button
+            type="button"
+            className={styles.clear}
+            onClick={() => setInputValue("")}
+            aria-label="Clear recipient"
+          >
             <IconCloseCircleFilled size={16} />
           </button>
         )}

@@ -102,7 +102,12 @@ const BridgeAccount = ({ type }: Props) => {
         return (
           <div className={styles.account}>
             <span>{truncate(address)}</span>
-            <button className={styles.reset} onClick={() => setValue("recipient", myDstAddress)}>
+            <button
+              type="button"
+              className={styles.clear}
+              onClick={() => setValue("recipient", myDstAddress, { shouldValidate: true })}
+              aria-label="Reset to my address"
+            >
               <IconCloseCircleFilled size={14} />
             </button>
           </div>
