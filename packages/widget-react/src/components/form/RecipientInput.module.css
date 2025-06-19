@@ -7,6 +7,10 @@
 .wrapper {
   position: relative;
 
+  .input {
+    padding-right: calc(6px + 2 * 10px + 16px);
+  }
+
   .clear {
     position: absolute;
     right: 6px;

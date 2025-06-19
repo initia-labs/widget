@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import type { Ref } from "react"
 import { useState, useEffect } from "react"
 import { mergeRefs } from "react-merge-refs"
@@ -76,7 +77,11 @@ const RecipientInput = (props: Props) => {
       return <InputHelp level="error">{error.message}</InputHelp>
     }
     if (usernameAddress) {
-      return <InputHelp level="success">{usernameAddress}</InputHelp>
+      return (
+        <InputHelp level="success" className="monospace">
+          {usernameAddress}
+        </InputHelp>
+      )
     }
     if (mode === "onSubmit" && inputValue && !resolvedAddress) {
       return <InputHelp level="error">Invalid address</InputHelp>
@@ -99,6 +104,7 @@ const RecipientInput = (props: Props) => {
       <div className={styles.wrapper}>
         <input
           id="recipient"
+          className={clsx(styles.input, AddressUtils.isAddress(inputValue) && "monospace")}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value.trim())}
           placeholder="Address or username"

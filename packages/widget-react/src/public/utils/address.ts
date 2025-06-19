@@ -1,4 +1,4 @@
-import { getAddress } from "ethers"
+import { getAddress, isAddress } from "ethers"
 import { fromBech32, fromHex, toBech32, toHex } from "@cosmjs/encoding"
 
 export const AddressUtils = {
@@ -33,6 +33,19 @@ export const AddressUtils = {
     const isSpecial = bytes.subarray(0, bytes.length - 1).every((byte) => byte === 0) && last < 0x10
     if (isSpecial) return checksummed.replace(/^0x0+/, "0x")
     return checksummed
+  },
+
+  isAddress(address: string) {
+    if (isAddress(address)) {
+      return true
+    }
+
+    try {
+      fromBech32(address)
+      return true
+    } catch {
+      return false
+    }
   },
 
   validate(address: string, prefix: string = "init") {

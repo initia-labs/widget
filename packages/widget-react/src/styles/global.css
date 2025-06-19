@@ -141,3 +141,7 @@
 :where(.info) {
   color: var(--info);
 }
+
+:where(.monospace) {
+  font-family: var(--monospace);
+}
