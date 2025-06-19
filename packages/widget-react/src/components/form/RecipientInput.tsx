@@ -77,7 +77,7 @@ const RecipientInput = (props: Props) => {
     }
     if (usernameAddress) {
       return (
-        <InputHelp level="success" className="mono">
+        <InputHelp level="success" className="monospace">
           {usernameAddress}
         </InputHelp>
       )
