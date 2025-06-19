@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import type { Ref } from "react"
 import { useState, useEffect } from "react"
 import { mergeRefs } from "react-merge-refs"
@@ -103,7 +104,7 @@ const RecipientInput = (props: Props) => {
       <div className={styles.wrapper}>
         <input
           id="recipient"
-          className={styles.input}
+          className={clsx(styles.input, AddressUtils.isAddress(inputValue) && "monospace")}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value.trim())}
           placeholder="Address or username"
