@@ -4,23 +4,23 @@
   align-items: center;
 }
 
-.my {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
+.wrapper {
+  position: relative;
 
-  padding-left: 8px;
+  .clear {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
 
-  .icon {
-    color: var(--gray-6);
-  }
-}
+    color: var(--gray-3);
+    background-color: var(--gray-7);
+    padding: 10px;
 
-.active {
-  border-color: var(--gray-0);
+    transition: color var(--transition) ease;
 
-  .icon {
-    color: var(--gray-0);
+    &:hover {
+      color: var(--gray-1);
+    }
   }
 }

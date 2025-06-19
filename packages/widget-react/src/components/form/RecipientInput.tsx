@@ -1,10 +1,9 @@
-import clsx from "clsx"
 import type { Ref } from "react"
 import { useState, useEffect } from "react"
 import { mergeRefs } from "react-merge-refs"
 import { useFormContext } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
-import { IconCheck } from "@initia/icons-react"
+import { IconCloseCircleFilled } from "@initia/icons-react"
 import { AddressUtils } from "@/public/utils"
 import { STALE_TIMES } from "@/data/http"
 import { accountQueryKeys, useUsernameClient } from "@/data/account"
@@ -27,12 +26,9 @@ const RecipientInput = (props: Props) => {
   const { mode = "onChange", myAddress, validate = AddressUtils.validate, onApply, ref } = props
   const autoFocusRef = useAutoFocus()
 
-  const { getValues, setValue, formState } = useFormContext<{
-    recipient: string
-    recipientType?: string
-  }>()
-  const initialValue = mode === "onChange" ? getValues("recipient") : ""
-  const [inputValue, setInputValue] = useState<string>(initialValue)
+  const { getValues, setValue, formState } = useFormContext<{ recipient: string }>()
+  const initialValue = getValues("recipient")
+  const [inputValue, setInputValue] = useState(initialValue)
   const client = useUsernameClient()
 
   const {
@@ -49,6 +45,15 @@ const RecipientInput = (props: Props) => {
   const resolvedAddress = usernameAddress ?? (validate(inputValue) ? inputValue : "")
   const isMyAddress = myAddress && AddressUtils.equals(resolvedAddress, myAddress)
 
+  const handlePaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText()
+      setInputValue(text.trim())
+    } catch {
+      // ignore clipboard read errors
+    }
+  }
+
   // onChange: update form value on every valid input change
   useEffect(() => {
     if (mode !== "onChange") return
@@ -59,13 +64,11 @@ const RecipientInput = (props: Props) => {
   // onSubmit: update form value when button clicked
   const handleApply = () => {
     if (isLoading || error) return
-    const recipientType = isMyAddress ? "auto" : "manual"
-    setValue("recipientType", recipientType, { shouldValidate: true })
     setValue("recipient", resolvedAddress, { shouldValidate: true })
     onApply?.()
   }
 
-  const renderResult = () => {
+  const renderUsernameQueryResult = () => {
     if (isLoading) {
       return <InputHelp level="loading">Resolving username...</InputHelp>
     }
@@ -88,36 +91,41 @@ const RecipientInput = (props: Props) => {
       <label htmlFor="recipient" className={styles.label}>
         <span>Recipient</span>
 
-        {myAddress && (
-          <Button.Small
-            type="button"
-            className={clsx(styles.my, { [styles.active]: isMyAddress })}
-            onClick={() => setInputValue(myAddress)}
-            readOnly={!!isMyAddress}
-          >
-            <IconCheck size={14} className={styles.icon} />
-            {isMyAddress ? "This is my address" : "Enter my address"}
-          </Button.Small>
-        )}
+        <Button.Small type="button" onClick={handlePaste}>
+          Paste
+        </Button.Small>
       </label>
 
-      <input
-        id="recipient"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value.trim())}
-        placeholder="Address or username"
-        autoComplete="off"
-        ref={mode === "onSubmit" ? mergeRefs([ref, autoFocusRef]) : ref}
-      />
+      <div className={styles.wrapper}>
+        <input
+          id="recipient"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value.trim())}
+          placeholder="Address or username"
+          autoComplete="off"
+          ref={mode === "onSubmit" ? mergeRefs([ref, autoFocusRef]) : ref}
+        />
 
-      {renderResult()}
+        {!!inputValue && (
+          <button
+            type="button"
+            className={styles.clear}
+            onClick={() => setInputValue("")}
+            aria-label="Clear recipient"
+          >
+            <IconCloseCircleFilled size={16} />
+          </button>
+        )}
+      </div>
+
+      {renderUsernameQueryResult()}
+      {isMyAddress && <InputHelp>This is my address</InputHelp>}
 
       {mode === "onSubmit" && (
         <Footer
           extra={
-            !!resolvedAddress &&
-            !isMyAddress && (
-              <FormHelp level="warning">
+            (!myAddress || (!!resolvedAddress && !isMyAddress)) && (
+              <FormHelp level="info">
                 Do not enter an exchange address. Tokens lost during the transfer will not be
                 retrievable.
               </FormHelp>
