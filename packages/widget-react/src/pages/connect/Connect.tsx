@@ -30,11 +30,11 @@ const Connect = () => {
 
   return (
     <>
-      <h2 className={styles.title}>Connect wallet</h2>
+      <h1 className={styles.title}>Connect wallet</h1>
       <List
         list={[...connectors]}
-        onSelect={(c) => mutate(c)}
-        getImage={({ icon }) => icon || ""}
+        onSelect={(connector) => mutate(connector)}
+        getImage={({ icon = "" }) => icon}
         getName={({ name }) => name}
         getKey={({ id }) => id}
         getIsLoading={({ id }) => id === pendingConnectorId}

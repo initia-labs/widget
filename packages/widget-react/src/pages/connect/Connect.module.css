@@ -1,8 +1,7 @@
 .title {
-  padding: 24px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--gray-7);
-
+  border-bottom: 1px solid var(--border);
   font-size: 20px;
   font-weight: 600;
+  padding: 24px;
+  padding-bottom: 20px;
 }

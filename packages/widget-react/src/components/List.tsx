@@ -1,7 +1,7 @@
 import Scrollable from "./Scrollable"
 import Image from "./Image"
-import styles from "./List.module.css"
 import Loader from "./Loader"
+import styles from "./List.module.css"
 
 interface Props<Item> {
   onSelect: (item: Item) => void
@@ -13,15 +13,8 @@ interface Props<Item> {
   getDisabled?: (item: Item) => boolean
 }
 
-function List<Item>({
-  onSelect,
-  list,
-  getImage,
-  getName,
-  getKey,
-  getIsLoading,
-  getDisabled,
-}: Props<Item>) {
+function List<Item>({ onSelect, list, ...props }: Props<Item>) {
+  const { getImage, getName, getKey, getIsLoading, getDisabled } = props
   return (
     <Scrollable className={styles.scrollable}>
       <div className={styles.list}>
@@ -29,8 +22,8 @@ function List<Item>({
           <button
             className={styles.item}
             onClick={() => onSelect(item)}
+            disabled={getIsLoading?.(item) || getDisabled?.(item)}
             key={getKey(item)}
-            disabled={getDisabled?.(item)}
           >
             <Image src={getImage(item)} width={32} height={32} />
             <span className={styles.name}>{getName(item)}</span>
