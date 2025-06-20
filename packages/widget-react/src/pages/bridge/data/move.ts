@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { BcsType} from "@mysten/bcs";
 import { bcs, fromHex, toHex } from "@mysten/bcs"
 
-function parseTypes(type: string): any {
+export type MsgExecuteContent = Record<string, any>
+
+function parseTypes(type: string): BcsType<any, any> {
   const [firstType, ...innerTypes] = type.split("<")
   const parsedType = [firstType.split("::").at(-1), ...innerTypes].join("<").toLocaleLowerCase()
 
@@ -13,15 +16,9 @@ function parseTypes(type: string): any {
     return bcs.vector(parseTypes(type.replace("vector<", "").slice(0, -1)))
   }
 
-  /*
-    if (parsedType.startsWith("object")) {
-      return bcs.object()
-    }*/
-
   switch (parsedType) {
     case "address":
       return bcs.bytes(32).transform({
-        // To change the input type, you need to provide a type definition for the input
         input: (val: string) => fromHex(val),
         output: (val) => toHex(val),
       })
@@ -50,26 +47,15 @@ function parseTypes(type: string): any {
     case "bool":
       return bcs.bool()
 
-    /* cusom types */
-    /*
-      case "decimal128":
-        return bcs.decimal128()
-  
-      case "decimal256":
-        return bcs.decimal256()
-  
-      case "fixedPoint32":
-        return bcs.fixedPoint32()
-  
-      case "fixedPoint64":
-        return bcs.fixedPoint64()*/
+    default:
+      throw new Error(`Unsupported type: ${type}`)
   }
 }
 
 export function stringifyBcsArgs(
   value: Uint8Array[],
   types: string[],
-): { type: string; encoded: Uint8Array; decoded: string }[] {
+): { type: string; encoded: Uint8Array; decoded: string; error?: true }[] {
   const parsedTypes = types.filter((type) => !type.startsWith("&"))
   return value.map((data, index) => {
     try {
@@ -79,7 +65,7 @@ export function stringifyBcsArgs(
         decoded: parseTypes(parsedTypes[index]).parse(data),
       }
     } catch {
-      return { type: parsedTypes[index], encoded: data, decoded: "" }
+      return { type: parsedTypes[index], encoded: data, decoded: "", error: true }
     }
   })
 }

@@ -46,3 +46,7 @@
   color: var(--gray-3);
   word-break: break-all;
 }
+
+.error {
+  color: var(--error);
+}

@@ -2,8 +2,13 @@ import { toBase64 } from "@cosmjs/encoding"
 import type { EncodeObject } from "@cosmjs/proto-signing"
 import styles from "./TxMessage.module.css"
 import MsgExecuteArgs from "./MsgExecuteArgs"
+import type { MsgExecuteContent } from "../bridge/data/move"
 
-const TxMessage = ({ value, typeUrl, chainId }: EncodeObject & { chainId: string }) => {
+interface Props extends EncodeObject {
+  chainId: string
+}
+
+const TxMessage = ({ value: msgValues, typeUrl, chainId }: Props) => {
   const renderValue = (value: unknown): string => {
     switch (typeof value) {
       case "string":
@@ -29,14 +34,11 @@ const TxMessage = ({ value, typeUrl, chainId }: EncodeObject & { chainId: string
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const msgValues = value as Record<string, any>
-
   return (
     <div className={styles.list}>
-      {Object.entries(msgValues).map(([key, value]) => {
+      {Object.entries(msgValues as MsgExecuteContent).map(([key, value]) => {
         if (typeUrl === "/initia.move.v1.MsgExecute" && key === "args") {
-          return <MsgExecuteArgs msg={msgValues} chainId={chainId} />
+          return <MsgExecuteArgs msg={msgValues} chainId={chainId} key={key} />
         }
 
         return (
