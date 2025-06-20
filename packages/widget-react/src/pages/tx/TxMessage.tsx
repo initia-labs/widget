@@ -1,8 +1,14 @@
 import { toBase64 } from "@cosmjs/encoding"
 import type { EncodeObject } from "@cosmjs/proto-signing"
 import styles from "./TxMessage.module.css"
+import MsgExecuteArgs from "./MsgExecuteArgs"
+import type { MsgExecuteContent } from "../bridge/data/move"
 
-const TxMessage = ({ value }: EncodeObject) => {
+interface Props extends EncodeObject {
+  chainId: string
+}
+
+const TxMessage = ({ value: msgValues, typeUrl, chainId }: Props) => {
   const renderValue = (value: unknown): string => {
     switch (typeof value) {
       case "string":
@@ -30,12 +36,18 @@ const TxMessage = ({ value }: EncodeObject) => {
 
   return (
     <div className={styles.list}>
-      {Object.entries(value).map(([key, value]) => (
-        <div key={key}>
-          <div className={styles.key}>{key}</div>
-          <p className={styles.value}>{renderValue(value)}</p>
-        </div>
-      ))}
+      {Object.entries(msgValues as MsgExecuteContent).map(([key, value]) => {
+        if (typeUrl === "/initia.move.v1.MsgExecute" && key === "args") {
+          return <MsgExecuteArgs msg={msgValues} chainId={chainId} key={key} />
+        }
+
+        return (
+          <div key={key}>
+            <div className={styles.key}>{key}</div>
+            <p className={styles.value}>{renderValue(value)}</p>
+          </div>
+        )
+      })}
     </div>
   )
 }
