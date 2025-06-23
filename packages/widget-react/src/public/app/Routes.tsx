@@ -23,7 +23,6 @@ const Routes = () => {
 
   // whenever address changes, navigate to the appropriate path
   useEffect(() => {
-    // close tx modal if it is open
     closeModal()
 
     if (path.startsWith("/bridge/")) {
