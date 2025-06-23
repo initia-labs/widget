@@ -13,14 +13,18 @@ import BridgePreview from "@/pages/bridge/BridgePreview"
 import BridgeHistory from "@/pages/bridge/BridgeHistory"
 import TxRequest from "@/pages/tx/TxRequest"
 import { useAddress } from "../data/hooks"
+import { useModal } from "./ModalContext"
 
 const Routes = () => {
   const navigate = useNavigate()
   const path = usePath()
   const address = useAddress()
+  const { closeModal } = useModal()
 
   // whenever address changes, navigate to the appropriate path
   useEffect(() => {
+    closeModal()
+
     if (path.startsWith("/bridge/")) {
       navigate("/bridge")
     }
