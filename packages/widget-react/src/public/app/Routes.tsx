@@ -1,7 +1,5 @@
 import { useEffect } from "react"
-import { useAtomValue } from "jotai"
 import { useNavigate, usePath } from "@/lib/router"
-import { txRequestHandlerAtom } from "@/data/tx"
 import Connect from "@/pages/connect/Connect"
 import Home from "@/pages/wallet/tabs/Home"
 import Send from "@/pages/wallet/txs/send/Send"
@@ -15,27 +13,21 @@ import BridgePreview from "@/pages/bridge/BridgePreview"
 import BridgeHistory from "@/pages/bridge/BridgeHistory"
 import TxRequest from "@/pages/tx/TxRequest"
 import { useAddress } from "../data/hooks"
+import { useModal } from "./ModalContext"
 
 const Routes = () => {
   const navigate = useNavigate()
   const path = usePath()
   const address = useAddress()
-  const txRequest = useAtomValue(txRequestHandlerAtom)
+  const { closeModal } = useModal()
 
   // whenever address changes, navigate to the appropriate path
   useEffect(() => {
-    if (txRequest && path !== "/tx") {
-      txRequest.reject(new Error("Signer address changed"))
-    }
+    // close tx modal if it is open
+    closeModal()
 
     if (path.startsWith("/bridge/")) {
       navigate("/bridge")
-
-      // if there is a tx request we need to navigate to the bridge page twice
-      // since on tx failure the bridge tries to navigate(-1)
-      if (txRequest) {
-        navigate("/bridge")
-      }
     }
 
     if (path === "/collection" || path.startsWith("/nft")) {
