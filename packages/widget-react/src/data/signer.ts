@@ -75,6 +75,27 @@ export class OfflineSigner implements OfflineAminoSigner {
     return publicKey
   }
 
+  // Cache the public key requests to avoid duplicated requests for the same address.
+  private static signMessageCache: Record<string, Promise<string>> = {}
+  private async signMessageWithCache(message: string): Promise<string> {
+    const cacheKey = `${this.address}:${message}`
+
+    if (!OfflineSigner.signMessageCache[cacheKey]) console.log("signMessageWithCache", cacheKey)
+
+    const signaturePromise = OfflineSigner.signMessageCache[cacheKey] || this.signMessage(message)
+    // add signature to the cache if needed
+    if (!OfflineSigner.signMessageCache[cacheKey]) {
+      OfflineSigner.signMessageCache[cacheKey] = signaturePromise
+    }
+    // wait for the signature to be resolved
+    try {
+      return await signaturePromise
+    } finally {
+      // delete the cached request after resolving it (allows to retry if the request fails)
+      delete OfflineSigner.signMessageCache[cacheKey]
+    }
+  }
+
   private async getPublicKey() {
     // Recover the public key by having the wallet sign a fixed message once.
     // EIP-191 is supported across wallets and doesn't require a prior key
@@ -82,7 +103,7 @@ export class OfflineSigner implements OfflineAminoSigner {
     // malicious host to derive the user's public key without explicit consent.
     // The key itself is not sensitive.
     const message = "Sign this message to identify your Initia account."
-    const signature = await this.signMessage(message)
+    const signature = await this.signMessageWithCache(message)
     const messageHash = ethers.hashMessage(message)
     const uncompressedPublicKey = ethers.SigningKey.recoverPublicKey(messageHash, signature)
     return Secp256k1.compressPubkey(fromHex(uncompressedPublicKey.replace("0x", "")))
@@ -183,10 +204,12 @@ export function useCreateSigningStargateClient() {
   const registry = useRegistry()
   const aminoTypes = useAminoTypes()
   const offlineSigner = useOfflineSigner()
+  const address = useInitiaAddress()
 
   return async (chainId: string) => {
-    if (clientCache.has(chainId)) {
-      return clientCache.get(chainId)!
+    const cacheKey = `${address}:${chainId}`
+    if (clientCache.has(cacheKey)) {
+      return clientCache.get(cacheKey)!
     }
 
     if (!offlineSigner) throw new Error("Signer not initialized")
@@ -200,7 +223,7 @@ export function useCreateSigningStargateClient() {
       broadcastPollIntervalMs: 1000,
     })
 
-    clientCache.set(chainId, client)
+    clientCache.set(cacheKey, client)
     return client
   }
 }
