@@ -23,7 +23,11 @@ const WithInitiaWidget = ({ children }: PropsWithChildren) => {
   const theme = useTheme()
 
   return (
-    <InitiaWidgetProvider {...(isTestnet ? TESTNET : {})} theme={theme}>
+    <InitiaWidgetProvider
+      {...(isTestnet ? TESTNET : {})}
+      theme={theme}
+      routerApiUrl="https://router-api.staging.initia.xyz"
+    >
       {children}
     </InitiaWidgetProvider>
   )
