@@ -82,11 +82,26 @@ const SlippageControl = ({ afterConfirm }: { afterConfirm: () => void }) => {
             {preset}%
           </button>
         ))}
-      </div>
-
-      <div className={styles.input}>
-        <NumericInput name="value" control={control} dp={2} onFocus={handleInputFocus} />
-        <span className={styles.percent}>%</span>
+        {activePreset !== null ? (
+          <button
+            type="button"
+            className={clsx(styles.preset, styles.custom)}
+            onClick={() => setActivePreset(null)}
+          >
+            Custom
+          </button>
+        ) : (
+          <div className={styles.customContainer}>
+            <NumericInput
+              name="value"
+              control={control}
+              dp={2}
+              onFocus={handleInputFocus}
+              className={clsx(styles.preset, styles.active)}
+            />
+            <span className={styles.percent}>%</span>
+          </div>
+        )}
       </div>
 
       {message && <InputHelp level={message.type}>{message.text}</InputHelp>}
