@@ -1,7 +1,12 @@
 import { intlFormatDistance } from "date-fns"
 import { useEffect, useMemo } from "react"
 import type { StatusResponseJson } from "@skip-go/client"
-import { IconArrowDown, IconCheckCircleFilled, IconWarningFilled } from "@initia/icons-react"
+import {
+  IconArrowDown,
+  IconArrowUpRight,
+  IconCheckCircleFilled,
+  IconWarningFilled,
+} from "@initia/icons-react"
 import { formatAmount, truncate } from "@/public/utils"
 import Loader from "@/components/Loader"
 import Image from "@/components/Image"
@@ -11,7 +16,13 @@ import type { RouterChainJson } from "./data/chains"
 import { useSkipChain } from "./data/chains"
 import type { RouterAsset } from "./data/assets"
 import { useSkipAsset } from "./data/assets"
-import { BridgeType, getBridgeType, useTrackTxQuery, useTxStatusQuery } from "./data/tx"
+import {
+  BridgeType,
+  bridgeTypeExplorerName,
+  getBridgeType,
+  useTrackTxQuery,
+  useTxStatusQuery,
+} from "./data/tx"
 import type { TxIdentifier } from "./data/history"
 import { useBridgeHistoryDetails } from "./data/history"
 import styles from "./BridgeHistoryItem.module.css"
@@ -86,12 +97,20 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
   const renderRow = (
     amount: string,
     { symbol, decimals, logo_uri }: RouterAsset,
-    { chain_name, pretty_name }: RouterChainJson,
+    { chain_name, pretty_name, logo_uri: chain_logo_uri }: RouterChainJson,
     address: string,
   ) => {
     return (
       <div className={styles.row}>
-        <Image src={logo_uri} width={32} height={32} />
+        <div className={styles.logoContainer}>
+          <Image src={logo_uri} width={32} height={32} />
+          <Image
+            src={chain_logo_uri || undefined}
+            width={16}
+            height={16}
+            className={styles.chainLogo}
+          />
+        </div>
         <div>
           <div className={styles.asset}>
             <span className={styles.amount}>{formatAmount(amount, { decimals })}</span>
@@ -112,28 +131,30 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
       <header className={styles.header}>
         <div className={styles.title}>
           {renderIcon()}
-          <span className={styles.badge}>{type}</span>
+          <div className={styles.meta}>
+            <div>{intlFormatDistance(new Date(timestamp), new Date(), { locale: "en-US" })}</div>
+            {estimated_fees.length > 0 && (
+              <>
+                <div className={styles.divider} />
+                <div className={styles.item}>
+                  <span>Fee</span>
+                  <span>{formatFees(estimated_fees)}</span>
+                </div>
+              </>
+            )}
+            {operations.some((operation) => "swap" in operation) && (
+              <>
+                <div className={styles.divider} />
+                <div className={styles.item}>
+                  <span>Slippage</span>
+                  <span>{values.slippagePercent}%</span>
+                </div>
+              </>
+            )}
+          </div>
         </div>
-        <div className={styles.meta}>
-          <div>{intlFormatDistance(new Date(timestamp), new Date(), { locale: "en-US" })}</div>
-          {estimated_fees.length > 0 && (
-            <>
-              <div className={styles.divider} />
-              <div className={styles.item}>
-                <span>Fee</span>
-                <span>{formatFees(estimated_fees)}</span>
-              </div>
-            </>
-          )}
-          {operations.some((operation) => "swap" in operation) && (
-            <>
-              <div className={styles.divider} />
-              <div className={styles.item}>
-                <span>Slippage</span>
-                <span>{values.slippagePercent}%</span>
-              </div>
-            </>
-          )}
+        <div className={styles.explorer}>
+          {bridgeTypeExplorerName[type]} <IconArrowUpRight size={12} />
         </div>
       </header>
 
