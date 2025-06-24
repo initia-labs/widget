@@ -1,11 +1,14 @@
+import Button from "@/components/Button"
+import Footer from "@/components/Footer"
+import InputHelp from "@/components/form/InputHelp"
+import NumericInput from "@/components/form/NumericInput"
+import PlainModalContent from "@/components/PlainModalContent"
+import Scrollable from "@/components/Scrollable"
+import { useModal } from "@/public/app/ModalContext"
+import { IconWarningFilled } from "@initia/icons-react"
 import clsx from "clsx"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
-import Scrollable from "@/components/Scrollable"
-import Footer from "@/components/Footer"
-import Button from "@/components/Button"
-import NumericInput from "@/components/form/NumericInput"
-import InputHelp from "@/components/form/InputHelp"
 import { useBridgeForm } from "./data/form"
 import styles from "./SlippageControl.module.css"
 
@@ -64,6 +67,31 @@ const SlippageControl = ({ afterConfirm }: { afterConfirm: () => void }) => {
     afterConfirm()
   }
 
+  const { openModal, closeModal } = useModal()
+  const openHighImpactModal = () =>
+    openModal({
+      content: (
+        <PlainModalContent
+          type="warning"
+          icon={<IconWarningFilled size={40} />}
+          title="High impact"
+          primaryButton={{ label: "Cancel", onClick: closeModal }}
+          secondaryButton={{
+            label: "Proceed anyway",
+            onClick: () => {
+              closeModal()
+              onConfirm(getValues())
+            },
+          }}
+        >
+          <p className={styles.warning}>
+            This will result in a price impact of over 5%. You will receive significant less than
+            expected amount.
+          </p>
+        </PlainModalContent>
+      ),
+    })
+
   return (
     <Scrollable>
       <p className={styles.description}>
@@ -92,7 +120,14 @@ const SlippageControl = ({ afterConfirm }: { afterConfirm: () => void }) => {
       {message && <InputHelp level={message.type}>{message.text}</InputHelp>}
 
       <Footer>
-        <Button.White type="button" onClick={() => onConfirm(getValues())} disabled={isError}>
+        <Button.White
+          type="button"
+          onClick={() => {
+            if (Number(value) > 5) openHighImpactModal()
+            else onConfirm(getValues())
+          }}
+          disabled={isError}
+        >
           Confirm
         </Button.White>
       </Footer>
