@@ -5,6 +5,7 @@ export interface Notification {
   type?: NotificationType
   title: string
   description?: ReactNode
+  autoHide?: boolean
 }
 
 export type NotificationType = "loading" | "success" | "error"
