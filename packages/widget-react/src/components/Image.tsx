@@ -14,11 +14,16 @@ const Image = ({ src, alt, placeholder, classNames, circle, ...attrs }: Props) =
   const unloader = placeholder ?? (
     <div className={clsx(styles.placeholder, classNames?.placeholder)} style={{ width, height }} />
   )
+
+  if (!src) {
+    return unloader
+  }
+
   return (
     <Img
       {...attrs}
       className={clsx(attrs.className, { [styles.circle]: circle })}
-      src={src || ""}
+      src={src}
       alt={alt}
       unloader={unloader}
       loading="lazy"

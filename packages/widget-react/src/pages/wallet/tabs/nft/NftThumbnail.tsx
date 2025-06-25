@@ -1,6 +1,5 @@
 import clsx from "clsx"
 import Image from "@/components/Image"
-import { IMG_ENDPOINT_URL } from "@/data/constants"
 import type { NormalizedChain } from "@/data/chains"
 import type { NormalizedCollection, NormalizedNft } from "./queries"
 import styles from "./NftThumbnail.module.css"
@@ -16,7 +15,7 @@ interface Props {
 const NftThumbnail = ({ chain, collection, nft, size, onClick }: Props) => {
   const src = new URL(
     `/v1/${chain.chainId}/${collection.object_addr}/${nft.object_addr || nft.token_id}`,
-    IMG_ENDPOINT_URL,
+    "https://glyph.initia.xyz",
   ).toString()
 
   if (onClick) {
