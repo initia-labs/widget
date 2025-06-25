@@ -8,7 +8,7 @@ export interface Notification {
   autoHide?: boolean
 }
 
-export type NotificationType = "loading" | "success" | "error"
+export type NotificationType = "loading" | "success" | "error" | "info"
 
 export interface NotificationContextValue {
   showNotification: (notification: Notification) => void

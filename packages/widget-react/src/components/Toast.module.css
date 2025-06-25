@@ -24,6 +24,10 @@
   color: var(--success);
 }
 
+.info {
+  color: var(--gray-0);
+}
+
 .error {
   color: var(--error);
   word-break: break-all;

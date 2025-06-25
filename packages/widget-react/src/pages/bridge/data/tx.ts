@@ -151,7 +151,7 @@ export function useBridgeTx(tx: TxJson) {
           const tx = { chainId: srcChainId, txHash }
           addHistoryItem(tx, { ...tx, timestamp: Date.now(), route, values })
           updateNotification({
-            type: "success",
+            type: "info",
             title: "Transaction sent",
             description: createElement(
               Fragment,
