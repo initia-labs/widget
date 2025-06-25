@@ -24,3 +24,5 @@ export const LocalStorageKey = {
   // op
   OP_REMINDER: `${NAMESPACE}:op:reminder`,
 }
+
+export const IMG_ENDPOINT_URL = "https://glyph.initia.xyz"

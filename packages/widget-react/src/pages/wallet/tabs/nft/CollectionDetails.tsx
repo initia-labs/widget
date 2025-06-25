@@ -27,7 +27,9 @@ const CollectionDetails = () => {
             {(nft) => (
               <div className={styles.item}>
                 <NftThumbnail
-                  src={nft.image}
+                  chain={chain}
+                  collection={collection}
+                  nft={nft}
                   onClick={() => navigate("/nft", { collection, nft, chain })}
                 />
                 <div className={styles.name}>{nft.name}</div>
