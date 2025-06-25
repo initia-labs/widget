@@ -21,7 +21,7 @@ const CollectionItem = ({ chain, collection }: Props) => {
     <Link className={styles.item} to="/collection" state={{ collection, chain }}>
       {primaryToken && (
         <WithNormalizedNft nftResponse={primaryToken}>
-          {({ image }) => <NftThumbnail src={image} size={58} />}
+          {(nft) => <NftThumbnail chain={chain} collection={collection} nft={nft} size={58} />}
         </WithNormalizedNft>
       )}
 

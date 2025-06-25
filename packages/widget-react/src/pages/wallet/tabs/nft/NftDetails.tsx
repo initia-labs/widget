@@ -9,13 +9,13 @@ import styles from "./NftDetails.module.css"
 const NftDetails = () => {
   const navigate = useNavigate()
   const state = useLocationState<ChainCollectionNftCollectionState>()
-  const { collection, nft } = state
+  const { collection, nft, chain } = state
   const { image, name, attributes } = nft
 
   return (
     <Page title={collection.name}>
       <header className={styles.header}>
-        {image && <NftThumbnail src={image} />}
+        {image && <NftThumbnail chain={chain} collection={collection} nft={nft} />}
         <h2 className={styles.name}>{name}</h2>
       </header>
 
