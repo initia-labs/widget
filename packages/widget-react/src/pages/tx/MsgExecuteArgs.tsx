@@ -1,13 +1,14 @@
-import Button from "@/components/Button"
-import styles from "./MsgExecuteArgs.module.css"
-import { useState } from "react"
-import { toBase64 } from "@cosmjs/encoding"
-import { useQuery } from "@tanstack/react-query"
-import { useChain } from "@/data/chains"
 import ky from "ky"
-import { stringifyBcsArgs, type MsgExecuteContent } from "../bridge/data/move"
+import { useQuery } from "@tanstack/react-query"
+import { ErrorBoundary } from "react-error-boundary"
+import { useToggle } from "react-use"
 import { createQueryKeys } from "@lukemorales/query-key-factory"
-import clsx from "clsx"
+import type { MsgExecute } from "@initia/initia.proto/initia/move/v1/tx"
+import { STALE_TIMES } from "@/data/http"
+import { useChain } from "@/data/chains"
+import Button from "@/components/Button"
+import { resolveBcsType, stringifyValue } from "./stringify"
+import styles from "./MsgExecuteArgs.module.css"
 
 interface MoveContractAbi {
   exposed_functions: {
@@ -17,64 +18,65 @@ interface MoveContractAbi {
 }
 
 const moveQueryKeys = createQueryKeys("initia-widget:move", {
-  abi: (restUrl: string, moduleAddress: string, moduleName: string, functionName: string) => [
-    restUrl,
-    moduleAddress,
-    moduleName,
-    functionName,
-  ],
+  abi: (restUrl: string, moduleAddress: string, moduleName: string, functionName: string) => {
+    return [restUrl, moduleAddress, moduleName, functionName]
+  },
 })
 
-const MsgExecuteArgs = ({ msg, chainId }: { msg: MsgExecuteContent; chainId: string }) => {
-  const [decoded, setDecoded] = useState<boolean>(false)
-  const { restUrl } = useChain(chainId)
-  const { moduleAddress, moduleName, functionName } = msg
+interface Props {
+  msg: MsgExecute
+  chainId: string
+  fallback: string
+}
 
-  const { data: functionParams } = useQuery({
+const DecodedArg = ({ type, arg }: { type: string; arg: Uint8Array }) => {
+  return stringifyValue(resolveBcsType(type).parse(arg))
+}
+
+const MsgExecuteArgs = ({ msg, chainId, fallback }: Props) => {
+  const [showDecoded, toggle] = useToggle(false)
+  const { restUrl } = useChain(chainId)
+  const { moduleAddress, moduleName, functionName, args } = msg
+
+  const { data: abi } = useQuery({
     queryKey: moveQueryKeys.abi(restUrl, moduleAddress, moduleName, functionName).queryKey,
     queryFn: async () => {
-      const data = await ky.get(`initia/move/v1/accounts/${moduleAddress}/modules/${moduleName}`, {
-        prefixUrl: restUrl,
-      })
-      const abi = JSON.parse(
-        (await data.json<{ module: { abi: string } }>()).module.abi,
-      ) as MoveContractAbi
-      return abi.exposed_functions.find(({ name }) => name === functionName)?.params
+      const data = await ky
+        .create({ prefixUrl: restUrl })
+        .get(`initia/move/v1/accounts/${moduleAddress}/modules/${moduleName}`)
+        .json<{ module: { abi: string } }>()
+      const abi = JSON.parse(data.module.abi) as MoveContractAbi
+      const exposedFunction = abi.exposed_functions.find(({ name }) => name === functionName)
+      if (!exposedFunction) {
+        throw new Error(`Function ${functionName} not found in module ${moduleName}`)
+      }
+      return exposedFunction.params.filter((params) => !params.startsWith("&"))
     },
+    staleTime: STALE_TIMES.INFINITY,
   })
 
-  const isDecodeAvailable = !!functionParams
-  return (
-    <div>
-      <div className={styles.key}>
-        args
-        <Button.Small onClick={() => setDecoded((d) => !d)} disabled={!isDecodeAvailable}>
-          {decoded ? "Encode" : "Decode"}
-        </Button.Small>
+  if (!abi) return fallback
+
+  const renderDecodedArg = (arg: Uint8Array, index: number) => {
+    const type = abi[index]
+
+    return (
+      <div className={styles.arg} key={index}>
+        <div className={styles.type}>{type}</div>
+        <ErrorBoundary fallback={<div className="error">Error decoding argument</div>}>
+          <DecodedArg type={type} arg={arg} />
+        </ErrorBoundary>
       </div>
-      {decoded ? (
-        <div className={styles.decoded}>
-          {!!functionParams &&
-            stringifyBcsArgs(msg["args"], functionParams).map(
-              ({ type, decoded, encoded, error }) => (
-                <div className={styles.arg}>
-                  <span className={styles.key}>Type</span>
-                  <span className={styles.value}>{type}</span>
+    )
+  }
 
-                  <span className={styles.key}>Encoded</span>
-                  <span className={styles.value}>{toBase64(encoded)}</span>
+  return (
+    <div className={styles.container}>
+      <Button.Small className={styles.toggle} onClick={toggle} disabled={!abi}>
+        {showDecoded ? "Encode" : "Decode"}
+      </Button.Small>
 
-                  <span className={styles.key}>Decoded</span>
-                  <span className={clsx(styles.value, { [styles.error]: error })}>
-                    {error ? "decoding failed" : JSON.stringify(decoded)}
-                  </span>
-                </div>
-              ),
-            )}
-        </div>
-      ) : (
-        <p className={styles.encoded}>[{msg["args"].map(toBase64).join(", ")}]</p>
-      )}
+      {showDecoded ? <div className={styles.list}>{args.map(renderDecodedArg)}</div> : fallback}
     </div>
   )
 }

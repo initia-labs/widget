@@ -157,6 +157,9 @@ importers:
       '@initia/initia-registry-types':
         specifier: ^1
         version: 1.0.5
+      '@initia/initia.proto':
+        specifier: ^1
+        version: 1.0.1
       '@initia/opinit.proto':
         specifier: ^1
         version: 1.0.1
@@ -942,6 +945,9 @@ packages:
 
   '@initia/initia.proto@0.2.6':
     resolution: {integrity: sha512-khiCPUxZTkyAl+SQbQCOlcJId/a0ToUhG+ChrVXN9a+1ypPz5355j2UP2IvnUf+lAix/+zzdekcqO/Lig7htAQ==}
+
+  '@initia/initia.proto@1.0.1':
+    resolution: {integrity: sha512-bXuubsWRlyWurl6amhAk5+vQ0qbs3J0yCgcCbas4sG8MczWU3AsbQ1bhRyFMYVqsNtV7jp/VOD7GYzv77tbo5A==}
 
   '@initia/opinit.proto@0.0.11':
     resolution: {integrity: sha512-Op9GIlXiV1xhUIjVQ2TFE9a3X8iyFVNtJNHCM34gwLQHJktDNm2KCoW4eHh6pkn4//ECRVH7zuKgV8TdZWogCw==}
@@ -7795,6 +7801,13 @@ snapshots:
       zod: 3.25.62
 
   '@initia/initia.proto@0.2.6':
+    dependencies:
+      '@improbable-eng/grpc-web': 0.15.0(google-protobuf@3.21.4)
+      google-protobuf: 3.21.4
+      long: 5.3.2
+      protobufjs: 7.5.3
+
+  '@initia/initia.proto@1.0.1':
     dependencies:
       '@improbable-eng/grpc-web': 0.15.0(google-protobuf@3.21.4)
       google-protobuf: 3.21.4

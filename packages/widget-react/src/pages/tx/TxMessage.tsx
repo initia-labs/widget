@@ -1,28 +1,29 @@
 import type { EncodeObject } from "@cosmjs/proto-signing"
-import styles from "./TxMessage.module.css"
 import { stringifyValue } from "./stringify"
 import MsgExecuteArgs from "./MsgExecuteArgs"
-import type { MsgExecuteContent } from "../bridge/data/move"
+import styles from "./TxMessage.module.css"
 
-interface Props extends EncodeObject {
+interface Props {
+  message: EncodeObject
   chainId: string
 }
 
-const TxMessage = ({ value: msgValues, typeUrl, chainId }: Props) => {
+const TxMessage = ({ message, chainId }: Props) => {
+  const { typeUrl, value } = message
   return (
     <div className={styles.list}>
-      {Object.entries(msgValues as MsgExecuteContent).map(([key, value]) => {
-        if (typeUrl === "/initia.move.v1.MsgExecute" && key === "args") {
-          return <MsgExecuteArgs msg={msgValues} chainId={chainId} key={key} />
-        }
-
-        return (
-          <div key={key}>
-            <div className={styles.key}>{key}</div>
-            <p className={styles.value}>{stringifyValue(value)}</p>
+      {Object.entries(value).map(([key, content]) => (
+        <div key={key}>
+          <div className={styles.key}>{key}</div>
+          <div className={styles.value}>
+            {typeUrl === "/initia.move.v1.MsgExecute" && key === "args" ? (
+              <MsgExecuteArgs msg={value} chainId={chainId} fallback={stringifyValue(content)} />
+            ) : (
+              stringifyValue(content)
+            )}
           </div>
-        )
-      })}
+        </div>
+      ))}
     </div>
   )
 }
