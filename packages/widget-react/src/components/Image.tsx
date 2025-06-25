@@ -18,7 +18,7 @@ const Image = ({ src, alt, placeholder, classNames, circle, ...attrs }: Props) =
     <Img
       {...attrs}
       className={clsx(attrs.className, { [styles.circle]: circle })}
-      src={getProxyImage(src)}
+      src={src || ""}
       alt={alt}
       unloader={unloader}
       loading="lazy"
@@ -27,10 +27,3 @@ const Image = ({ src, alt, placeholder, classNames, circle, ...attrs }: Props) =
 }
 
 export default Image
-
-function getProxyImage(url?: string) {
-  if (!url) return ""
-  if (url.trim().startsWith("data:image/")) return url
-  const proxy = "https://img.initia.xyz/?url="
-  return proxy + url.replace(proxy, "")
-}
