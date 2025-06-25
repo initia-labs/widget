@@ -46,7 +46,7 @@ const Countdown = ({ date }: Props) => {
   const formatTime = (time: number) => time.toString().padStart(2, "0")
 
   const renderItem = (number: string | number, unit: string) => {
-    return <>{` ${number}${unit}`}</>
+    return ` ${number}${unit}`
   }
 
   const { days, hours, minutes, seconds } = timeLeft
