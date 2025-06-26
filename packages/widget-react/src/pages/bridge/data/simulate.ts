@@ -9,25 +9,8 @@ import { useChainType, useSkipChain } from "./chains"
 import type { RouterAsset } from "./assets"
 import { useSkipAsset } from "./assets"
 
-interface BaseOperationJson {
-  tx_index: number
-  amount_in: string
-  amount_out: string
-}
-
-interface LzTransferJson {
-  denom_in: string
-  denom_out: string
-  from_chain_id: string
-  to_chain_id: string
-}
-
-export type RouterOperationJson =
-  | OperationJson
-  | (BaseOperationJson & { lz_transfer: LzTransferJson })
-
 export interface RouterRouteResponseJson extends RouteResponseJson {
-  operations: RouterOperationJson[]
+  operations: OperationJson[]
   required_op_hook?: boolean
   extra_warnings?: string[]
 }

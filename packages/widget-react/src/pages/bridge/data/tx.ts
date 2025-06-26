@@ -319,7 +319,7 @@ export function getBridgeType(route: RouterRouteResponseJson) {
   if (has("op_init_transfer", head(operations)) && dest_asset_denom === "uinit") {
     return BridgeType.OP_WITHDRAW
   }
-  if (has("lz_transfer", head(operations))) {
+  if (has("layer_zero_transfer", head(operations))) {
     return BridgeType.LZ
   }
   return BridgeType.SKIP
