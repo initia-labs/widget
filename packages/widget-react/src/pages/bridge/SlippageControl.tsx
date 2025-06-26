@@ -91,12 +91,13 @@ const SlippageControl = ({ afterConfirm }: { afterConfirm: () => void }) => {
             Custom
           </button>
         ) : (
-          <div className={styles.customContainer}>
+          <div className={styles.wrapper}>
             <NumericInput
               name="value"
               control={control}
               dp={2}
               onFocus={handleInputFocus}
+              placeholder=""
               className={clsx(styles.preset, styles.active)}
             />
             <span className={styles.percent}>%</span>
