@@ -79,6 +79,7 @@ const BridgeAccount = ({ type }: Props) => {
             <RecipientInput
               mode="onSubmit"
               myAddress={myDstAddress}
+              chainType={dstChainType}
               validate={(address) => validateRecipientAddress(address, dstChainId)}
               onApply={close}
             />
