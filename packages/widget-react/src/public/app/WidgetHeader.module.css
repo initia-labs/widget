@@ -8,10 +8,11 @@
 }
 
 .logo {
-  border-right: 1px solid var(--border);
-  padding: 0 16px;
   display: flex;
   align-items: center;
+
+  border-right: 1px solid var(--border);
+  padding: 0 16px;
 }
 
 .copy {
