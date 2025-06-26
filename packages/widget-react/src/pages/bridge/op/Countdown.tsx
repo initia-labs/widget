@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
 import WidgetTooltip from "@/components/WidgetTooltip"
-import styles from "./Countdown.module.css"
 
 const MILLISECONDS_IN_SECOND = 1000
 const SECONDS_IN_MINUTE = 60
@@ -49,7 +48,7 @@ const Countdown = ({ date }: Props) => {
 
   return (
     <WidgetTooltip label={date.toLocaleString()}>
-      <span className={styles.countdown}>
+      <span className="monospace">
         {days}d {formatTime(hours)}h {formatTime(minutes)}m {formatTime(seconds)}s
       </span>
     </WidgetTooltip>
