@@ -74,8 +74,8 @@ const BridgeFields = () => {
   })
   const routeQuery =
     isOpWithdrawable && selectedType === "op" ? routeQueryOpWithdrawal : routeQueryDefault
-  const { data, isLoading, isFetching, isFetched, error } = routeQuery
-  console.error(error?.message)
+  const { data, isLoading, isFetching, isFetched } = routeQuery
+
   // Local state to retain the last successful simulated route
   const [previousData, setPreviousData] = useState(data)
   useEffect(() => {
