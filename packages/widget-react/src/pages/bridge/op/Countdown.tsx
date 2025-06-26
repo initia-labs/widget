@@ -45,19 +45,12 @@ const Countdown = ({ date }: Props) => {
 
   const formatTime = (time: number) => time.toString().padStart(2, "0")
 
-  const renderItem = (number: string | number, unit: string) => {
-    return ` ${number}${unit}`
-  }
-
   const { days, hours, minutes, seconds } = timeLeft
 
   return (
     <WidgetTooltip label={date.toLocaleString()}>
       <span className={styles.countdown}>
-        {renderItem(days, "d")}
-        {renderItem(formatTime(hours), "h")}
-        {renderItem(formatTime(minutes), "m")}
-        {renderItem(formatTime(seconds), "s")}
+        {days}d {formatTime(hours)}h {formatTime(minutes)}m {formatTime(seconds)}s
       </span>
     </WidgetTooltip>
   )
