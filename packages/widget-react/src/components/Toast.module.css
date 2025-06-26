@@ -20,12 +20,12 @@
   padding: 16px;
 }
 
-.success {
-  color: var(--success);
-}
-
 .info {
   color: var(--gray-0);
+}
+
+.success {
+  color: var(--success);
 }
 
 .error {

@@ -24,8 +24,8 @@ const Toast = ({ notification, onClose }: Props) => {
     switch (type) {
       case "loading":
         return <Loader size={16} />
-      case "success":
       case "info":
+      case "success":
         return <IconCheckCircleFilled size={16} />
       case "error":
         return <IconCloseCircleFilled size={16} />
