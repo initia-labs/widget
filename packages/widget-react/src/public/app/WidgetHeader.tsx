@@ -1,7 +1,6 @@
 import clsx from "clsx"
 import { useAccount, useDisconnect } from "wagmi"
 import { IconCopy, IconSignOut } from "@initia/icons-react"
-import { Link } from "@/lib/router"
 import { truncate } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { useWidgetVisibility } from "@/data/ui"
@@ -22,9 +21,9 @@ const WidgetHeader = () => {
 
   return (
     <header className={styles.header}>
-      <Link to="/" className={styles.logo}>
+      <div className={styles.logo}>
         <Image src={connector.icon} width={18} height={18} />
-      </Link>
+      </div>
 
       <CopyButton value={address}>
         {({ copy, copied }) => (
