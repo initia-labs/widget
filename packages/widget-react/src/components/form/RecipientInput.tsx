@@ -107,7 +107,7 @@ const RecipientInput = (props: Props) => {
           className={clsx(styles.input, AddressUtils.isAddress(inputValue) && "monospace")}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value.trim())}
-          placeholder="Address or username"
+          placeholder="Enter address"
           autoComplete="off"
           ref={mode === "onSubmit" ? mergeRefs([ref, autoFocusRef]) : ref}
         />
