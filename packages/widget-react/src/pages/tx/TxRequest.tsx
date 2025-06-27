@@ -109,6 +109,8 @@ const TxRequest = () => {
   return (
     <>
       <Scrollable>
+        <h1 className={styles.title}>Confirm tx</h1>
+
         <div className={styles.meta}>
           <TxMetaItem title="Chain" content={chainId} />
           <TxMetaItem
