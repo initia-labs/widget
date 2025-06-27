@@ -36,8 +36,10 @@
   }
 
   &.white {
+    gap: 4px;
     background-color: var(--gray-0);
     color: var(--gray-8);
+    font-weight: 600;
   }
 
   &.white:hover {

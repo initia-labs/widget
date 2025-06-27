@@ -38,7 +38,7 @@ const AssetOptions = (props: Props) => {
                 <>
                   <Image src={logoUrl} width={32} height={32} className={styles.logo} />
                   <div className={styles.info}>
-                    <div>{symbol}</div>
+                    <div className={styles.symbol}>{symbol}</div>
                     <div className={styles.name}>{name}</div>
                   </div>
                   <div className={styles.balance}>
