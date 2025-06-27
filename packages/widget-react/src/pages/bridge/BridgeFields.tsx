@@ -219,12 +219,17 @@ const BridgeFields = () => {
               {isMaxAmount && (
                 <FormHelp level="warning">Make sure to leave enough for fees</FormHelp>
               )}
-              {route?.warning && <FormHelp level="warning">{route.warning.message}</FormHelp>}
+              {route?.extra_infos?.map((info) => (
+                <FormHelp level="info" key={info}>
+                  {info}
+                </FormHelp>
+              ))}
               {route?.extra_warnings?.map((warning) => (
                 <FormHelp level="warning" key={warning}>
                   {warning}
                 </FormHelp>
               ))}
+              {route?.warning && <FormHelp level="warning">{route.warning.message}</FormHelp>}
             </FormHelp.Stack>
 
             <AnimatedHeight>
