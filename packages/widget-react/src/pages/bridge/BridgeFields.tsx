@@ -257,29 +257,31 @@ const BridgeFields = () => {
             <AnimatedHeight>
               {route && (
                 <div className={styles.meta}>
-                  {formatFees(deductedFees) && (
+                  {formatFees(route.estimated_fees) && (
                     <div className={styles.row}>
                       <span className={styles.title}>Estimated fees</span>
-                      <span className={styles.description}>
-                        {formatFees(deductedFees)}
-                        <WidgetTooltip label="This fee is already deducted from the estimated output amount">
-                          <span className={styles.icon}>
-                            <IconInfoFilled size={12} />
+                      <p>
+                        {formatFees(deductedFees) && (
+                          <span className={styles.description}>
+                            {formatFees(deductedFees)}
+                            <WidgetTooltip label="This is the fee that is deducted from the final amount received.">
+                              <span className={styles.icon}>
+                                <IconInfoFilled size={12} />
+                              </span>
+                            </WidgetTooltip>
                           </span>
-                        </WidgetTooltip>
-                      </span>
-                    </div>
-                  )}
-
-                  {formatFees(additionalFees) && (
-                    <div className={styles.row}>
-                      <span className={styles.title}>Fee</span>
-                      <span className={styles.description}>
-                        {formatFees(additionalFees)}
-                        <WidgetTooltip label="This fee is paid on top of the current amount">
-                          <IconInfoFilled />
-                        </WidgetTooltip>
-                      </span>
+                        )}
+                        {formatFees(additionalFees) && (
+                          <span className={styles.description}>
+                            {formatFees(additionalFees)}
+                            <WidgetTooltip label="This is the fee that occurs prior to the transaction.">
+                              <span className={styles.icon}>
+                                <IconInfoFilled size={12} />
+                              </span>
+                            </WidgetTooltip>
+                          </span>
+                        )}
+                      </p>
                     </div>
                   )}
 
