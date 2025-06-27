@@ -181,7 +181,6 @@ export function useBridgeTx(tx: TxJson) {
             title: "Transaction failed",
             description: error.message,
           })
-          console.trace(error)
         })
         .finally(() => {
           queryClient.invalidateQueries({
@@ -196,7 +195,6 @@ export function useBridgeTx(tx: TxJson) {
         title: "Transaction failed",
         description: error.message,
       })
-      console.trace(error)
     },
   })
 }

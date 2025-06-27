@@ -100,7 +100,6 @@ const TxRequest = () => {
       localStorage.setItem(localStorageKey, feeDenom)
     },
     onError: async (error: Error) => {
-      console.trace(error)
       reject(new Error(await normalizeError(error)))
     },
   })
