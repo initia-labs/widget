@@ -11,7 +11,7 @@ export const skipQueryKeys = createQueryKeys("initia-widget:skip", {
   balances: (chainId: string, address: string) => [chainId, address],
   route: (values: FormValues, isOpWithdraw?: boolean) => [values, isOpWithdraw],
   txTrack: (chainId: string, txHash?: string) => [chainId, txHash],
-  txStatus: (chainId: string, txHash?: string, isLz?: boolean) => [chainId, txHash, isLz],
+  txStatus: (chainId: string, txHash?: string) => [chainId, txHash],
 })
 
 export function useSkip() {

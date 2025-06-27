@@ -7,13 +7,13 @@ import { AddressUtils } from "@/public/utils"
 import AsyncBoundary from "@/components/AsyncBoundary"
 import CheckboxButton from "@/components/CheckboxButton"
 import Image from "@/components/Image"
-import type { RouterOperationJson } from "./data/simulate"
 import { useBridgePreviewState } from "./data/tx"
 import { useCosmosWallets } from "./data/cosmos"
 import OperationItem from "./OperationItem"
 import styles from "./BridgePreviewRoute.module.css"
+import type { OperationJson } from "@skip-go/client"
 
-function normalizeOperation(operation: RouterOperationJson) {
+function normalizeOperation(operation: OperationJson) {
   if ("transfer" in operation) {
     return { type: "transfer", ...operation, ...operation.transfer }
   }
@@ -47,8 +47,8 @@ function normalizeOperation(operation: RouterOperationJson) {
   if ("stargate_transfer" in operation) {
     return { type: "stargate_transfer", ...operation, ...operation.stargate_transfer }
   }
-  if ("lz_transfer" in operation) {
-    return { type: "lz_transfer", ...operation, ...operation.lz_transfer }
+  if ("layer_zero_transfer" in operation) {
+    return { type: "layer_zero_transfer", ...operation, ...operation.layer_zero_transfer }
   }
   throw new Error("Unknown operation type")
 }
