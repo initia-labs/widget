@@ -252,7 +252,7 @@ const BridgeFields = () => {
 
                   {formatDuration(route.estimated_route_duration_seconds) && (
                     <div className={styles.row}>
-                      <span className={styles.title}>Estimated route duration</span>
+                      <span className={styles.title}>Estimated time</span>
                       <span className={styles.description}>
                         {formatDuration(route.estimated_route_duration_seconds)}
                       </span>

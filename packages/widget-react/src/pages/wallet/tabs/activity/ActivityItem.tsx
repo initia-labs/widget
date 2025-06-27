@@ -1,4 +1,5 @@
 import { intlFormatDistance } from "date-fns"
+import { sentenceCase } from "change-case"
 import { IconWarningFilled } from "@initia/icons-react"
 import type { NormalizedChain } from "@/data/chains"
 import ExplorerLink from "@/components/ExplorerLink"
@@ -17,7 +18,9 @@ const ActivityItem = ({ txItem, chain }: Props) => {
     <ExplorerLink txHash={txItem.txhash} chainId={chain.chainId} className={styles.link}>
       <div className={styles.inner}>
         <div className={styles.timestamp}>
-          {intlFormatDistance(new Date(txItem.timestamp), new Date(), { locale: "en-US" })}
+          {sentenceCase(
+            intlFormatDistance(new Date(txItem.timestamp), new Date(), { locale: "en-US" }),
+          )}
         </div>
 
         <div className={styles.content}>
