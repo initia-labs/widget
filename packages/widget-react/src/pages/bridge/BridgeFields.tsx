@@ -2,7 +2,12 @@ import BigNumber from "bignumber.js"
 import { sentenceCase } from "change-case"
 import { useEffect, useMemo, useState } from "react"
 import { useDebounce, useLocalStorage } from "react-use"
-import { IconChevronDown, IconSettingFilled, IconWarningFilled } from "@initia/icons-react"
+import {
+  IconChevronDown,
+  IconInfoFilled,
+  IconSettingFilled,
+  IconWarningFilled,
+} from "@initia/icons-react"
 import { useNavigate } from "@/lib/router"
 import { formatAmount, formatNumber, toQuantity } from "@/public/utils"
 import { useModal } from "@/public/app/ModalContext"
@@ -16,6 +21,7 @@ import ModalTrigger from "@/components/ModalTrigger"
 import FormHelp from "@/components/form/FormHelp"
 import PlainModalContent from "@/components/PlainModalContent"
 import AnimatedHeight from "@/components/AnimatedHeight"
+import WidgetTooltip from "@/components/WidgetTooltip"
 import { formatDuration, formatFees } from "./data/format"
 import type { FormValues } from "./data/form"
 import { FormValuesSchema, useBridgeForm } from "./data/form"
@@ -164,6 +170,14 @@ const BridgeFields = () => {
     BigNumber(quantity).gt(0) &&
     BigNumber(quantity).isEqualTo(toQuantity(srcBalance?.amount, srcBalance?.decimals ?? 0))
 
+  const deductedFees = route?.estimated_fees?.filter(
+    ({ fee_behavior }) => fee_behavior === "FEE_BEHAVIOR_DEDUCTED",
+  )
+
+  const additionalFees = route?.estimated_fees?.filter(
+    ({ fee_behavior }) => fee_behavior === "FEE_BEHAVIOR_ADDITIONAL",
+  )
+
   return (
     <form className={styles.form} onSubmit={submit}>
       <ChainAssetQuantityLayout
@@ -243,10 +257,29 @@ const BridgeFields = () => {
             <AnimatedHeight>
               {route && (
                 <div className={styles.meta}>
-                  {formatFees(route.estimated_fees) && (
+                  {formatFees(deductedFees) && (
                     <div className={styles.row}>
                       <span className={styles.title}>Estimated fees</span>
-                      <span className={styles.description}>{formatFees(route.estimated_fees)}</span>
+                      <span className={styles.description}>
+                        {formatFees(deductedFees)}
+                        <WidgetTooltip label="This fee is already deducted from the estimated output amount">
+                          <span className={styles.icon}>
+                            <IconInfoFilled size={12} />
+                          </span>
+                        </WidgetTooltip>
+                      </span>
+                    </div>
+                  )}
+
+                  {formatFees(additionalFees) && (
+                    <div className={styles.row}>
+                      <span className={styles.title}>Fee</span>
+                      <span className={styles.description}>
+                        {formatFees(additionalFees)}
+                        <WidgetTooltip label="This fee is paid on top of the current amount">
+                          <IconInfoFilled />
+                        </WidgetTooltip>
+                      </span>
                     </div>
                   )}
 

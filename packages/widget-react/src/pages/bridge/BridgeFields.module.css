@@ -63,6 +63,10 @@
     gap: 4px;
 
     font-family: var(--monospace);
+
+    .icon {
+      color: var(--gray-2);
+    }
   }
 
   .edit {
