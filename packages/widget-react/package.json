@@ -87,7 +87,7 @@
     "@privy-io/cross-app-connect": "^0",
     "@rainbow-me/rainbowkit": "^2",
     "@react-spring/web": "^10",
-    "@skip-go/client": "^1.3.4",
+    "@skip-go/client": "^1",
     "@tanstack/react-query": "^5",
     "@tsconfig/vite-react": "^6",
     "@types/ramda": "^0",

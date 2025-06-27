@@ -2,6 +2,7 @@ import { zipObj } from "ramda"
 import { useToggle } from "react-use"
 import { Collapsible } from "radix-ui"
 import { useAccount } from "wagmi"
+import type { OperationJson } from "@skip-go/client"
 import { IconWallet } from "@initia/icons-react"
 import { AddressUtils } from "@/public/utils"
 import AsyncBoundary from "@/components/AsyncBoundary"
@@ -11,7 +12,6 @@ import { useBridgePreviewState } from "./data/tx"
 import { useCosmosWallets } from "./data/cosmos"
 import OperationItem from "./OperationItem"
 import styles from "./BridgePreviewRoute.module.css"
-import type { OperationJson } from "@skip-go/client"
 
 function normalizeOperation(operation: OperationJson) {
   if ("transfer" in operation) {
