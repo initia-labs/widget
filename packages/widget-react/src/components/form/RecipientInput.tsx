@@ -4,8 +4,8 @@ import { useState, useEffect } from "react"
 import { mergeRefs } from "react-merge-refs"
 import { useFormContext } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
-import { IconCloseCircleFilled } from "@initia/icons-react"
 import type { ChainTypeJson } from "@skip-go/client"
+import { IconCloseCircleFilled } from "@initia/icons-react"
 import { AddressUtils } from "@/public/utils"
 import { STALE_TIMES } from "@/data/http"
 import { accountQueryKeys, useUsernameClient } from "@/data/account"
@@ -25,15 +25,8 @@ interface Props {
   ref?: Ref<HTMLInputElement>
 }
 
-const RecipientInput = (props: Props) => {
-  const {
-    mode = "onChange",
-    myAddress,
-    validate = AddressUtils.validate,
-    chainType = "initia",
-    onApply,
-    ref,
-  } = props
+const RecipientInput = ({ mode = "onChange", myAddress, ...props }: Props) => {
+  const { validate = AddressUtils.validate, chainType = "initia", onApply, ref } = props
   const autoFocusRef = useAutoFocus()
 
   const { getValues, setValue, formState } = useFormContext<{ recipient: string }>()
