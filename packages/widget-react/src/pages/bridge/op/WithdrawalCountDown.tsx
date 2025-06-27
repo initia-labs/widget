@@ -1,13 +1,13 @@
 import { IconInfoFilled } from "@initia/icons-react"
 import WidgetTooltip from "@/components/WidgetTooltip"
-import styles from "./WithdrawalCountdown.module.css"
 import Countdown from "./Countdown"
+import styles from "./WithdrawalCountdown.module.css"
 
-const DESCRIPTION = "This is the time remaining before you can claim your Op withdrawal request."
+const DESCRIPTION = "Time remaining before you can claim"
 
 const WithdrawalCountdown = ({ date }: { date: Date }) => {
   return (
-    <div className={styles.submitted}>
+    <div className={styles.container}>
       <Countdown date={date} />
       <WidgetTooltip label={DESCRIPTION}>
         <span className={styles.icon}>

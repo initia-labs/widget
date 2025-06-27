@@ -7,7 +7,7 @@ const DESCRIPTION =
 
 const WithdrawalSubmitted = () => {
   return (
-    <div className={styles.submitted}>
+    <div className={styles.container}>
       <span>Withdrawal submitted</span>
       <WidgetTooltip label={DESCRIPTION}>
         <span className={styles.icon}>
