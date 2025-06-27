@@ -264,7 +264,6 @@ export function useTrackTxQuery(details: HistoryDetails) {
     queryKey: skipQueryKeys.txTrack(chainId, txHash).queryKey,
     queryFn: async () => {
       try {
-        if (!shouldTrackBridgeHistory(details)) return { tx_hash: txHash }
         return await skip
           .post("v2/tx/track", { json: { tx_hash: txHash, chain_id: chainId } })
           .json<TrackResponseJson>()
@@ -282,13 +281,12 @@ export function useTrackTxQuery(details: HistoryDetails) {
 export function useTxStatusQuery(details: HistoryDetails) {
   const { timestamp, chainId, txHash, state } = details
   const skip = useSkip()
-  const isLz = getBridgeType(details.route) === BridgeType.LZ
 
   return useQuery({
-    queryKey: skipQueryKeys.txStatus(chainId, txHash, isLz).queryKey,
+    queryKey: skipQueryKeys.txStatus(chainId, txHash).queryKey,
     queryFn: () =>
       skip
-        .get("v2/tx/status", { searchParams: { tx_hash: txHash, chain_id: chainId, is_lz: isLz } })
+        .get("v2/tx/status", { searchParams: { tx_hash: txHash, chain_id: chainId } })
         .json<StatusResponseJson>(),
     enabled: !!txHash && !state,
     refetchInterval: ({ state: { data } }) => {
@@ -310,7 +308,6 @@ export function useTxStatusQuery(details: HistoryDetails) {
 
 export enum BridgeType {
   OP_WITHDRAW = "Optimistic bridge withdrawal",
-  LZ = "LayerZero",
   SKIP = "Skip",
 }
 
@@ -319,12 +316,5 @@ export function getBridgeType(route: RouterRouteResponseJson) {
   if (has("op_init_transfer", head(operations)) && dest_asset_denom === "uinit") {
     return BridgeType.OP_WITHDRAW
   }
-  if (has("lz_transfer", head(operations))) {
-    return BridgeType.LZ
-  }
   return BridgeType.SKIP
-}
-
-export function shouldTrackBridgeHistory({ tracked, route }: HistoryDetails) {
-  return !tracked && getBridgeType(route) !== BridgeType.LZ
 }
