@@ -2,6 +2,7 @@ import clsx from "clsx"
 import { IconChevronDown } from "@initia/icons-react"
 import { useChain } from "@/data/chains"
 import ModalTrigger from "@/components/ModalTrigger"
+import Image from "@/components/Image"
 import AddedChainList from "../../components/AddedChainList"
 import styles from "./SelectChain.module.css"
 
@@ -11,7 +12,7 @@ interface Props {
 }
 
 const SelectChain = ({ value, onSelect }: Props) => {
-  const { name } = useChain(value)
+  const { logoUrl, name } = useChain(value)
 
   return (
     <ModalTrigger
@@ -26,7 +27,8 @@ const SelectChain = ({ value, onSelect }: Props) => {
       )}
       className={clsx("input", styles.button)}
     >
-      <span>{name}</span>
+      <Image src={logoUrl} width={16} height={16} />
+      <span className={styles.name}>{name}</span>
       <IconChevronDown size={16} className={styles.icon} />
     </ModalTrigger>
   )

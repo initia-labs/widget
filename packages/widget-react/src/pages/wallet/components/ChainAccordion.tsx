@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 import { useLocalStorage } from "react-use"
-import { IconChevronUp, IconChevronDown, IconSetting } from "@initia/icons-react"
+import { IconChevronUp, IconChevronDown, IconSettingFilled } from "@initia/icons-react"
 import { Link } from "@/lib/router"
 import { version } from "@/../package.json"
 import { LocalStorageKey } from "@/data/constants"
@@ -39,7 +39,7 @@ const ChainAccordion = ({ renderContent, storageKey }: Props) => {
   return (
     <>
       <FlexEnd mb={6}>
-        <Button.Small onClick={handleToggleAll}>
+        <Button.Small className={styles.toggle} onClick={handleToggleAll}>
           <span>{isAllCollapsed ? "Expand all" : "Collapse all"}</span>
           {isAllCollapsed ? <IconChevronDown size={10} /> : <IconChevronUp size={10} />}
         </Button.Small>
@@ -59,7 +59,7 @@ const ChainAccordion = ({ renderContent, storageKey }: Props) => {
         onValueChange={setOpenedChains}
         footer={
           <Link className={styles.rollups} to="/rollups">
-            <IconSetting size={12} />
+            <IconSettingFilled size={12} />
             <span>Manage rollup list</span>
           </Link>
         }

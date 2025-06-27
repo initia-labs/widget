@@ -1,7 +1,8 @@
 import { last } from "ramda"
-import { toBase64 } from "@cosmjs/encoding"
-import type { BcsType } from "@mysten/bcs"
-import { bcs } from "@mysten/bcs"
+import { toBase64, toHex } from "@cosmjs/encoding"
+import type { BcsType, BcsTypeOptions } from "@mysten/bcs"
+import { bcs as mystenBcs } from "@mysten/bcs"
+import { AddressUtils } from "@/public/utils"
 
 export function stringifyValue(content: unknown): string {
   switch (typeof content) {
@@ -28,6 +29,12 @@ export function stringifyValue(content: unknown): string {
   }
 }
 
+const bcs = {
+  ...mystenBcs,
+  address: addressSerializer,
+  object: addressSerializer,
+}
+
 /** Recursively resolves a Move-style type string into a bcs.*() call */
 export function resolveBcsType(typeStr: string): BcsType<unknown, unknown> {
   // Try to match a generic like Foo<InnerType>
@@ -47,4 +54,11 @@ export function resolveBcsType(typeStr: string): BcsType<unknown, unknown> {
   // call the corresponding bcs.*()
   // @ts-expect-error // guaranteed to be a valid bcs.*() function
   return bcs[baseName]()
+}
+
+function addressSerializer(options?: BcsTypeOptions<Uint8Array, Iterable<number>>) {
+  return bcs.bytes(32, options).transform({
+    input: (value: string) => AddressUtils.toBytes(value, 32),
+    output: (value: Uint8Array) => `0x${toHex(value)}`,
+  })
 }

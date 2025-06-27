@@ -100,7 +100,6 @@ const TxRequest = () => {
       localStorage.setItem(localStorageKey, feeDenom)
     },
     onError: async (error: Error) => {
-      console.trace(error)
       reject(new Error(await normalizeError(error)))
     },
   })
@@ -110,6 +109,8 @@ const TxRequest = () => {
   return (
     <>
       <Scrollable>
+        <h1 className={styles.title}>Confirm tx</h1>
+
         <div className={styles.meta}>
           <TxMetaItem title="Chain" content={chainId} />
           <TxMetaItem

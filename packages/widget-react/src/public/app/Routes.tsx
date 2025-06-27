@@ -44,7 +44,7 @@ const Routes = () => {
 
   switch (path) {
     case "/bridge":
-      return <BridgeForm />
+      return <BridgeForm key={address} />
     case "/bridge/history":
       return <BridgeHistory />
   }

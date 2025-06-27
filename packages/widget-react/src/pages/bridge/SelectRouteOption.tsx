@@ -2,7 +2,6 @@ import clsx from "clsx"
 import type { PropsWithChildren } from "react"
 import { IconClockFilled } from "@initia/icons-react"
 import { formatAmount } from "@/public/utils"
-import Image from "@/components/Image"
 import Loader from "@/components/Loader"
 import { formatDuration } from "./data/format"
 import { useBridgeForm } from "./data/form"
@@ -51,7 +50,6 @@ const SelectRouteOption = ({ label, query, value, onSelect, checked }: Props) =>
           <Loader size={14} />
         ) : (
           <>
-            <Image src={dstAsset.logo_uri} width={14} height={14} />
             <span>{formatAmount(data?.amount_out, { decimals: dstAsset.decimals })}</span>
             <span className={styles.symbol}>{dstAsset.symbol}</span>
           </>

@@ -27,7 +27,7 @@ const ExplorerLink = (props: Props) => {
   return (
     <a
       {...attrs}
-      href={xss(txPage.replace(/\$\{txHash\}/g, txHash))}
+      href={xss(sanitizeLink(txPage.replace(/\$\{txHash\}/g, txHash)))}
       className={clsx(styles.link, className)}
       onClick={onClick}
       target="_blank"
@@ -39,3 +39,15 @@ const ExplorerLink = (props: Props) => {
 }
 
 export default ExplorerLink
+
+function sanitizeLink(href: string): string {
+  try {
+    const url = new URL(href, window.location.href)
+    if (!["http:", "https:"].includes(url.protocol)) {
+      throw new Error("Invalid protocol")
+    }
+    return url.toString()
+  } catch {
+    return "#"
+  }
+}

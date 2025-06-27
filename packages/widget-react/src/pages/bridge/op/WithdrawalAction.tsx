@@ -1,10 +1,10 @@
 import { isFuture } from "date-fns"
 import WithIsSubmitted from "./WithIsSubmitted"
 import WithdrawalSubmitted from "./WithdrawalSubmitted"
+import WithdrawalCountdown from "./WithdrawalCountDown"
 import WithClaimableDate from "./WithClaimableDate"
 import WithUpdateReminder from "./WithUpdateReminder"
 import ClaimButton from "./ClaimButton"
-import Countdown from "./Countdown"
 
 const WithdrawalAction = () => {
   return (
@@ -19,7 +19,7 @@ const WithdrawalAction = () => {
                 <WithdrawalSubmitted />
               ) : (
                 <WithUpdateReminder date={date}>
-                  {isFuture(date) ? <Countdown date={date} /> : <ClaimButton />}
+                  {isFuture(date) ? <WithdrawalCountdown date={date} /> : <ClaimButton />}
                 </WithUpdateReminder>
               )
             }

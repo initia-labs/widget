@@ -27,7 +27,12 @@ import type { FormValues } from "./data/form"
 import { FormValuesSchema, useBridgeForm } from "./data/form"
 import { useChainType, useSkipChain } from "./data/chains"
 import { useSkipAsset } from "./data/assets"
-import { FeeBehaviorJson, useIsOpWithdrawable, useRouteQuery } from "./data/simulate"
+import {
+  useIsOpWithdrawable,
+  useRouteErrorInfo,
+  useRouteQuery,
+  FeeBehaviorJson,
+} from "./data/simulate"
 import { useSkipBalance, useSkipBalancesQuery } from "./data/balance"
 import SelectedChainAsset from "./SelectedChainAsset"
 import BridgeAccount from "./BridgeAccount"
@@ -80,7 +85,8 @@ const BridgeFields = () => {
   })
   const routeQuery =
     isOpWithdrawable && selectedType === "op" ? routeQueryOpWithdrawal : routeQueryDefault
-  const { data, isLoading, isFetching, isFetched } = routeQuery
+  const { data, isLoading, isFetching, isFetched, error } = routeQuery
+  const { data: routeErrorInfo } = useRouteErrorInfo(error)
 
   // Local state to retain the last successful simulated route
   const [previousData, setPreviousData] = useState(data)
@@ -159,13 +165,6 @@ const BridgeFields = () => {
   // render
   const received = route ? formatAmount(route.amount_out, { decimals: dstAsset.decimals }) : "0"
 
-  const withdrawalStatusLink = (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-    <span className={styles.link} onClick={() => navigate("/op/withdrawals")}>
-      Withdrawal status
-    </span>
-  )
-
   const isMaxAmount =
     BigNumber(quantity).gt(0) &&
     BigNumber(quantity).isEqualTo(toQuantity(srcBalance?.amount, srcBalance?.decimals ?? 0))
@@ -237,12 +236,12 @@ const BridgeFields = () => {
             </AnimatedHeight>
 
             <FormHelp.Stack>
-              {route && isOpWithdrawable && selectedType === "op" && (
-                <FormHelp level="info">
-                  Withdraw transaction is required when using the Optimistic bridge. Status of all
-                  withdrawals can be viewed on the {withdrawalStatusLink} page.
+              {route?.extra_infos?.map((info) => (
+                <FormHelp level="info" key={info}>
+                  {info}
                 </FormHelp>
-              )}
+              ))}
+              {routeErrorInfo && <FormHelp level="info">{routeErrorInfo}</FormHelp>}
               {isMaxAmount && (
                 <FormHelp level="warning">Make sure to leave enough for fees</FormHelp>
               )}
@@ -287,7 +286,7 @@ const BridgeFields = () => {
 
                   {formatDuration(route.estimated_route_duration_seconds) && (
                     <div className={styles.row}>
-                      <span className={styles.title}>Estimated route duration</span>
+                      <span className={styles.title}>Estimated time</span>
                       <span className={styles.description}>
                         {formatDuration(route.estimated_route_duration_seconds)}
                       </span>
