@@ -153,13 +153,6 @@ const BridgeFields = () => {
   // render
   const received = route ? formatAmount(route.amount_out, { decimals: dstAsset.decimals }) : "0"
 
-  const withdrawalStatusLink = (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-    <span className={styles.link} onClick={() => navigate("/op/withdrawals")}>
-      Withdrawal status
-    </span>
-  )
-
   const isMaxAmount =
     BigNumber(quantity).gt(0) &&
     BigNumber(quantity).isEqualTo(toQuantity(srcBalance?.amount, srcBalance?.decimals ?? 0))
@@ -223,12 +216,6 @@ const BridgeFields = () => {
             </AnimatedHeight>
 
             <FormHelp.Stack>
-              {route && isOpWithdrawable && selectedType === "op" && (
-                <FormHelp level="info">
-                  Withdraw transaction is required when using the Optimistic bridge. Status of all
-                  withdrawals can be viewed on the {withdrawalStatusLink} page.
-                </FormHelp>
-              )}
               {isMaxAmount && (
                 <FormHelp level="warning">Make sure to leave enough for fees</FormHelp>
               )}
