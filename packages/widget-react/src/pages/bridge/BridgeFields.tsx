@@ -36,6 +36,12 @@ import type { RouteType } from "./SelectRouteOption"
 import SelectRouteOption from "./SelectRouteOption"
 import styles from "./BridgeFields.module.css"
 
+//import { FeeBehaviorJson } from "@skip-go/client"
+enum FeeBehaviorJson {
+  FEE_BEHAVIOR_DEDUCTED = "FEE_BEHAVIOR_DEDUCTED",
+  FEE_BEHAVIOR_ADDITIONAL = "FEE_BEHAVIOR_ADDITIONAL",
+}
+
 const BridgeFields = () => {
   const navigate = useNavigate()
 
@@ -171,11 +177,11 @@ const BridgeFields = () => {
     BigNumber(quantity).isEqualTo(toQuantity(srcBalance?.amount, srcBalance?.decimals ?? 0))
 
   const deductedFees = route?.estimated_fees?.filter(
-    ({ fee_behavior }) => fee_behavior === "FEE_BEHAVIOR_DEDUCTED",
+    ({ fee_behavior }) => fee_behavior === FeeBehaviorJson.FEE_BEHAVIOR_DEDUCTED,
   )
 
   const additionalFees = route?.estimated_fees?.filter(
-    ({ fee_behavior }) => fee_behavior === "FEE_BEHAVIOR_ADDITIONAL",
+    ({ fee_behavior }) => fee_behavior === FeeBehaviorJson.FEE_BEHAVIOR_ADDITIONAL,
   )
 
   return (
