@@ -27,7 +27,7 @@ import type { FormValues } from "./data/form"
 import { FormValuesSchema, useBridgeForm } from "./data/form"
 import { useChainType, useSkipChain } from "./data/chains"
 import { useSkipAsset } from "./data/assets"
-import { useIsOpWithdrawable, useRouteQuery } from "./data/simulate"
+import { FeeBehaviorJson, useIsOpWithdrawable, useRouteQuery } from "./data/simulate"
 import { useSkipBalance, useSkipBalancesQuery } from "./data/balance"
 import SelectedChainAsset from "./SelectedChainAsset"
 import BridgeAccount from "./BridgeAccount"
@@ -35,12 +35,6 @@ import SlippageControl from "./SlippageControl"
 import type { RouteType } from "./SelectRouteOption"
 import SelectRouteOption from "./SelectRouteOption"
 import styles from "./BridgeFields.module.css"
-
-//import { FeeBehaviorJson } from "@skip-go/client"
-enum FeeBehaviorJson {
-  FEE_BEHAVIOR_DEDUCTED = "FEE_BEHAVIOR_DEDUCTED",
-  FEE_BEHAVIOR_ADDITIONAL = "FEE_BEHAVIOR_ADDITIONAL",
-}
 
 const BridgeFields = () => {
   const navigate = useNavigate()
