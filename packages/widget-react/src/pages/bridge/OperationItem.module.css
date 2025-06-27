@@ -6,6 +6,18 @@
   .info {
     flex: 1;
   }
+
+  .logoContainer {
+    position: relative;
+
+    .chainLogo {
+      position: absolute;
+      bottom: 0;
+      right: -4px;
+      border: 1px solid var(--gray-7);
+      border-radius: 50%;
+    }
+  }
 }
 
 .arrow {

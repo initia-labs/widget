@@ -18,7 +18,7 @@ interface ComponentProps extends Props {
 const OperationItemComponent = (props: ComponentProps) => {
   const { source, type, amount, denom, chainId, address, walletIcon } = props
   const { symbol = truncate(denom), decimals = 0, logo_uri = placeholder } = props
-  const { chain_name, pretty_name } = useSkipChain(chainId)
+  const { chain_name, pretty_name, logo_uri: chain_logo_uri } = useSkipChain(chainId)
 
   return (
     <div>
@@ -40,7 +40,12 @@ const OperationItemComponent = (props: ComponentProps) => {
       )}
 
       <div className={styles.content}>
-        <Image src={logo_uri} width={32} height={32} />
+        <div className={styles.logoContainer}>
+          <Image src={logo_uri} width={32} height={32} />
+          {!!walletIcon && (
+            <Image src={chain_logo_uri!} width={16} height={16} className={styles.chainLogo} />
+          )}
+        </div>
 
         <div className={styles.info}>
           <div className={styles.asset}>

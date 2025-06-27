@@ -1,8 +1,15 @@
 import { intlFormatDistance } from "date-fns"
 import { useEffect, useMemo } from "react"
+import { useAccount } from "wagmi"
 import type { StatusResponseJson } from "@skip-go/client"
-import { IconArrowDown, IconCheckCircleFilled, IconWarningFilled } from "@initia/icons-react"
-import { formatAmount, truncate } from "@/public/utils"
+import {
+  IconArrowDown,
+  IconArrowUpRight,
+  IconCheckCircleFilled,
+  IconWallet,
+  IconWarningFilled,
+} from "@initia/icons-react"
+import { AddressUtils, formatAmount, truncate } from "@/public/utils"
 import Loader from "@/components/Loader"
 import Image from "@/components/Image"
 import ExplorerLink from "@/components/ExplorerLink"
@@ -11,9 +18,16 @@ import type { RouterChainJson } from "./data/chains"
 import { useSkipChain } from "./data/chains"
 import type { RouterAsset } from "./data/assets"
 import { useSkipAsset } from "./data/assets"
-import { BridgeType, getBridgeType, useTrackTxQuery, useTxStatusQuery } from "./data/tx"
+import {
+  BridgeType,
+  bridgeTypeExplorerName,
+  getBridgeType,
+  useTrackTxQuery,
+  useTxStatusQuery,
+} from "./data/tx"
 import type { TxIdentifier } from "./data/history"
 import { useBridgeHistoryDetails } from "./data/history"
+import { useCosmosWallets } from "./data/cosmos"
 import styles from "./BridgeHistoryItem.module.css"
 
 const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
@@ -27,6 +41,9 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
   const { data: trackedTxHash = "" } = useTrackTxQuery(details)
   const { data: txStatus } = useTxStatusQuery({ ...details, txHash: trackedTxHash })
   const state = details.state ?? getState(txStatus)
+
+  const { address: connectedAddress = "", connector } = useAccount()
+  const { find } = useCosmosWallets()
 
   useEffect(() => {
     if (trackedTxHash) {
@@ -83,22 +100,50 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
   const srcAsset = useSkipAsset(srcDenom, srcChainId)
   const dstAsset = useSkipAsset(dstDenom, dstChainId)
 
+  const getWalletIcon = (address: string, isSource: boolean) => {
+    if (values.cosmosWalletName && isSource) {
+      return (
+        <Image
+          src={find(values.cosmosWalletName)?.image}
+          width={12}
+          height={12}
+          className={styles.walletIcon}
+        />
+      )
+    }
+
+    if (AddressUtils.equals(address, connectedAddress))
+      return <Image src={connector?.icon} width={12} height={12} className={styles.walletIcon} />
+
+    return <IconWallet size={12} className={styles.walletIcon} />
+  }
+
   const renderRow = (
     amount: string,
     { symbol, decimals, logo_uri }: RouterAsset,
-    { chain_name, pretty_name }: RouterChainJson,
+    { chain_name, pretty_name, logo_uri: chain_logo_uri }: RouterChainJson,
     address: string,
+    isSource: boolean,
   ) => {
     return (
       <div className={styles.row}>
-        <Image src={logo_uri} width={32} height={32} />
+        <div className={styles.logoContainer}>
+          <Image src={logo_uri} width={32} height={32} />
+          <Image
+            src={chain_logo_uri || undefined}
+            width={16}
+            height={16}
+            className={styles.chainLogo}
+          />
+        </div>
         <div>
           <div className={styles.asset}>
             <span className={styles.amount}>{formatAmount(amount, { decimals })}</span>
             <span>{symbol}</span>
           </div>
           <div className={styles.chain}>
-            on {pretty_name || chain_name} <span className="monospace">({truncate(address)})</span>
+            on {pretty_name || chain_name} {getWalletIcon(address, isSource)}{" "}
+            <span className="monospace">{truncate(address)}</span>
           </div>
         </div>
       </div>
@@ -112,37 +157,39 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
       <header className={styles.header}>
         <div className={styles.title}>
           {renderIcon()}
-          <span className={styles.badge}>{type}</span>
+          <div className={styles.meta}>
+            <div>{intlFormatDistance(new Date(timestamp), new Date(), { locale: "en-US" })}</div>
+            {estimated_fees.length > 0 && (
+              <>
+                <div className={styles.divider} />
+                <div className={styles.item}>
+                  <span>Fee</span>
+                  <span>{formatFees(estimated_fees)}</span>
+                </div>
+              </>
+            )}
+            {operations.some((operation) => "swap" in operation) && (
+              <>
+                <div className={styles.divider} />
+                <div className={styles.item}>
+                  <span>Slippage</span>
+                  <span>{values.slippagePercent}%</span>
+                </div>
+              </>
+            )}
+          </div>
         </div>
-        <div className={styles.meta}>
-          <div>{intlFormatDistance(new Date(timestamp), new Date(), { locale: "en-US" })}</div>
-          {estimated_fees.length > 0 && (
-            <>
-              <div className={styles.divider} />
-              <div className={styles.item}>
-                <span>Fee</span>
-                <span>{formatFees(estimated_fees)}</span>
-              </div>
-            </>
-          )}
-          {operations.some((operation) => "swap" in operation) && (
-            <>
-              <div className={styles.divider} />
-              <div className={styles.item}>
-                <span>Slippage</span>
-                <span>{values.slippagePercent}%</span>
-              </div>
-            </>
-          )}
+        <div className={styles.explorer}>
+          {bridgeTypeExplorerName[type]} <IconArrowUpRight size={12} />
         </div>
       </header>
 
       <div className={styles.route}>
-        {renderRow(amount_in, srcAsset, srcChain, values.sender)}
+        {renderRow(amount_in, srcAsset, srcChain, values.sender, true)}
         <div className={styles.arrow}>
           <IconArrowDown size={12} />
         </div>
-        {renderRow(amount_out, dstAsset, dstChain, values.recipient)}
+        {renderRow(amount_out, dstAsset, dstChain, values.recipient, false)}
       </div>
     </>
   )
