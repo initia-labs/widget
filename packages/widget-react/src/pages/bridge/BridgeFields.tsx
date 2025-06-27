@@ -21,7 +21,7 @@ import type { FormValues } from "./data/form"
 import { FormValuesSchema, useBridgeForm } from "./data/form"
 import { useChainType, useSkipChain } from "./data/chains"
 import { useSkipAsset } from "./data/assets"
-import { useIsOpWithdrawable, useRouteQuery } from "./data/simulate"
+import { useIsOpWithdrawable, useRouteErrorInfo, useRouteQuery } from "./data/simulate"
 import { useSkipBalance, useSkipBalancesQuery } from "./data/balance"
 import SelectedChainAsset from "./SelectedChainAsset"
 import BridgeAccount from "./BridgeAccount"
@@ -74,7 +74,8 @@ const BridgeFields = () => {
   })
   const routeQuery =
     isOpWithdrawable && selectedType === "op" ? routeQueryOpWithdrawal : routeQueryDefault
-  const { data, isLoading, isFetching, isFetched } = routeQuery
+  const { data, isLoading, isFetching, isFetched, error } = routeQuery
+  const { data: routeErrorInfo } = useRouteErrorInfo(error)
 
   // Local state to retain the last successful simulated route
   const [previousData, setPreviousData] = useState(data)
@@ -216,20 +217,21 @@ const BridgeFields = () => {
             </AnimatedHeight>
 
             <FormHelp.Stack>
-              {isMaxAmount && (
-                <FormHelp level="warning">Make sure to leave enough for fees</FormHelp>
-              )}
               {route?.extra_infos?.map((info) => (
                 <FormHelp level="info" key={info}>
                   {info}
                 </FormHelp>
               ))}
+              {routeErrorInfo && <FormHelp level="info">{routeErrorInfo}</FormHelp>}
+              {isMaxAmount && (
+                <FormHelp level="warning">Make sure to leave enough for fees</FormHelp>
+              )}
+              {route?.warning && <FormHelp level="warning">{route.warning.message}</FormHelp>}
               {route?.extra_warnings?.map((warning) => (
                 <FormHelp level="warning" key={warning}>
                   {warning}
                 </FormHelp>
               ))}
-              {route?.warning && <FormHelp level="warning">{route.warning.message}</FormHelp>}
             </FormHelp.Stack>
 
             <AnimatedHeight>

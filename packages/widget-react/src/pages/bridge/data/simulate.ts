@@ -1,7 +1,8 @@
+import { HTTPError } from "ky"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import type { OperationJson, RouteResponseJson } from "@skip-go/client"
 import { toAmount } from "@/public/utils"
-import { normalizeError, STALE_TIMES } from "@/data/http"
+import { STALE_TIMES } from "@/data/http"
 import { useInitiaRegistry, useLayer1 } from "@/data/chains"
 import { skipQueryKeys, useSkip } from "./skip"
 import { useBridgeForm } from "./form"
@@ -46,34 +47,46 @@ export function useRouteQuery(
   const queryClient = useQueryClient()
   return useQuery({
     queryKey: skipQueryKeys.route(debouncedValues, opWithdrawal?.isOpWithdraw).queryKey,
-    queryFn: async () => {
-      try {
-        const { srcChainId, srcDenom, quantity, dstChainId, dstDenom } = debouncedValues
+    queryFn: () => {
+      // This query may produce specific errors that need separate handling.
+      // Therefore, we do not use try-catch or normalizeError here.
 
-        const { decimals: srcDecimals } = queryClient.getQueryData<RouterAsset>(
-          skipQueryKeys.asset(srcChainId, srcDenom).queryKey,
-        ) ?? { decimals: 0 }
+      const { srcChainId, srcDenom, quantity, dstChainId, dstDenom } = debouncedValues
 
-        const params = {
-          amount_in: toAmount(quantity, srcDecimals),
-          source_asset_chain_id: srcChainId,
-          source_asset_denom: srcDenom,
-          dest_asset_chain_id: dstChainId,
-          dest_asset_denom: dstDenom,
-          allow_unsafe: true,
-          go_fast: true,
-          is_op_withdraw: opWithdrawal?.isOpWithdraw,
-        }
+      const { decimals: srcDecimals } = queryClient.getQueryData<RouterAsset>(
+        skipQueryKeys.asset(srcChainId, srcDenom).queryKey,
+      ) ?? { decimals: 0 }
 
-        return await skip
-          .post("v2/fungible/route", { json: params })
-          .json<RouterRouteResponseJson>()
-      } catch (error) {
-        throw new Error(await normalizeError(error))
+      const params = {
+        amount_in: toAmount(quantity, srcDecimals),
+        source_asset_chain_id: srcChainId,
+        source_asset_denom: srcDenom,
+        dest_asset_chain_id: dstChainId,
+        dest_asset_denom: dstDenom,
+        allow_unsafe: true,
+        go_fast: true,
+        is_op_withdraw: opWithdrawal?.isOpWithdraw,
       }
+
+      return skip.post("v2/fungible/route", { json: params }).json<RouterRouteResponseJson>()
     },
     enabled: !!Number(debouncedValues.quantity) && !opWithdrawal?.disabled,
     staleTime: STALE_TIMES.MINUTE,
+  })
+}
+
+export function useRouteErrorInfo(error: Error | null) {
+  return useQuery({
+    queryKey: skipQueryKeys.routeErrorInfo(error || new Error()).queryKey,
+    queryFn: async () => {
+      if (!error) return null
+      if (!(error instanceof HTTPError)) return null
+      const { response } = error
+      const contentType = response.headers.get("content-type") ?? ""
+      if (!contentType.includes("application/json")) return null
+      const data = await response.json()
+      return data.info ?? null
+    },
   })
 }
 
