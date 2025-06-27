@@ -70,7 +70,7 @@ const ClaimButton = () => {
     return (
       <div className={styles.claimed}>
         <div className={styles.icon}>
-          <IconCheckCircleFilled size={18} />
+          <IconCheckCircleFilled size={14} />
         </div>
         <span>Success</span>
       </div>
