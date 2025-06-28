@@ -139,16 +139,32 @@ const BridgeFields = () => {
     navigate("/bridge/preview", { route, values })
   })
 
-  // disabled
+  // fees
+  const deductedFees = route?.estimated_fees?.filter(
+    ({ fee_behavior }) => fee_behavior === FeeBehaviorJson.FEE_BEHAVIOR_DEDUCTED,
+  )
+
+  const additionalFees = route?.estimated_fees?.filter(
+    ({ fee_behavior }) => fee_behavior === FeeBehaviorJson.FEE_BEHAVIOR_ADDITIONAL,
+  )
+
   const feeErrorMessage = useMemo(() => {
-    for (const fee of route?.estimated_fees ?? []) {
+    for (const fee of additionalFees ?? []) {
+      const usedAmount = route?.source_asset_denom === fee.origin_asset.denom ? route.amount_in : 0
       const balance = balances?.[fee.origin_asset.denom]?.amount
-      if (!balance || BigNumber(balance).lt(fee.amount ?? 0)) {
+
+      if (
+        !balance ||
+        BigNumber(balance)
+          .minus(usedAmount)
+          .lt(fee.amount ?? 0)
+      ) {
         return `Insufficient ${fee.origin_asset.symbol} for fees`
       }
     }
-  }, [balances, route])
+  }, [balances, route, additionalFees])
 
+  // disabled
   const disabledMessage = useMemo(() => {
     if (!values.sender) return "Connect wallet"
     if (!values.quantity) return "Enter amount"
@@ -159,7 +175,7 @@ const BridgeFields = () => {
     if (!result.success) return `Invalid ${result.error.issues[0].path}`
     if (!route) return "Route not found"
     // This should be enabled later when the fee behavior is defined by the backend
-    if (feeErrorMessage) return // feeErrorMessage
+    if (feeErrorMessage) return feeErrorMessage
   }, [debouncedQuantity, feeErrorMessage, formState, route, values])
 
   // render
@@ -168,14 +184,6 @@ const BridgeFields = () => {
   const isMaxAmount =
     BigNumber(quantity).gt(0) &&
     BigNumber(quantity).isEqualTo(toQuantity(srcBalance?.amount, srcBalance?.decimals ?? 0))
-
-  const deductedFees = route?.estimated_fees?.filter(
-    ({ fee_behavior }) => fee_behavior === FeeBehaviorJson.FEE_BEHAVIOR_DEDUCTED,
-  )
-
-  const additionalFees = route?.estimated_fees?.filter(
-    ({ fee_behavior }) => fee_behavior === FeeBehaviorJson.FEE_BEHAVIOR_ADDITIONAL,
-  )
 
   return (
     <form className={styles.form} onSubmit={submit}>
