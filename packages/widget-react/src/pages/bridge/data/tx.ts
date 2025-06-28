@@ -189,7 +189,6 @@ export function useBridgeTx(tx: TxJson) {
         })
     },
     onError: (error) => {
-      navigate(-1)
       showNotification({
         type: "error",
         title: "Transaction failed",

@@ -94,9 +94,13 @@ export function useTx() {
             const client = await createSigningStargateClient(txRequest.chainId)
             const response = await broadcaster(client, TxRaw.encode(signedTx).finish())
             resolve(response)
-            finalize()
+            if (typeof txRequest.internal === "string") {
+              // Internal requests can redirect to a different route after signing.
+              navigate(txRequest.internal)
+            }
           } catch (error) {
             reject(error)
+          } finally {
             finalize()
           }
         },
@@ -122,10 +126,6 @@ export function useTx() {
           return
         }
 
-        if (typeof txRequest.internal === "string") {
-          // Internal requests can redirect to a different route after signing.
-          navigate(txRequest.internal)
-        }
         closeModal()
       }
     })
