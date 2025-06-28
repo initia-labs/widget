@@ -174,7 +174,6 @@ const BridgeFields = () => {
     const result = FormValuesSchema.safeParse(values)
     if (!result.success) return `Invalid ${result.error.issues[0].path}`
     if (!route) return "Route not found"
-    // This should be enabled later when the fee behavior is defined by the backend
     if (feeErrorMessage) return feeErrorMessage
   }, [debouncedQuantity, feeErrorMessage, formState, route, values])
 
@@ -271,7 +270,7 @@ const BridgeFields = () => {
                         {formatFees(deductedFees) && (
                           <span className={styles.description}>
                             {formatFees(deductedFees)}
-                            <WidgetTooltip label="This is the fee that is deducted from the final amount received.">
+                            <WidgetTooltip label="Fee deducted from the amount you receive.">
                               <span className={styles.icon}>
                                 <IconInfoFilled size={12} />
                               </span>
@@ -281,7 +280,7 @@ const BridgeFields = () => {
                         {formatFees(additionalFees) && (
                           <span className={styles.description}>
                             {formatFees(additionalFees)}
-                            <WidgetTooltip label="This is the fee that occurs prior to the transaction.">
+                            <WidgetTooltip label="Fee that is charged at the time of execution.">
                               <span className={styles.icon}>
                                 <IconInfoFilled size={12} />
                               </span>
