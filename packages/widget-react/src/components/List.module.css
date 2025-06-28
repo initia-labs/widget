@@ -8,14 +8,16 @@
 
 .item {
   flex: 1;
-  gap: 8px;
+  gap: 10px;
 
   .name {
     flex: 1;
   }
 
   border-bottom: 1px solid var(--border);
-  padding: 12px var(--padding);
+  font-weight: 600;
+  height: 56px;
+  padding: 0 var(--padding);
 
   transition: background-color var(--transition) ease;
 

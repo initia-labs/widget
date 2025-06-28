@@ -25,7 +25,7 @@ function List<Item>({ onSelect, list, ...props }: Props<Item>) {
             disabled={getIsLoading?.(item) || getDisabled?.(item)}
             key={getKey(item)}
           >
-            <Image src={getImage(item)} width={32} height={32} />
+            <Image src={getImage(item)} width={28} height={28} />
             <span className={styles.name}>{getName(item)}</span>
             {getIsLoading?.(item) && <Loader size={16} />}
           </button>
