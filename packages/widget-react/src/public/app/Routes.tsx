@@ -59,13 +59,13 @@ const Routes = () => {
     case "/activity":
       return <Home />
     case "/send":
-      return <Send />
+      return <Send key={address} />
     case "/collection":
       return <CollectionDetails />
     case "/nft":
       return <NftDetails />
     case "/nft/send":
-      return <SendNft />
+      return <SendNft key={address} />
     case "/rollups":
       return <ManageChains />
     case "/bridge/preview":
