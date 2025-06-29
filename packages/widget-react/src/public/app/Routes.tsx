@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useTransition, animated } from "@react-spring/web"
-import { useNavigate, usePath, useHistory } from "@/lib/router"
+import { useNavigate, usePath, usePreviousPath } from "@/lib/router"
 import { useAddress } from "../data/hooks"
 import Connect from "@/pages/connect/Connect"
 import Home from "@/pages/wallet/tabs/Home"
@@ -32,12 +32,12 @@ const routes = [
 
 const Routes = () => {
   const rawPath = usePath()
+  const rawPrevPath = usePreviousPath()
   const navigate = useNavigate()
-  const history = useHistory()
   const address = useAddress()
 
   const path = ["/nfts", "/activity"].includes(rawPath) ? "/" : rawPath
-  const prevPath = history[history.length - 2]?.path ?? path
+  const prevPath = ["/nfts", "/activity"].includes(rawPrevPath || "") ? "/" : rawPrevPath
 
   // whenever address changes, navigate to the appropriate path
   useEffect(() => {
@@ -54,25 +54,19 @@ const Routes = () => {
   // Compute transition direction
   const currentIndex = routes.findIndex((r) => r.path === path)
   const prevIndex = routes.findIndex((r) => r.path === prevPath)
-  const direction = currentIndex > prevIndex ? 1 : -1
+  const direction = currentIndex >= prevIndex ? 1 : -1
 
   const transitions = useTransition(path, {
-    from:
-      direction > 0
-        ? { opacity: 1, transform: "translateX(100%)" }
-        : { opacity: 0, transform: "translateX(0%)" },
+    from: { opacity: 0, transform: `translateX(${direction * 100}%)` },
     enter: { opacity: 1, transform: "translateX(0%)" },
-    leave:
-      direction > 0
-        ? { opacity: 0, transform: "translateX(0%)" }
-        : { opacity: 1, transform: "translateX(100%)" },
+    leave: { opacity: 0, transform: `translateX(${direction * -100}%)` },
     config: { tension: 250, friction: 30 },
+    skipAnimation: !prevPath,
   })
 
-  // Gate: block app unless connected
   if (path === "/connect" && !address) return <Connect />
 
-  // FIXME: block only selected routes
+  // FIXME: do we need to block all routes when address is not connected?
   if (!address) return null
 
   return (
@@ -88,9 +82,6 @@ const Routes = () => {
               position: "absolute",
               width: "100%",
               height: "100%",
-              willChange: "transform, opacity",
-              zIndex: 10 + currentIndex,
-              backgroundColor: "var(--bg)",
             }}
           >
             {route.component}
