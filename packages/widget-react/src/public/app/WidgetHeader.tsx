@@ -6,6 +6,7 @@ import { useInitiaWidget } from "@/public/data/hooks"
 import { useWidgetVisibility } from "@/data/ui"
 import CopyButton from "@/components/CopyButton"
 import Image from "@/components/Image"
+import { resetBridgeFormValues } from "../data/storage"
 import styles from "./WidgetHeader.module.css"
 
 const WidgetHeader = () => {
@@ -41,6 +42,7 @@ const WidgetHeader = () => {
         onClick={() => {
           closeWidget()
           disconnect()
+          resetBridgeFormValues()
         }}
       >
         <IconSignOut size={18} />
