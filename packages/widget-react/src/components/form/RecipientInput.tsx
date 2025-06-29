@@ -106,7 +106,7 @@ const RecipientInput = ({ mode = "onChange", myAddress, ...props }: Props) => {
       <div className={styles.wrapper}>
         <input
           id="recipient"
-          className={clsx(styles.input, AddressUtils.isAddress(inputValue) && "monospace")}
+          className={clsx(styles.input, "monospace")}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value.trim())}
           placeholder={chainType === "initia" ? "Address or username" : "Enter address"}

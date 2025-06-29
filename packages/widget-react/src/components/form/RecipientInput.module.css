@@ -11,6 +11,10 @@
     padding-right: calc(6px + 2 * 10px + 16px);
   }
 
+  .input::placeholder {
+    font-family: var(--font-family);
+  }
+
   .clear {
     position: absolute;
     right: 6px;
