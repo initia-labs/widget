@@ -61,10 +61,15 @@ const Routes = () => {
   const direction = currentIndex >= prevIndex ? 1 : -1
 
   const transitions = useTransition(path, {
-    from: { opacity: 0, transform: `translateX(${direction * 100}%)` },
+    from:
+      direction > 0
+        ? { opacity: 1, transform: `translateX(100%)` }
+        : { opacity: 0, transform: `translateX(0%)` },
     enter: { opacity: 1, transform: "translateX(0%)" },
-    leave: { opacity: 0, transform: `translateX(${direction * -100}%)` },
-    config: { tension: 250, friction: 30 },
+    leave:
+      direction < 0
+        ? { opacity: 1, transform: `translateX(100%)` }
+        : { opacity: 0, transform: `translateX(0%)` },
     immediate: !prevPath,
   })
 
@@ -90,6 +95,7 @@ const Routes = () => {
               position: "absolute",
               width: "100%",
               height: "100%",
+              backgroundColor: "var(--bg)",
             }}
           >
             {rerender ? <Component key={address} /> : <Component />}

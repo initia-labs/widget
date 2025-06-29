@@ -30,7 +30,8 @@ const Home = () => {
     return currentIndex > prevIndex ? 1 : -1
   }, [path, prevPath])
 
-  const skipAnimation = !tabs.find((t) => t.value === prevPath)
+  const skipAnimation =
+    !tabs.find((t) => t.value === prevPath) || !tabs.find((t) => t.value === path)
 
   const transitions = useTransition(path, {
     from: { opacity: 0, transform: `translateX(${direction * 100}%)` },
