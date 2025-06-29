@@ -4,6 +4,7 @@ import type { ReactNode } from "react"
 import { useAsync } from "react-use"
 import { AddressUtils } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
+import { normalizeError } from "@/data/http"
 import { useOfflineSigner } from "@/data/signer"
 import Footer from "@/components/Footer"
 import Button from "@/components/Button"
@@ -41,10 +42,14 @@ const FooterWithAddressList = ({ children }: Props) => {
     loading,
     error,
   } = useAsync(async () => {
-    if (!isPubkeyRequired) return
-    if (!signer) throw new Error("Wallet not connected")
-    const [{ pubkey }] = await signer.getAccounts()
-    return pubkey
+    try {
+      if (!isPubkeyRequired) return
+      if (!signer) throw new Error("Wallet not connected")
+      const [{ pubkey }] = await signer.getAccounts()
+      return pubkey
+    } catch (error) {
+      throw new Error(await normalizeError(error))
+    }
   })
 
   if (error) {

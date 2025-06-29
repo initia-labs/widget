@@ -2,7 +2,9 @@
   display: grid;
   gap: 16px;
 
-  padding-top: 20px;
+  &:not(:only-child) {
+    padding-top: 20px;
+  }
 }
 
 .actions {
