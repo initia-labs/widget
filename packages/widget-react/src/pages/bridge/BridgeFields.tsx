@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js"
 import { sentenceCase } from "change-case"
 import { useEffect, useMemo, useState } from "react"
 import { useDebounce, useLocalStorage } from "react-use"
+import type { FeeJson } from "@skip-go/client"
 import {
   IconChevronDown,
   IconInfoFilled,
@@ -140,27 +141,28 @@ const BridgeFields = () => {
   })
 
   // fees
-  const deductedFees = route?.estimated_fees?.filter(
-    ({ fee_behavior }) => fee_behavior === FeeBehaviorJson.FEE_BEHAVIOR_DEDUCTED,
-  )
+  const deductedFees = useMemo(() => {
+    return (
+      route?.estimated_fees?.filter(
+        ({ fee_behavior }) => fee_behavior === FeeBehaviorJson.FEE_BEHAVIOR_DEDUCTED,
+      ) ?? []
+    )
+  }, [route])
 
-  const additionalFees = route?.estimated_fees?.filter(
-    ({ fee_behavior }) => fee_behavior === FeeBehaviorJson.FEE_BEHAVIOR_ADDITIONAL,
-  )
+  const additionalFees = useMemo(() => {
+    return (
+      route?.estimated_fees?.filter(
+        ({ fee_behavior }) => fee_behavior === FeeBehaviorJson.FEE_BEHAVIOR_ADDITIONAL,
+      ) ?? []
+    )
+  }, [route])
 
   const feeErrorMessage = useMemo(() => {
-    for (const fee of additionalFees ?? []) {
-      const usedAmount = route?.source_asset_denom === fee.origin_asset.denom ? route.amount_in : 0
-      const balance = balances?.[fee.origin_asset.denom]?.amount
-
-      if (
-        !balance ||
-        BigNumber(balance)
-          .minus(usedAmount)
-          .lt(fee.amount ?? 0)
-      ) {
-        return `Insufficient ${fee.origin_asset.symbol} for fees`
-      }
+    for (const fee of additionalFees) {
+      const balance = balances?.[fee.origin_asset.denom]?.amount ?? "0"
+      const amount = route?.source_asset_denom === fee.origin_asset.denom ? route.amount_in : "0"
+      const insufficient = BigNumber(balance).lt(BigNumber(amount).plus(fee.amount ?? "0"))
+      if (insufficient) return `Insufficient ${fee.origin_asset.symbol} for fees`
     }
   }, [balances, route, additionalFees])
 
@@ -183,6 +185,20 @@ const BridgeFields = () => {
   const isMaxAmount =
     BigNumber(quantity).gt(0) &&
     BigNumber(quantity).isEqualTo(toQuantity(srcBalance?.amount, srcBalance?.decimals ?? 0))
+
+  const renderFees = (fees: FeeJson[], tooltip: string) => {
+    if (!fees.length) return null
+    return (
+      <div className={styles.description}>
+        {formatFees(fees)}
+        <WidgetTooltip label={tooltip}>
+          <span className={styles.icon}>
+            <IconInfoFilled size={12} />
+          </span>
+        </WidgetTooltip>
+      </div>
+    )
+  }
 
   return (
     <form className={styles.form} onSubmit={submit}>
@@ -263,31 +279,16 @@ const BridgeFields = () => {
             <AnimatedHeight>
               {route && (
                 <div className={styles.meta}>
-                  {formatFees(route.estimated_fees) && (
+                  {!!route.estimated_fees?.length && (
                     <div className={styles.row}>
-                      <span className={styles.title}>Estimated fees</span>
-                      <p>
-                        {formatFees(deductedFees) && (
-                          <span className={styles.description}>
-                            {formatFees(deductedFees)}
-                            <WidgetTooltip label="Fee deducted from the amount you receive.">
-                              <span className={styles.icon}>
-                                <IconInfoFilled size={12} />
-                              </span>
-                            </WidgetTooltip>
-                          </span>
+                      <span className={styles.title}>Fees</span>
+                      <div>
+                        {renderFees(deductedFees, "Fee deducted from the amount you receive")}
+                        {renderFees(
+                          additionalFees,
+                          "Fee charged in addition to the amount you enter",
                         )}
-                        {formatFees(additionalFees) && (
-                          <span className={styles.description}>
-                            {formatFees(additionalFees)}
-                            <WidgetTooltip label="Fee that is charged at the time of execution.">
-                              <span className={styles.icon}>
-                                <IconInfoFilled size={12} />
-                              </span>
-                            </WidgetTooltip>
-                          </span>
-                        )}
-                      </p>
+                      </div>
                     </div>
                   )}
 
