@@ -109,3 +109,8 @@ export function useIsOpWithdrawable() {
       ?.metadata?.op_denoms?.includes(dstAsset.denom)
   )
 }
+
+export enum FeeBehaviorJson {
+  FEE_BEHAVIOR_DEDUCTED = "FEE_BEHAVIOR_DEDUCTED",
+  FEE_BEHAVIOR_ADDITIONAL = "FEE_BEHAVIOR_ADDITIONAL",
+}
