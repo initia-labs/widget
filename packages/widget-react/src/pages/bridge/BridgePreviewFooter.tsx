@@ -2,18 +2,13 @@ import type { TxJson } from "@skip-go/client"
 import Button from "@/components/Button"
 import Footer from "@/components/Footer"
 import { useBridgeTx } from "./data/tx"
-import FooterWithError from "./FooterWithError"
 
 interface Props {
   tx: TxJson
 }
 
 const BridgePreviewFooter = ({ tx }: Props) => {
-  const { mutate, isPending, error } = useBridgeTx(tx)
-
-  if (error) {
-    return <FooterWithError error={error} />
-  }
+  const { mutate, isPending } = useBridgeTx(tx)
 
   return (
     <Footer>

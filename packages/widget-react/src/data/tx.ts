@@ -7,6 +7,7 @@ import { DEFAULT_GAS_ADJUSTMENT } from "@/public/data/constants"
 import { useInitiaAddress } from "@/public/data/hooks"
 import { useModal } from "@/public/app/ModalContext"
 import { useConfig } from "./config"
+import { normalizeError } from "./http"
 import { useCreateSigningStargateClient } from "./signer"
 import { useWidgetVisibility } from "./ui"
 
@@ -56,8 +57,12 @@ export function useTx() {
   const createSigningStargateClient = useCreateSigningStargateClient()
 
   const estimateGas = async ({ messages, memo, chainId = defaultChainId }: TxRequest) => {
-    const client = await createSigningStargateClient(chainId)
-    return client.simulate(address, messages, memo)
+    try {
+      const client = await createSigningStargateClient(chainId)
+      return await client.simulate(address, messages, memo)
+    } catch (error) {
+      throw new Error(await normalizeError(error))
+    }
   }
 
   type Broadcaster<T> = (client: SigningStargateClient, signedTxBytes: Uint8Array) => Promise<T>
@@ -89,9 +94,13 @@ export function useTx() {
             const client = await createSigningStargateClient(txRequest.chainId)
             const response = await broadcaster(client, TxRaw.encode(signedTx).finish())
             resolve(response)
-            finalize()
+            if (typeof txRequest.internal === "string") {
+              // Internal requests can redirect to a different route after signing.
+              navigate(txRequest.internal)
+            }
           } catch (error) {
             reject(error)
+          } finally {
             finalize()
           }
         },
@@ -117,10 +126,6 @@ export function useTx() {
           return
         }
 
-        if (typeof txRequest.internal === "string") {
-          // Internal requests can redirect to a different route after signing.
-          navigate(txRequest.internal)
-        }
         closeModal()
       }
     })

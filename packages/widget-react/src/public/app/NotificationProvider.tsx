@@ -34,7 +34,9 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
     (notification: Notification) => {
       clearTimer()
       setNotification({ ...notification, id: nanoid() })
-      timerRef.current = setTimeout(() => hideNotification(), duration)
+      if (notification.autoHide) {
+        timerRef.current = setTimeout(() => hideNotification(), duration)
+      }
     },
     [hideNotification],
   )
@@ -46,7 +48,9 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
         if (prev) return { ...prev, ...notification }
         return { ...notification, id: nanoid() }
       })
-      timerRef.current = setTimeout(() => hideNotification(), duration)
+      if (notification.autoHide) {
+        timerRef.current = setTimeout(() => hideNotification(), duration)
+      }
     },
     [hideNotification],
   )

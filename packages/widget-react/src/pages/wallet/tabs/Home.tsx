@@ -13,7 +13,7 @@ import styles from "./Home.module.css"
 const tabs = [
   { label: "Assets", value: "/", component: <Assets /> },
   { label: "NFTs", value: "/nfts", component: <Nfts /> },
-  { label: "Activity", value: "/activity", component: <Activity /> },
+  { label: "History", value: "/activity", component: <Activity /> },
 ]
 
 const Home = () => {

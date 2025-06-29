@@ -36,7 +36,7 @@ export const SendFields = () => {
   const balance = balances.find((coin) => coin.denom === denom)?.amount ?? "0"
   const price = prices?.find(({ id }) => id === denom)?.price
 
-  const { mutate, isPending, error } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: ({ chainId, denom, quantity, recipient, memo }: FormValues) => {
       const amount = toAmount(quantity, decimals)
       const messages = [
@@ -82,7 +82,7 @@ export const SendFields = () => {
 
           <div className={styles.divider} />
 
-          <RecipientInput myAddress={import.meta.env.DEV ? address : undefined} />
+          <RecipientInput myAddress={address} />
 
           <div>
             <label htmlFor="memo">Memo (optional)</label>
@@ -99,8 +99,6 @@ export const SendFields = () => {
             {!memo && (
               <FormHelp level="info">Check if the above transaction requires a memo</FormHelp>
             )}
-
-            {error && <FormHelp level="error">{error.message}</FormHelp>}
           </FormHelp.Stack>
         </div>
 

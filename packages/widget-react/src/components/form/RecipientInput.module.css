@@ -4,23 +4,27 @@
   align-items: center;
 }
 
-.my {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
+.wrapper {
+  position: relative;
 
-  padding-left: 8px;
-
-  .icon {
-    color: var(--gray-6);
+  .input {
+    padding-right: calc(6px + 2 * 10px + 16px);
   }
-}
 
-.active {
-  border-color: var(--gray-0);
+  .clear {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
 
-  .icon {
-    color: var(--gray-0);
+    color: var(--gray-3);
+    background-color: var(--gray-7);
+    padding: 10px;
+
+    transition: color var(--transition) ease;
+
+    &:hover {
+      color: var(--gray-1);
+    }
   }
 }

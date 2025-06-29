@@ -5,7 +5,7 @@ import Loader from "../Loader"
 import styles from "./InputHelp.module.css"
 
 interface Props {
-  level: "info" | "warning" | "error" | "success" | "loading"
+  level?: "info" | "warning" | "error" | "success" | "loading"
   className?: string
   mt?: number
 }
@@ -22,15 +22,13 @@ const InputHelp = ({ level, className, mt = 8, children }: PropsWithChildren<Pro
       case "warning":
       case "error":
         return <IconWarningFilled size={12} />
-      case "success":
-        return <IconCheckCircleFilled size={12} />
       default:
-        return null
+        return <IconCheckCircleFilled size={12} />
     }
   }
 
   return (
-    <div className={clsx(styles.help, styles[level], className)} style={{ marginTop: mt }}>
+    <div className={clsx(styles.help, level && styles[level], className)} style={{ marginTop: mt }}>
       <div className={styles.icon}>{getIcon()}</div>
       <p>{children}</p>
     </div>

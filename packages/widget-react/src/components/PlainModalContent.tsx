@@ -34,7 +34,7 @@ const PlainModalContent = (props: PropsWithChildren<Props>) => {
       <div className={styles.content}>{children}</div>
 
       <footer className={styles.footer}>
-        <Button.White onClick={primaryButton.onClick} fullWidth>
+        <Button.White onClick={primaryButton.onClick} sm fullWidth>
           {primaryButton.label}
         </Button.White>
 

@@ -1,3 +1,9 @@
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
 .meta {
   display: grid;
   gap: 8px;

@@ -14,7 +14,7 @@ const CopyButton = ({ value, children }: Props) => {
       setCopied(true)
       setTimeout(() => setCopied(false), 1000)
     } catch {
-      console.error("Failed to copy text to clipboard")
+      // ignore
     }
   }
 

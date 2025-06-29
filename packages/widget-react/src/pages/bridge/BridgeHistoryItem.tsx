@@ -2,10 +2,10 @@ import { intlFormatDistance } from "date-fns"
 import { useEffect, useMemo } from "react"
 import type { StatusResponseJson } from "@skip-go/client"
 import { IconArrowDown, IconCheckCircleFilled, IconWarningFilled } from "@initia/icons-react"
-import { Link } from "@/lib/router"
 import { formatAmount, truncate } from "@/public/utils"
 import Loader from "@/components/Loader"
 import Image from "@/components/Image"
+import ExplorerLink from "@/components/ExplorerLink"
 import { formatFees } from "./data/format"
 import type { RouterChainJson } from "./data/chains"
 import { useSkipChain } from "./data/chains"
@@ -98,7 +98,7 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
             <span>{symbol}</span>
           </div>
           <div className={styles.chain}>
-            on {pretty_name || chain_name} ({truncate(address)})
+            on {pretty_name || chain_name} <span className="monospace">({truncate(address)})</span>
           </div>
         </div>
       </div>
@@ -120,7 +120,7 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
             <>
               <div className={styles.divider} />
               <div className={styles.item}>
-                <span>Fee</span>
+                <span>Fees</span>
                 <span>{formatFees(estimated_fees)}</span>
               </div>
             </>
@@ -161,9 +161,9 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
 
   if (type === BridgeType.OP_WITHDRAW) {
     return (
-      <Link to="/op/withdrawals" state={{ chainId }} className={styles.link}>
+      <ExplorerLink chainId={chainId} txHash={txHash} className={styles.link}>
         {content}
-      </Link>
+      </ExplorerLink>
     )
   }
 

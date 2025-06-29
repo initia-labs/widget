@@ -1,12 +1,13 @@
 import clsx from "clsx"
-import { IconChevronRight, IconEdit, IconWarningFilled } from "@initia/icons-react"
+import type { ReactNode } from "react"
+import { IconChevronRight, IconCloseCircleFilled, IconEdit, IconWallet } from "@initia/icons-react"
 import { AddressUtils, truncate } from "@/public/utils"
 import Image from "@/components/Image"
 import ModalTrigger from "@/components/ModalTrigger"
 import Scrollable from "@/components/Scrollable"
 import List from "@/components/List"
 import RecipientInput from "@/components/form/RecipientInput"
-import WidgetTooltip from "@/components/WidgetTooltip"
+import { useChainType, useSkipChain } from "./data/chains"
 import { useGetDefaultAddress, useValidateAddress } from "./data/address"
 import { useBridgeForm } from "./data/form"
 import { useCosmosWallets } from "./data/cosmos"
@@ -21,87 +22,120 @@ const BridgeAccount = ({ type }: Props) => {
   const { srcChainId, dstChainId, cosmosWalletName } = watch()
   const addressKey = type === "src" ? "sender" : "recipient"
   const address = watch(addressKey)
+  const dstChainType = useChainType(useSkipChain(dstChainId))
 
   const { list, find } = useCosmosWallets()
   const connected = find(cosmosWalletName)
   const getDefaultRecipientAddress = useGetDefaultAddress()
   const validateRecipientAddress = useValidateAddress()
 
-  const content = (
-    <>
-      {type === "src" && connected && <Image src={connected.image} width={18} height={18} />}
-      <span>{address ? truncate(address) : "Recipient"}</span>
-      {type === "dst" && <IconEdit size={14} />}
-    </>
-  )
+  const myDstAddress = getDefaultRecipientAddress(dstChainId)
+  const isMyDstAddress = AddressUtils.equals(address, myDstAddress)
+
+  const renderSrcAccount = () => {
+    return (
+      <ModalTrigger
+        title="Connect wallet"
+        content={(close) => (
+          <List
+            onSelect={async (item) => {
+              const provider = item.getProvider()
+              if (!provider) return window.open(item.fallbackUrl, "_blank")
+              const offlineSigner = provider.getOfflineSigner(srcChainId)
+              const [{ address }] = await offlineSigner.getAccounts()
+              setValue("sender", address)
+              setValue("cosmosWalletName", item.name)
+              close()
+            }}
+            list={list}
+            getImage={(item) => item.image}
+            getName={(item) => item.name}
+            getKey={(item) => item.name}
+          />
+        )}
+        className={clsx(styles.account, { [styles.white]: !address })}
+      >
+        {!address ? (
+          <>
+            <span>Connect wallet</span>
+            <IconChevronRight size={14} />
+          </>
+        ) : (
+          <>
+            {connected && <Image src={connected.image} width={18} height={18} />}
+            <span className="monospace">{truncate(address)}</span>
+          </>
+        )}
+      </ModalTrigger>
+    )
+  }
+
+  const renderDstModalTrigger = (content: ReactNode) => {
+    return (
+      <ModalTrigger
+        title="Recipient"
+        content={(close) => (
+          <Scrollable>
+            <RecipientInput
+              mode="onSubmit"
+              myAddress={myDstAddress}
+              chainType={dstChainType}
+              validate={(address) => validateRecipientAddress(address, dstChainId)}
+              onApply={close}
+            />
+          </Scrollable>
+        )}
+        className={styles.account}
+      >
+        {content}
+      </ModalTrigger>
+    )
+  }
+
+  const renderDstAccount = () => {
+    switch (dstChainType) {
+      case "initia":
+      case "evm": {
+        if (isMyDstAddress) {
+          return renderDstModalTrigger(<IconWallet size={14} />)
+        }
+
+        return (
+          <div className={styles.account}>
+            <span className="monospace">{truncate(address)}</span>
+            <button
+              type="button"
+              className={styles.clear}
+              onClick={() => setValue("recipient", myDstAddress, { shouldValidate: true })}
+              aria-label="Reset to my address"
+            >
+              <IconCloseCircleFilled size={14} />
+            </button>
+          </div>
+        )
+      }
+
+      case "cosmos": {
+        return renderDstModalTrigger(
+          <>
+            {address ? (
+              <span className="monospace">{truncate(address)}</span>
+            ) : (
+              <span>Recipient</span>
+            )}
+            <IconEdit size={14} />
+          </>,
+        )
+      }
+    }
+  }
 
   switch (type) {
-    case "src": {
-      return (
-        <ModalTrigger
-          title="Connect wallet"
-          content={(close) => (
-            <List
-              onSelect={async (item) => {
-                const provider = item.getProvider()
-                if (!provider) return window.open(item.fallbackUrl, "_blank")
-                const offlineSigner = provider.getOfflineSigner(srcChainId)
-                const [{ address }] = await offlineSigner.getAccounts()
-                setValue("sender", address)
-                setValue("cosmosWalletName", item.name)
-                close()
-              }}
-              list={list}
-              getImage={(item) => item.image}
-              getName={(item) => item.name}
-              getKey={(item) => item.name}
-            />
-          )}
-          className={clsx(styles.account, { [styles.white]: !address })}
-        >
-          {!address ? (
-            <>
-              <span>Connect wallet</span>
-              <IconChevronRight size={14} />
-            </>
-          ) : (
-            content
-          )}
-        </ModalTrigger>
-      )
-    }
+    case "src":
+      return renderSrcAccount()
 
-    case "dst": {
-      const myAddress = getDefaultRecipientAddress(dstChainId)
-      const isMyAddress = AddressUtils.equals(address, myAddress)
-
-      return (
-        <div className={styles.wrapper}>
-          {!isMyAddress && (
-            <WidgetTooltip label="This is not my address">
-              <IconWarningFilled size={14} className="warning" />
-            </WidgetTooltip>
-          )}
-
-          <ModalTrigger
-            title="Recipient"
-            content={(close) => (
-              <Scrollable>
-                <RecipientInput
-                  mode="onSubmit"
-                  myAddress={myAddress}
-                  validate={(address) => validateRecipientAddress(address, dstChainId)}
-                  onApply={close}
-                />
-              </Scrollable>
-            )}
-            className={styles.account}
-          >
-            {content}
-          </ModalTrigger>
-        </div>
-      )
-    }
+    case "dst":
+      return renderDstAccount()
   }
 }
 

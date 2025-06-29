@@ -4,15 +4,17 @@ import Loader from "./Loader"
 import styles from "./Button.module.css"
 
 export interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
+  sm?: boolean
   fullWidth?: boolean
   loading?: boolean | string
 }
 
-const WhiteButton = ({ fullWidth, loading, className, children, disabled, ...attrs }: Props) => {
+const WhiteButton = (props: Props) => {
+  const { sm, fullWidth, loading, className, children, disabled, ...attrs } = props
   return (
     <button
       {...attrs}
-      className={clsx(styles.button, { [styles.full]: fullWidth }, className)}
+      className={clsx(styles.button, { [styles.sm]: sm, [styles.full]: fullWidth }, className)}
       disabled={!!loading || disabled}
     >
       {loading ? (
@@ -32,20 +34,12 @@ const OutlineButton = ({ className, ...props }: Props) => {
 }
 
 interface SmallButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  readOnly?: boolean
   unpadded?: boolean
 }
 
-const SmallButton = ({ className, readOnly, unpadded, ...attrs }: SmallButtonProps) => {
+const SmallButton = ({ className, unpadded, ...attrs }: SmallButtonProps) => {
   return (
-    <button
-      {...attrs}
-      className={clsx(
-        styles.small,
-        { [styles.span]: readOnly, [styles.unpadded]: unpadded },
-        className,
-      )}
-    />
+    <button {...attrs} className={clsx(styles.small, { [styles.unpadded]: unpadded }, className)} />
   )
 }
 

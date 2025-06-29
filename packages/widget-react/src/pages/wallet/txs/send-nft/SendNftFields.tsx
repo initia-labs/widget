@@ -1,10 +1,12 @@
 import ky from "ky"
 import clsx from "clsx"
+import { VisuallyHidden } from "radix-ui"
+import { createQueryKeys } from "@lukemorales/query-key-factory"
 import { AddressUtils } from "@/public/utils"
 import { useAminoTypes } from "@/data/signer"
 import type { AminoMsg } from "@cosmjs/amino"
 import { useFormContext } from "react-hook-form"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { useLocationState } from "@/lib/router"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { useConfig } from "@/data/config"
@@ -14,7 +16,6 @@ import ModalTrigger from "@/components/ModalTrigger"
 import RecipientInput from "@/components/form/RecipientInput"
 import Button from "@/components/Button"
 import Image from "@/components/Image"
-import FormHelp from "@/components/form/FormHelp"
 import Footer from "@/components/Footer"
 import AddedChainList from "../../components/AddedChainList"
 import type { ChainCollectionNftCollectionState } from "../../tabs/nft/queries"
@@ -23,23 +24,38 @@ import { createNftTransferParams } from "./tx"
 import type { FormValues } from "./SendNft"
 import styles from "./SendNftFields.module.css"
 
+const queryKeys = createQueryKeys("initia-widget:send-nft", {
+  simulation: (params) => [params],
+})
+
 const SendNftFields = () => {
   const { chain: srcChain, collection, nft } = useLocationState<ChainCollectionNftCollectionState>()
 
   const { routerApiUrl } = useConfig()
   const aminoTypes = useAminoTypes()
   const layer1 = useLayer1()
-  const { address, initiaAddress, requestTxSync } = useInitiaWidget()
+  const { address, initiaAddress: sender, requestTxSync } = useInitiaWidget()
 
   const { watch, setValue, handleSubmit, formState } = useFormContext<FormValues>()
-  const { dstChainId } = watch()
+  const values = watch()
+  const { recipient, dstChainId } = values
   const dstChain = useChain(dstChainId)
 
-  const { mutate, isPending, error } = useMutation({
-    mutationFn: async ({ recipient, dstChainId }: FormValues) => {
+  const simulation = useQuery({
+    queryKey: queryKeys.simulation({
+      collection,
+      nft,
+      sender,
+      recipient,
+      srcChain,
+      dstChainId,
+      layer1,
+      routerApiUrl,
+    }).queryKey,
+    queryFn: async () => {
       const params = Object.assign(
         {
-          from_address: initiaAddress,
+          from_address: sender,
           from_chain_id: srcChain.chainId,
           to_address: AddressUtils.toBech32(recipient),
           to_chain_id: dstChainId,
@@ -61,16 +77,24 @@ const SendNftFields = () => {
         .post("nft", { json: params })
         .json<{ msgs: AminoMsg[] }>()
 
-      const messages = msgs.map((msg) => aminoTypes.fromAmino(msg))
+      return msgs.map((msg) => aminoTypes.fromAmino(msg))
+    },
+    enabled: !!recipient,
+  })
 
+  const { data: messages, isLoading, error } = simulation
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      if (!messages) throw new Error("Route not found")
       await requestTxSync({ messages, chainId: srcChain.chainId, internal: "/nfts" })
     },
   })
 
   return (
-    <form onSubmit={handleSubmit((values) => mutate(values))}>
+    <form onSubmit={handleSubmit(() => mutate())}>
       <header className={styles.header}>
-        {nft.image && <NftThumbnail src={nft.image} size={80} />}
+        {nft.image && <NftThumbnail chain={srcChain} collection={collection} nft={nft} size={80} />}
         <div className={styles.name}>
           <div className={styles.collection}>{collection.name}</div>
           <div className={styles.nft}>{nft.name}</div>
@@ -78,36 +102,34 @@ const SendNftFields = () => {
       </header>
 
       <div className={styles.fields}>
-        <div>
-          <div className="label">Destination rollup</div>
+        <VisuallyHidden.Root>
+          <div>
+            <div className="label">Destination rollup</div>
 
-          <ModalTrigger
-            title="Destination rollup"
-            content={(close) => (
-              <AddedChainList
-                onSelect={(chainId) => {
-                  setValue("dstChainId", chainId)
-                  close()
-                }}
-              />
-            )}
-            className={clsx("input", styles.chain)}
-          >
-            <Image src={dstChain.logoUrl} width={20} height={20} />
-            <span>{dstChain.name}</span>
-          </ModalTrigger>
-        </div>
+            <ModalTrigger
+              title="Destination rollup"
+              content={(close) => (
+                <AddedChainList
+                  onSelect={(chainId) => {
+                    setValue("dstChainId", chainId)
+                    close()
+                  }}
+                />
+              )}
+              className={clsx("input", styles.chain)}
+            >
+              <Image src={dstChain.logoUrl} width={20} height={20} />
+              <span>{dstChain.name}</span>
+            </ModalTrigger>
+          </div>
+        </VisuallyHidden.Root>
 
         <RecipientInput myAddress={address} ref={useAutoFocus()} />
-
-        <FormHelp.Stack>
-          {error && <FormHelp level="error">{error.message}</FormHelp>}
-        </FormHelp.Stack>
       </div>
 
       <Footer>
-        <Button.White loading={isPending} disabled={!formState.isValid}>
-          Confirm
+        <Button.White loading={isLoading || isPending} disabled={!formState.isValid}>
+          {error ? "Route not found" : "Confirm"}
         </Button.White>
       </Footer>
     </form>

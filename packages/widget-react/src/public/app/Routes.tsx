@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import { useTransition, animated } from "@react-spring/web"
 import { useNavigate, usePath, usePreviousPath } from "@/lib/router"
+import { useModal } from "./ModalContext"
 import { useAddress } from "../data/hooks"
 import Connect from "@/pages/connect/Connect"
 import Home from "@/pages/wallet/tabs/Home"
@@ -16,18 +17,18 @@ import BridgeHistory from "@/pages/bridge/BridgeHistory"
 import TxRequest from "@/pages/tx/TxRequest"
 
 const routes = [
-  { path: "/connect", component: <Connect /> },
-  { path: "/", component: <Home /> },
-  { path: "/send", component: <Send /> },
-  { path: "/collection", component: <CollectionDetails /> },
-  { path: "/nft", component: <NftDetails /> },
-  { path: "/nft/send", component: <SendNft /> },
-  { path: "/rollups", component: <ManageChains /> },
-  { path: "/bridge", component: <BridgeForm /> },
-  { path: "/bridge/preview", component: <BridgePreview /> },
-  { path: "/bridge/history", component: <BridgeHistory /> },
-  { path: "/op/withdrawals", component: <Withdrawals /> },
-  { path: "/tx", component: <TxRequest /> },
+  { path: "/connect", Component: Connect },
+  { path: "/", Component: Home },
+  { path: "/send", Component: Send, rerender: true },
+  { path: "/collection", Component: CollectionDetails },
+  { path: "/nft", Component: NftDetails },
+  { path: "/nft/send", Component: SendNft, rerender: true },
+  { path: "/rollups", Component: ManageChains },
+  { path: "/bridge", Component: BridgeForm, renderWithoutAddress: true, rerender: true },
+  { path: "/bridge/preview", Component: BridgePreview },
+  { path: "/bridge/history", Component: BridgeHistory, renderWithoutAddress: true },
+  { path: "/op/withdrawals", Component: Withdrawals },
+  { path: "/tx", Component: TxRequest },
 ]
 
 const Routes = () => {
@@ -35,12 +36,15 @@ const Routes = () => {
   const rawPrevPath = usePreviousPath()
   const navigate = useNavigate()
   const address = useAddress()
+  const { closeModal } = useModal()
 
   const path = ["/nfts", "/activity"].includes(rawPath) ? "/" : rawPath
   const prevPath = ["/nfts", "/activity"].includes(rawPrevPath || "") ? "/" : rawPrevPath
 
   // whenever address changes, navigate to the appropriate path
   useEffect(() => {
+    closeModal()
+
     if (path.startsWith("/bridge/")) {
       navigate("/bridge")
     }
@@ -74,6 +78,10 @@ const Routes = () => {
       {transitions((style, animatedPath) => {
         const route = routes.find((r) => r.path === animatedPath)
         if (!route) return null
+        if (!address && !route.renderWithoutAddress) return null
+
+        const { Component, rerender } = route
+
         return (
           <animated.div
             key={animatedPath}
@@ -84,7 +92,7 @@ const Routes = () => {
               height: "100%",
             }}
           >
-            {route.component}
+            {rerender ? <Component key={address} /> : <Component />}
           </animated.div>
         )
       })}

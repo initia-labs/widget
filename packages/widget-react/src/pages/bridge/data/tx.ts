@@ -151,7 +151,7 @@ export function useBridgeTx(tx: TxJson) {
           const tx = { chainId: srcChainId, txHash }
           addHistoryItem(tx, { ...tx, timestamp: Date.now(), route, values })
           updateNotification({
-            type: "success",
+            type: "info",
             title: "Transaction sent",
             description: createElement(
               Fragment,
@@ -181,7 +181,6 @@ export function useBridgeTx(tx: TxJson) {
             title: "Transaction failed",
             description: error.message,
           })
-          console.trace(error)
         })
         .finally(() => {
           queryClient.invalidateQueries({
@@ -190,13 +189,11 @@ export function useBridgeTx(tx: TxJson) {
         })
     },
     onError: (error) => {
-      navigate(-1)
       showNotification({
         type: "error",
         title: "Transaction failed",
         description: error.message,
       })
-      console.trace(error)
     },
   })
 }

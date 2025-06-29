@@ -2,6 +2,7 @@
   display: flex;
   gap: 4px;
 
+  color: var(--gray-1);
   font-size: 12px;
   font-weight: 500;
 }
@@ -23,6 +24,7 @@
 
 .error {
   color: var(--error);
+  white-space: pre-wrap;
   word-break: break-all;
 }
 
