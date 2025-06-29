@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import { Tabs } from "radix-ui"
 import { IconArrowRight, IconSwap } from "@initia/icons-react"
 import { animated, useTransition } from "@react-spring/web"
-import { Link, useHistory, useNavigate, usePath } from "@/lib/router"
+import { Link, useNavigate, usePath, usePreviousPath } from "@/lib/router"
 import { useClaimableModal } from "@/pages/bridge/op/reminder"
 import Scrollable from "@/components/Scrollable"
 import Assets from "./assets/Assets"
@@ -21,8 +21,7 @@ const Home = () => {
 
   const navigate = useNavigate()
   const path = usePath()
-  const history = useHistory()
-  const prevPath = history[history.length - 2]?.path
+  const prevPath = usePreviousPath()
 
   const direction = useMemo(() => {
     const currentIndex = tabs.findIndex((t) => t.value === path)
