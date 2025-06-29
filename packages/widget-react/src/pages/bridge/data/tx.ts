@@ -149,7 +149,14 @@ export function useBridgeTx(tx: TxJson) {
       wait
         .then(() => {
           const tx = { chainId: srcChainId, txHash }
-          addHistoryItem(tx, { ...tx, timestamp: Date.now(), route, values })
+          const isOpWithdraw = getBridgeType(route) === BridgeType.OP_WITHDRAW
+          addHistoryItem(tx, {
+            ...tx,
+            timestamp: Date.now(),
+            route,
+            values,
+            state: isOpWithdraw ? "success" : undefined,
+          })
           updateNotification({
             type: "info",
             title: "Transaction sent",
@@ -165,7 +172,7 @@ export function useBridgeTx(tx: TxJson) {
               " for transaction status",
             ),
           })
-          if (getBridgeType(route) === BridgeType.OP_WITHDRAW) {
+          if (isOpWithdraw) {
             addReminder(tx, {
               ...tx,
               recipient: AddressUtils.toBech32(recipient),
@@ -323,5 +330,5 @@ export function getBridgeType(route: RouterRouteResponseJson) {
 }
 
 export function shouldTrackBridgeHistory({ tracked, route }: HistoryDetails) {
-  return !tracked && getBridgeType(route) !== BridgeType.LZ
+  return !tracked && getBridgeType(route) === BridgeType.SKIP
 }
