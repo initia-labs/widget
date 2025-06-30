@@ -24,7 +24,7 @@ const BridgeHistory = () => {
   const filteredHistory = showAll ? allHistory : myHistory
 
   return (
-    <Page title="Bridge/Swap history">
+    <Page title="Bridge/Swap activity">
       <div className={styles.list}>
         {allHistory.length > 0 && allHistory.length !== myHistory.length && (
           <header className={styles.header}>
@@ -38,7 +38,7 @@ const BridgeHistory = () => {
         )}
 
         {filteredHistory.length === 0 ? (
-          <Status>No bridge/swap history</Status>
+          <Status>No bridge/swap activity</Status>
         ) : (
           filteredHistory.map((tx, index) => (
             <div className={styles.item} key={index}>
