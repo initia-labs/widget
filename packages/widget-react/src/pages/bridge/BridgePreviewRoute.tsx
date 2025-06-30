@@ -92,7 +92,7 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
   const toProps = (normalizedOperation: ReturnType<typeof normalizeOperation>, index: number) => {
     // prettier-ignore
     // @ts-expect-error Skip API's response structure is too complicated
-    const { type, amount_out, denom, denom_out = denom, chain_id, to_chain_id = chain_id } = normalizedOperation
+    const { type, amount_out, denom, denom_out = denom, chain_id, from_chain_id, to_chain_id = chain_id ?? from_chain_id } = normalizedOperation
     const address = addressMap[to_chain_id]
     return {
       type: canToggleShowAll && !showAll ? undefined : type,
