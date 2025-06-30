@@ -133,7 +133,7 @@ const RecipientInput = ({ mode = "onChange", myAddress, ...props }: Props) => {
         <Footer
           extra={
             (!myAddress || (!!resolvedAddress && !isMyAddress)) && (
-              <FormHelp level="info">
+              <FormHelp level="warning">
                 Do not enter an exchange address. Tokens lost during the transfer will not be
                 retrievable.
               </FormHelp>
