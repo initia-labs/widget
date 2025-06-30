@@ -97,7 +97,7 @@ export const SendFields = () => {
               )}
 
             {!memo && (
-              <FormHelp level="info">Check if the above transaction requires a memo</FormHelp>
+              <FormHelp level="warning">Check if the above transaction requires a memo</FormHelp>
             )}
           </FormHelp.Stack>
         </div>
