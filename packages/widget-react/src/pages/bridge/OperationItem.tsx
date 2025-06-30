@@ -16,7 +16,7 @@ interface ComponentProps extends Props {
 }
 
 const OperationItemComponent = (props: ComponentProps) => {
-  const { source, type, amount, denom, chainId, address, walletIcon } = props
+  const { source, type, onClick, amount, denom, chainId, address, walletIcon } = props
   const { symbol = truncate(denom), decimals = 0, logo_uri = placeholder } = props
   const { chain_name, pretty_name } = useSkipChain(chainId)
 
@@ -27,14 +27,14 @@ const OperationItemComponent = (props: ComponentProps) => {
           <div className={styles.divider} />
           {type ? (
             <WidgetTooltip label={type}>
-              <button className={styles.type}>
+              <span className={styles.type}>
                 <IconChevronDown size={16} />
-              </button>
+              </span>
             </WidgetTooltip>
           ) : (
-            <span className={styles.type}>
+            <button onClick={onClick} className={styles.type}>
               <IconChevronDown size={16} />
-            </span>
+            </button>
           )}
         </div>
       )}
@@ -75,6 +75,7 @@ const OperationItemComponent = (props: ComponentProps) => {
 interface Props {
   source?: boolean
   type?: string
+  onClick?: () => void
   amount: string
   denom: string
   chainId: string

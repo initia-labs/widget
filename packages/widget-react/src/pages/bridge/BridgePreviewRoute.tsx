@@ -2,10 +2,9 @@ import { zipObj } from "ramda"
 import { useToggle } from "react-use"
 import { Collapsible } from "radix-ui"
 import { useAccount } from "wagmi"
-import { IconWallet } from "@initia/icons-react"
+import { IconList, IconMinus, IconWallet } from "@initia/icons-react"
 import { AddressUtils } from "@/public/utils"
 import AsyncBoundary from "@/components/AsyncBoundary"
-import CheckboxButton from "@/components/CheckboxButton"
 import Image from "@/components/Image"
 import type { RouterOperationJson } from "./data/simulate"
 import { useBridgePreviewState } from "./data/tx"
@@ -112,7 +111,17 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
     <Collapsible.Root className={styles.root} open={showAll} onOpenChange={toggleShowAll}>
       {canToggleShowAll && (
         <Collapsible.Trigger asChild>
-          <CheckboxButton checked={showAll} onClick={toggleShowAll} label="Show details" />
+          <button className={styles.toggle} onClick={toggleShowAll}>
+            {showAll ? (
+              <>
+                <IconMinus size={12} /> Hide detail
+              </>
+            ) : (
+              <>
+                <IconList size={12} /> Show detail
+              </>
+            )}
+          </button>
         </Collapsible.Trigger>
       )}
 
@@ -131,7 +140,7 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
           ))}
         </Collapsible.Content>
 
-        <OperationItem {...lastOperationProps} />
+        <OperationItem {...lastOperationProps} onClick={showAll ? undefined : toggleShowAll} />
       </div>
     </Collapsible.Root>
   )

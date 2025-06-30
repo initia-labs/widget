@@ -3,6 +3,21 @@
   gap: 12px;
 }
 
+.toggle {
+  display: flex;
+  gap: 4px;
+  background-color: var(--gray-6);
+  width: fit-content;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: var(--gray-5);
+  }
+}
+
 .route {
   background: var(--gray-8);
   border: 1px solid var(--gray-5);
