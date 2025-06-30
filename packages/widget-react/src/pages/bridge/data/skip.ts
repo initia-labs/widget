@@ -12,7 +12,7 @@ export const skipQueryKeys = createQueryKeys("initia-widget:skip", {
   route: (values: FormValues, isOpWithdraw?: boolean) => [values, isOpWithdraw],
   routeErrorInfo: (error: Error) => [error],
   txTrack: (chainId: string, txHash?: string) => [chainId, txHash],
-  txStatus: (chainId: string, txHash?: string, isLz?: boolean) => [chainId, txHash, isLz],
+  txStatus: (chainId: string, txHash?: string) => [chainId, txHash],
 })
 
 export function useSkip() {
