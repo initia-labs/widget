@@ -39,7 +39,7 @@ const Home = () => {
           </Tabs.Trigger>
 
           <Tabs.Trigger className={styles.tab} value="/activity">
-            History
+            Activity
           </Tabs.Trigger>
         </Tabs.List>
 

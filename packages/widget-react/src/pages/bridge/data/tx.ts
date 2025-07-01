@@ -167,7 +167,7 @@ export function useBridgeTx(tx: TxJson) {
               createElement(
                 Link,
                 { to: "/bridge/history", onClick: hideNotification },
-                "the history page",
+                "the activity page",
               ),
               " for transaction status",
             ),
