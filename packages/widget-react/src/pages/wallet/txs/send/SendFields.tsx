@@ -93,11 +93,11 @@ export const SendFields = () => {
           <FormHelp.Stack>
             {BigNumber(quantity).gt(0) &&
               BigNumber(quantity).isEqualTo(toQuantity(balance, decimals)) && (
-                <FormHelp level="warning">Make sure to leave enough funds to cover fees.</FormHelp>
+                <FormHelp level="warning">Make sure to leave enough funds to cover fees</FormHelp>
               )}
 
             {!memo && (
-              <FormHelp level="info">Check if the above transaction requires a memo.</FormHelp>
+              <FormHelp level="info">Check if the above transaction requires a memo</FormHelp>
             )}
           </FormHelp.Stack>
         </div>
