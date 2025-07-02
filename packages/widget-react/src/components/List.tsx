@@ -11,10 +11,11 @@ interface Props<Item> {
   getKey: (item: Item) => string
   getIsLoading?: (item: Item) => boolean
   getDisabled?: (item: Item) => boolean
+  getExtra?: (item: Item) => React.ReactNode
 }
 
 function List<Item>({ onSelect, list, ...props }: Props<Item>) {
-  const { getImage, getName, getKey, getIsLoading, getDisabled } = props
+  const { getImage, getName, getKey, getIsLoading, getDisabled, getExtra } = props
   return (
     <Scrollable className={styles.scrollable}>
       <div className={styles.list}>
@@ -27,7 +28,7 @@ function List<Item>({ onSelect, list, ...props }: Props<Item>) {
           >
             <Image src={getImage(item)} width={28} height={28} />
             <span className={styles.name}>{getName(item)}</span>
-            {getIsLoading?.(item) && <Loader size={16} />}
+            {getIsLoading?.(item) ? <Loader size={16} /> : getExtra?.(item) || null}
           </button>
         ))}
       </div>
