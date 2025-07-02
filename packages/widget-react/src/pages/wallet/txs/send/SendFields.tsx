@@ -36,6 +36,8 @@ export const SendFields = () => {
   const balance = balances.find((coin) => coin.denom === denom)?.amount ?? "0"
   const price = prices?.find(({ id }) => id === denom)?.price
 
+  const isFeeToken = chain.fees.fee_tokens.some((token) => token.denom === denom)
+
   const { mutate, isPending } = useMutation({
     mutationFn: ({ chainId, denom, quantity, recipient, memo }: FormValues) => {
       const amount = toAmount(quantity, decimals)
@@ -92,7 +94,8 @@ export const SendFields = () => {
 
           <FormHelp.Stack>
             {BigNumber(quantity).gt(0) &&
-              BigNumber(quantity).isEqualTo(toQuantity(balance, decimals)) && (
+              BigNumber(quantity).isEqualTo(toQuantity(balance, decimals)) &&
+              isFeeToken && (
                 <FormHelp level="warning">Make sure to leave enough funds to cover fees</FormHelp>
               )}
 
