@@ -19,6 +19,7 @@
 }
 
 .item {
+  position: relative;
   aspect-ratio: 1 / 1;
 
   background-color: var(--gray-7);
@@ -38,5 +39,16 @@
   &.active {
     background-color: var(--gray-6);
     border-color: var(--gray-3);
+  }
+
+  .badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+
+    background-color: var(--error);
+    border-radius: 4px;
+    width: 8px;
+    height: 8px;
   }
 }

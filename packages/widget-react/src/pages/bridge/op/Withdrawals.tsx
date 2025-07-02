@@ -6,6 +6,7 @@ import FormHelp from "@/components/form/FormHelp"
 import AsyncBoundary from "@/components/AsyncBoundary"
 import ChainOptions from "@/components/form/ChainOptions"
 import WithdrawalList from "./WithdrawalList"
+import { useClaimableReminders } from "./reminder"
 import styles from "./Withdrawals.module.css"
 
 const Withdrawals = () => {
@@ -16,12 +17,18 @@ const Withdrawals = () => {
     initialChainId ?? (defaultChain.metadata?.is_l1 ? "" : defaultChain.chainId),
   )
   const findChain = useFindChain()
+  const { reminders } = useClaimableReminders()
   const chain = chainId ? findChain(chainId) : undefined
 
   return (
     <Page title="Optimistic bridge withdrawals">
       <ChainOptions
-        chains={chains.filter(({ metadata }) => !metadata?.is_l1 && metadata?.op_denoms?.length)}
+        chains={chains
+          .filter(({ metadata }) => !metadata?.is_l1 && metadata?.op_denoms?.length)
+          .map((chain) => ({
+            ...chain,
+            reminder: reminders.some(({ chainId }) => chainId === chain.chainId),
+          }))}
         value={chainId}
         onSelect={setChainId}
       />
