@@ -6,7 +6,7 @@ import { STALE_TIMES } from "@/data/http"
 import { useInitiaRegistry, useLayer1 } from "@/data/chains"
 import { skipQueryKeys, useSkip } from "./skip"
 import { useBridgeForm } from "./form"
-import { useChainType, useSkipChain } from "./chains"
+import { useChainType, useFindChainType, useFindSkipChain, useSkipChain } from "./chains"
 import type { RouterAsset } from "./assets"
 import { useSkipAsset } from "./assets"
 
@@ -41,6 +41,8 @@ export function useRouteQuery(
   const { watch } = useBridgeForm()
   const values = watch()
   const skip = useSkip()
+  const findChain = useFindSkipChain()
+  const findChainType = useFindChainType()
 
   const debouncedValues = { ...values, quantity: debouncedQuantity }
 
@@ -53,7 +55,7 @@ export function useRouteQuery(
 
       const { srcChainId, srcDenom, quantity, dstChainId, dstDenom } = debouncedValues
 
-      const { decimals: srcDecimals } = queryClient.getQueryData<RouterAsset>(
+      const { symbol: srcSymbol, decimals: srcDecimals } = queryClient.getQueryData<RouterAsset>(
         skipQueryKeys.asset(srcChainId, srcDenom).queryKey,
       ) ?? { decimals: 0 }
 
@@ -63,8 +65,7 @@ export function useRouteQuery(
         source_asset_denom: srcDenom,
         dest_asset_chain_id: dstChainId,
         dest_asset_denom: dstDenom,
-        allow_unsafe: true,
-        go_fast: true,
+        go_fast: srcSymbol === "USDC" && findChainType(findChain(srcChainId)) === "evm",
         is_op_withdraw: opWithdrawal?.isOpWithdraw,
       }
 
