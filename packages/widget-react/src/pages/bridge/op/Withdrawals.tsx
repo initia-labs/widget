@@ -23,14 +23,10 @@ const Withdrawals = () => {
   return (
     <Page title="Optimistic bridge withdrawals">
       <ChainOptions
-        chains={chains
-          .filter(({ metadata }) => !metadata?.is_l1 && metadata?.op_denoms?.length)
-          .map((chain) => ({
-            ...chain,
-            reminder: reminders.some(({ chainId }) => chainId === chain.chainId),
-          }))}
+        chains={chains.filter(({ metadata }) => !metadata?.is_l1 && metadata?.op_denoms?.length)}
         value={chainId}
         onSelect={setChainId}
+        getReminder={(chainId) => reminders.some((reminder) => reminder.chainId === chainId)}
       />
 
       <div className={styles.content}>
