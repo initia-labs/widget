@@ -21,7 +21,7 @@
   transition: background-color var(--transition) ease-in-out;
 
   &:hover {
-    background-color: #7d7d7d1a;
+    background-color: rgba(125, 125, 125, 0.1);
   }
 
   @media (max-width: 576px) {
