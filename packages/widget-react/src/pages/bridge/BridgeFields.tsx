@@ -14,7 +14,7 @@ import { useNavigate } from "@/lib/router"
 import { formatAmount, formatNumber, toQuantity } from "@/public/utils"
 import { useModal } from "@/public/app/ModalContext"
 import { LocalStorageKey } from "@/data/constants"
-import { useInitiaRegistry } from "@/data/chains"
+import { useFindChain } from "@/data/chains"
 import Button from "@/components/Button"
 import ChainAssetQuantityLayout from "@/components/form/ChainAssetQuantityLayout"
 import BalanceButton from "@/components/form/BalanceButton"
@@ -58,7 +58,7 @@ const BridgeFields = () => {
   const values = watch()
   const { srcChainId, srcDenom, dstChainId, dstDenom, quantity, sender, slippagePercent } = values
 
-  const initiaRegistry = useInitiaRegistry()
+  const findChain = useFindChain()
   const srcChain = useSkipChain(srcChainId)
   const srcChainType = useChainType(srcChain)
   const dstChain = useSkipChain(dstChainId)
@@ -189,14 +189,20 @@ const BridgeFields = () => {
     BigNumber(quantity).gt(0) &&
     BigNumber(quantity).isEqualTo(toQuantity(srcBalance?.amount, srcBalance?.decimals ?? 0))
 
-  const isFeeToken =
-    srcChain.chain_type === "evm"
-      ? !isAddress(srcDenom)
-      : // check initia registry to handle USDC on L1, which due to dynamic gas price is not included in Skip registry
-        initiaRegistry
-          .find(({ chain_id }) => chain_id === srcChainId)
-          ?.fees.fee_tokens.some(({ denom }) => denom === srcDenom) ||
-        srcChain.fee_assets.some(({ denom }) => denom === srcDenom)
+  const getIsFeeToken = () => {
+    switch (srcChainType) {
+      case "initia":
+        return findChain(srcChainId).fees.fee_tokens.some(({ denom }) => denom === srcDenom)
+      case "cosmos":
+        return srcChain.fee_assets.some(({ denom }) => denom === srcDenom)
+      case "evm":
+        return !isAddress(srcDenom)
+      default:
+        return false
+    }
+  }
+
+  const isFeeToken = getIsFeeToken()
 
   const renderFees = (fees: FeeJson[], tooltip: string) => {
     if (!fees.length) return null
