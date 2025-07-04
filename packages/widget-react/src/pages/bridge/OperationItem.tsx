@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { IconChevronDown } from "@initia/icons-react"
+import { IconArrowDown } from "@initia/icons-react"
 import { formatAmount, truncate } from "@/public/utils"
 import placeholder from "@/data/placeholder"
 import Image from "@/components/Image"
@@ -28,14 +28,15 @@ const OperationItemComponent = (props: ComponentProps) => {
           {type ? (
             <WidgetTooltip label={type}>
               <button className={styles.type}>
-                <IconChevronDown size={16} />
+                <IconArrowDown size={12} />
               </button>
             </WidgetTooltip>
           ) : (
             <span className={styles.type}>
-              <IconChevronDown size={16} />
+              <IconArrowDown size={12} />
             </span>
           )}
+          <div className={styles.divider} />
         </div>
       )}
 

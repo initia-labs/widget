@@ -1,6 +1,6 @@
 .toggle {
   justify-content: space-between;
-  width: 108px; /* magic number to fit the toggle and text */
+  width: 108px; /* magic number to fit the icon and text */
   white-space: nowrap;
 }
 

@@ -3,6 +3,25 @@
   gap: 12px;
 }
 
+.toggle {
+  justify-content: flex-start;
+  gap: 4px;
+
+  background-color: var(--gray-6);
+  border-radius: 13px;
+  height: 26px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0 12px;
+  width: 114px; /* magic number to fit the icon and text */
+
+  transition: background-color var(--transition) ease;
+
+  &:hover {
+    background-color: var(--gray-5);
+  }
+}
+
 .route {
   background: var(--gray-8);
   border: 1px solid var(--gray-5);
