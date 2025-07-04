@@ -8,6 +8,9 @@
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+
   border-right: 1px solid var(--border);
   padding: 0 16px;
 }

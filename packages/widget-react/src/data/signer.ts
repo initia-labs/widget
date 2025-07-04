@@ -183,10 +183,12 @@ export function useCreateSigningStargateClient() {
   const registry = useRegistry()
   const aminoTypes = useAminoTypes()
   const offlineSigner = useOfflineSigner()
+  const address = useInitiaAddress()
 
   return async (chainId: string) => {
-    if (clientCache.has(chainId)) {
-      return clientCache.get(chainId)!
+    const cacheKey = `${address}:${chainId}`
+    if (clientCache.has(cacheKey)) {
+      return clientCache.get(cacheKey)!
     }
 
     if (!offlineSigner) throw new Error("Signer not initialized")
@@ -200,7 +202,7 @@ export function useCreateSigningStargateClient() {
       broadcastPollIntervalMs: 1000,
     })
 
-    clientCache.set(chainId, client)
+    clientCache.set(cacheKey, client)
     return client
   }
 }

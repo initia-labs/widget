@@ -1,12 +1,20 @@
 import BigNumber from "bignumber.js"
+import { isAddress } from "ethers"
 import { sentenceCase } from "change-case"
 import { useEffect, useMemo, useState } from "react"
 import { useDebounce, useLocalStorage } from "react-use"
-import { IconChevronDown, IconSettingFilled, IconWarningFilled } from "@initia/icons-react"
+import type { FeeJson } from "@skip-go/client"
+import {
+  IconChevronDown,
+  IconInfoFilled,
+  IconSettingFilled,
+  IconWarningFilled,
+} from "@initia/icons-react"
 import { useNavigate } from "@/lib/router"
 import { formatAmount, formatNumber, toQuantity } from "@/public/utils"
 import { useModal } from "@/public/app/ModalContext"
 import { LocalStorageKey } from "@/data/constants"
+import { useFindChain } from "@/data/chains"
 import Button from "@/components/Button"
 import ChainAssetQuantityLayout from "@/components/form/ChainAssetQuantityLayout"
 import BalanceButton from "@/components/form/BalanceButton"
@@ -16,12 +24,18 @@ import ModalTrigger from "@/components/ModalTrigger"
 import FormHelp from "@/components/form/FormHelp"
 import PlainModalContent from "@/components/PlainModalContent"
 import AnimatedHeight from "@/components/AnimatedHeight"
+import WidgetTooltip from "@/components/WidgetTooltip"
 import { formatDuration, formatFees } from "./data/format"
 import type { FormValues } from "./data/form"
 import { FormValuesSchema, useBridgeForm } from "./data/form"
 import { useChainType, useSkipChain } from "./data/chains"
 import { useSkipAsset } from "./data/assets"
-import { useIsOpWithdrawable, useRouteQuery } from "./data/simulate"
+import {
+  useIsOpWithdrawable,
+  useRouteErrorInfo,
+  useRouteQuery,
+  FeeBehaviorJson,
+} from "./data/simulate"
 import { useSkipBalance, useSkipBalancesQuery } from "./data/balance"
 import SelectedChainAsset from "./SelectedChainAsset"
 import BridgeAccount from "./BridgeAccount"
@@ -44,6 +58,7 @@ const BridgeFields = () => {
   const values = watch()
   const { srcChainId, srcDenom, dstChainId, dstDenom, quantity, sender, slippagePercent } = values
 
+  const findChain = useFindChain()
   const srcChain = useSkipChain(srcChainId)
   const srcChainType = useChainType(srcChain)
   const dstChain = useSkipChain(dstChainId)
@@ -74,7 +89,8 @@ const BridgeFields = () => {
   })
   const routeQuery =
     isOpWithdrawable && selectedType === "op" ? routeQueryOpWithdrawal : routeQueryDefault
-  const { data, isLoading, isFetching, isFetched } = routeQuery
+  const { data, isLoading, isFetching, isFetched, error } = routeQuery
+  const { data: routeErrorInfo } = useRouteErrorInfo(error)
 
   // Local state to retain the last successful simulated route
   const [previousData, setPreviousData] = useState(data)
@@ -127,16 +143,33 @@ const BridgeFields = () => {
     navigate("/bridge/preview", { route, values })
   })
 
-  // disabled
-  const feeErrorMessage = useMemo(() => {
-    for (const fee of route?.estimated_fees ?? []) {
-      const balance = balances?.[fee.origin_asset.denom]?.amount
-      if (!balance || BigNumber(balance).lt(fee.amount ?? 0)) {
-        return `Insufficient ${fee.origin_asset.symbol} for fees`
-      }
-    }
-  }, [balances, route])
+  // fees
+  const deductedFees = useMemo(() => {
+    return (
+      route?.estimated_fees?.filter(
+        ({ fee_behavior }) => fee_behavior === FeeBehaviorJson.FEE_BEHAVIOR_DEDUCTED,
+      ) ?? []
+    )
+  }, [route])
 
+  const additionalFees = useMemo(() => {
+    return (
+      route?.estimated_fees?.filter(
+        ({ fee_behavior }) => fee_behavior === FeeBehaviorJson.FEE_BEHAVIOR_ADDITIONAL,
+      ) ?? []
+    )
+  }, [route])
+
+  const feeErrorMessage = useMemo(() => {
+    for (const fee of additionalFees) {
+      const balance = balances?.[fee.origin_asset.denom]?.amount ?? "0"
+      const amount = route?.source_asset_denom === fee.origin_asset.denom ? route.amount_in : "0"
+      const insufficient = BigNumber(balance).lt(BigNumber(amount).plus(fee.amount ?? "0"))
+      if (insufficient) return `Insufficient ${fee.origin_asset.symbol} for fees`
+    }
+  }, [balances, route, additionalFees])
+
+  // disabled
   const disabledMessage = useMemo(() => {
     if (!values.sender) return "Connect wallet"
     if (!values.quantity) return "Enter amount"
@@ -146,23 +179,44 @@ const BridgeFields = () => {
     const result = FormValuesSchema.safeParse(values)
     if (!result.success) return `Invalid ${result.error.issues[0].path}`
     if (!route) return "Route not found"
-    // This should be enabled later when the fee behavior is defined by the backend
-    if (feeErrorMessage) return // feeErrorMessage
+    if (feeErrorMessage) return feeErrorMessage
   }, [debouncedQuantity, feeErrorMessage, formState, route, values])
 
   // render
   const received = route ? formatAmount(route.amount_out, { decimals: dstAsset.decimals }) : "0"
 
-  const withdrawalStatusLink = (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-    <span className={styles.link} onClick={() => navigate("/op/withdrawals")}>
-      Withdrawal status
-    </span>
-  )
-
   const isMaxAmount =
     BigNumber(quantity).gt(0) &&
     BigNumber(quantity).isEqualTo(toQuantity(srcBalance?.amount, srcBalance?.decimals ?? 0))
+
+  const getIsFeeToken = () => {
+    switch (srcChainType) {
+      case "initia":
+        return findChain(srcChainId).fees.fee_tokens.some(({ denom }) => denom === srcDenom)
+      case "cosmos":
+        return srcChain.fee_assets.some(({ denom }) => denom === srcDenom)
+      case "evm":
+        return !isAddress(srcDenom)
+      default:
+        return false
+    }
+  }
+
+  const isFeeToken = getIsFeeToken()
+
+  const renderFees = (fees: FeeJson[], tooltip: string) => {
+    if (!fees.length) return null
+    return (
+      <div className={styles.description}>
+        {formatFees(fees)}
+        <WidgetTooltip label={tooltip}>
+          <span className={styles.icon}>
+            <IconInfoFilled size={12} />
+          </span>
+        </WidgetTooltip>
+      </div>
+    )
+  }
 
   return (
     <form className={styles.form} onSubmit={submit}>
@@ -223,14 +277,14 @@ const BridgeFields = () => {
             </AnimatedHeight>
 
             <FormHelp.Stack>
-              {route && isOpWithdrawable && selectedType === "op" && (
-                <FormHelp level="info">
-                  Withdraw transaction is required when using the Optimistic bridge. Status of all
-                  withdrawals can be viewed on the {withdrawalStatusLink} page.
+              {route?.extra_infos?.map((info) => (
+                <FormHelp level="info" key={info}>
+                  {info}
                 </FormHelp>
-              )}
-              {isMaxAmount && (
-                <FormHelp level="warning">Make sure to leave enough for fees</FormHelp>
+              ))}
+              {routeErrorInfo && <FormHelp level="info">{routeErrorInfo}</FormHelp>}
+              {isMaxAmount && isFeeToken && (
+                <FormHelp level="warning">Make sure to leave enough funds to cover fees</FormHelp>
               )}
               {route?.warning && <FormHelp level="warning">{route.warning.message}</FormHelp>}
               {route?.extra_warnings?.map((warning) => (
@@ -243,16 +297,22 @@ const BridgeFields = () => {
             <AnimatedHeight>
               {route && (
                 <div className={styles.meta}>
-                  {formatFees(route.estimated_fees) && (
+                  {!!route.estimated_fees?.length && (
                     <div className={styles.row}>
-                      <span className={styles.title}>Estimated fees</span>
-                      <span className={styles.description}>{formatFees(route.estimated_fees)}</span>
+                      <span className={styles.title}>Fees</span>
+                      <div>
+                        {renderFees(deductedFees, "Fee deducted from the amount you receive")}
+                        {renderFees(
+                          additionalFees,
+                          "Fee charged in addition to the amount you enter",
+                        )}
+                      </div>
                     </div>
                   )}
 
                   {formatDuration(route.estimated_route_duration_seconds) && (
                     <div className={styles.row}>
-                      <span className={styles.title}>Estimated route duration</span>
+                      <span className={styles.title}>Estimated time</span>
                       <span className={styles.description}>
                         {formatDuration(route.estimated_route_duration_seconds)}
                       </span>

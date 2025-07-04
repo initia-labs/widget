@@ -20,6 +20,10 @@
   padding: 16px;
 }
 
+.info {
+  color: var(--gray-0);
+}
+
 .success {
   color: var(--success);
 }

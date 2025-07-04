@@ -149,9 +149,16 @@ export function useBridgeTx(tx: TxJson) {
       wait
         .then(() => {
           const tx = { chainId: srcChainId, txHash }
-          addHistoryItem(tx, { ...tx, timestamp: Date.now(), route, values })
+          const isOpWithdraw = getBridgeType(route) === BridgeType.OP_WITHDRAW
+          addHistoryItem(tx, {
+            ...tx,
+            timestamp: Date.now(),
+            route,
+            values,
+            state: isOpWithdraw ? "success" : undefined,
+          })
           updateNotification({
-            type: "success",
+            type: "info",
             title: "Transaction sent",
             description: createElement(
               Fragment,
@@ -160,12 +167,12 @@ export function useBridgeTx(tx: TxJson) {
               createElement(
                 Link,
                 { to: "/bridge/history", onClick: hideNotification },
-                "the history page",
+                "the activity page",
               ),
               " for transaction status",
             ),
           })
-          if (getBridgeType(route) === BridgeType.OP_WITHDRAW) {
+          if (isOpWithdraw) {
             addReminder(tx, {
               ...tx,
               recipient: AddressUtils.toBech32(recipient),
@@ -181,7 +188,6 @@ export function useBridgeTx(tx: TxJson) {
             title: "Transaction failed",
             description: error.message,
           })
-          console.trace(error)
         })
         .finally(() => {
           queryClient.invalidateQueries({
@@ -190,13 +196,11 @@ export function useBridgeTx(tx: TxJson) {
         })
     },
     onError: (error) => {
-      navigate(-1)
       showNotification({
         type: "error",
         title: "Transaction failed",
         description: error.message,
       })
-      console.trace(error)
     },
   })
 }
@@ -264,7 +268,6 @@ export function useTrackTxQuery(details: HistoryDetails) {
     queryKey: skipQueryKeys.txTrack(chainId, txHash).queryKey,
     queryFn: async () => {
       try {
-        if (!shouldTrackBridgeHistory(details)) return { tx_hash: txHash }
         return await skip
           .post("v2/tx/track", { json: { tx_hash: txHash, chain_id: chainId } })
           .json<TrackResponseJson>()
@@ -282,13 +285,12 @@ export function useTrackTxQuery(details: HistoryDetails) {
 export function useTxStatusQuery(details: HistoryDetails) {
   const { timestamp, chainId, txHash, state } = details
   const skip = useSkip()
-  const isLz = getBridgeType(details.route) === BridgeType.LZ
 
   return useQuery({
-    queryKey: skipQueryKeys.txStatus(chainId, txHash, isLz).queryKey,
+    queryKey: skipQueryKeys.txStatus(chainId, txHash).queryKey,
     queryFn: () =>
       skip
-        .get("v2/tx/status", { searchParams: { tx_hash: txHash, chain_id: chainId, is_lz: isLz } })
+        .get("v2/tx/status", { searchParams: { tx_hash: txHash, chain_id: chainId } })
         .json<StatusResponseJson>(),
     enabled: !!txHash && !state,
     refetchInterval: ({ state: { data } }) => {
@@ -310,7 +312,6 @@ export function useTxStatusQuery(details: HistoryDetails) {
 
 export enum BridgeType {
   OP_WITHDRAW = "Optimistic bridge withdrawal",
-  LZ = "LayerZero",
   SKIP = "Skip",
 }
 
@@ -325,12 +326,5 @@ export function getBridgeType(route: RouterRouteResponseJson) {
   if (has("op_init_transfer", head(operations)) && dest_asset_denom === "uinit") {
     return BridgeType.OP_WITHDRAW
   }
-  if (has("lz_transfer", head(operations))) {
-    return BridgeType.LZ
-  }
   return BridgeType.SKIP
-}
-
-export function shouldTrackBridgeHistory({ tracked, route }: HistoryDetails) {
-  return !tracked && getBridgeType(route) !== BridgeType.LZ
 }

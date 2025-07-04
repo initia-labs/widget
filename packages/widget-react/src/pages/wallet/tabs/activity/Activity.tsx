@@ -2,7 +2,6 @@ import { useState } from "react"
 import { useChain } from "@/data/chains"
 import { useConfig } from "@/data/config"
 import AsyncBoundary from "@/components/AsyncBoundary"
-import FlexEnd from "@/components/FlexEnd"
 import SelectChain from "./SelectChain"
 import ActivityList from "./ActivityList"
 
@@ -13,9 +12,7 @@ const Activity = () => {
 
   return (
     <>
-      <FlexEnd>
-        <SelectChain value={selectedChainId} onSelect={setSelectedChainId} />
-      </FlexEnd>
+      <SelectChain value={selectedChainId} onSelect={setSelectedChainId} />
 
       <AsyncBoundary key={selectedChainId}>
         <ActivityList chain={selectedChain} />

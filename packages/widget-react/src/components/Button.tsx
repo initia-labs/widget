@@ -4,15 +4,17 @@ import Loader from "./Loader"
 import styles from "./Button.module.css"
 
 export interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
+  sm?: boolean
   fullWidth?: boolean
   loading?: boolean | string
 }
 
-const WhiteButton = ({ fullWidth, loading, className, children, disabled, ...attrs }: Props) => {
+const WhiteButton = (props: Props) => {
+  const { sm, fullWidth, loading, className, children, disabled, ...attrs } = props
   return (
     <button
       {...attrs}
-      className={clsx(styles.button, { [styles.full]: fullWidth }, className)}
+      className={clsx(styles.button, { [styles.sm]: sm, [styles.full]: fullWidth }, className)}
       disabled={!!loading || disabled}
     >
       {loading ? (

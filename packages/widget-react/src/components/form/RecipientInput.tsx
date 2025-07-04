@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { mergeRefs } from "react-merge-refs"
 import { useFormContext } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
+import type { ChainTypeJson } from "@skip-go/client"
 import { IconCloseCircleFilled } from "@initia/icons-react"
 import { AddressUtils } from "@/public/utils"
 import { STALE_TIMES } from "@/data/http"
@@ -19,12 +20,13 @@ interface Props {
   mode?: "onChange" | "onSubmit" // onSubmit: for Bridge
   myAddress?: string
   validate?: (address: string) => boolean
+  chainType?: "initia" | ChainTypeJson
   onApply?: () => void
   ref?: Ref<HTMLInputElement>
 }
 
-const RecipientInput = (props: Props) => {
-  const { mode = "onChange", myAddress, validate = AddressUtils.validate, onApply, ref } = props
+const RecipientInput = ({ mode = "onChange", myAddress, ...props }: Props) => {
+  const { validate = AddressUtils.validate, chainType = "initia", onApply, ref } = props
   const autoFocusRef = useAutoFocus()
 
   const { getValues, setValue, formState } = useFormContext<{ recipient: string }>()
@@ -104,10 +106,10 @@ const RecipientInput = (props: Props) => {
       <div className={styles.wrapper}>
         <input
           id="recipient"
-          className={clsx(styles.input, AddressUtils.isAddress(inputValue) && "monospace")}
+          className={clsx(styles.input, "monospace")}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value.trim())}
-          placeholder="Address or username"
+          placeholder={chainType === "initia" ? "Address or username" : "Enter address"}
           autoComplete="off"
           ref={mode === "onSubmit" ? mergeRefs([ref, autoFocusRef]) : ref}
         />
@@ -131,7 +133,7 @@ const RecipientInput = (props: Props) => {
         <Footer
           extra={
             (!myAddress || (!!resolvedAddress && !isMyAddress)) && (
-              <FormHelp level="info">
+              <FormHelp level="warning">
                 Do not enter an exchange address. Tokens lost during the transfer will not be
                 retrievable.
               </FormHelp>

@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js"
 import { sentenceCase } from "change-case"
 import type { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin"
 import { calculateFee, GasPrice } from "@cosmjs/stargate"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query"
 import { useInitiaAddress } from "@/public/data/hooks"
 import { DEFAULT_GAS_PRICE_MULTIPLIER } from "@/public/data/constants"
@@ -100,16 +100,23 @@ const TxRequest = () => {
       localStorage.setItem(localStorageKey, feeDenom)
     },
     onError: async (error: Error) => {
-      console.trace(error)
       reject(new Error(await normalizeError(error)))
     },
   })
+
+  useEffect(() => {
+    return () => {
+      reject(new Error("User rejected"))
+    }
+  }, [reject])
 
   const isInsufficient = !canPayFee(feeDenom)
 
   return (
     <>
       <Scrollable>
+        <h1 className={styles.title}>Confirm tx</h1>
+
         <div className={styles.meta}>
           <TxMetaItem title="Chain" content={chainId} />
           <TxMetaItem
@@ -125,7 +132,7 @@ const TxRequest = () => {
           renderHeader={({ typeUrl }) =>
             sentenceCase(typeUrl.split(".").pop()!.replace(/^Msg/, ""))
           }
-          renderContent={(message) => <TxMessage {...message} />}
+          renderContent={(message) => <TxMessage message={message} chainId={chainId} />}
         />
       </Scrollable>
 

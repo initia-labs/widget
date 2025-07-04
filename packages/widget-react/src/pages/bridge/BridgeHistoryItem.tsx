@@ -163,7 +163,7 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
               <>
                 <div className={styles.divider} />
                 <div className={styles.item}>
-                  <span>Fee</span>
+                  <span>Fees</span>
                   <span>{formatFees(estimated_fees)}</span>
                 </div>
               </>

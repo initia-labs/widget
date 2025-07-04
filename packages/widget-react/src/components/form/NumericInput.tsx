@@ -28,13 +28,13 @@ function NumericInput<T extends FieldValues>(props: Props<T>) {
       control={control}
       render={({ field }) => (
         <input
-          {...attrs}
           {...field}
           className={clsx(styles.input, className)}
           onChange={(e) => field.onChange(sanitizeNumericInput(e.target.value, dp))}
           placeholder="0"
           inputMode="decimal"
           autoComplete="off"
+          {...attrs}
           ref={mergeRefs([field.ref, autoFocusRef])}
         />
       )}

@@ -37,6 +37,10 @@
   display: grid;
 }
 
+.symbol {
+  font-weight: 600;
+}
+
 .name {
   white-space: nowrap;
   overflow: hidden;

@@ -16,9 +16,6 @@
 .claimed {
   display: flex;
   align-items: center;
-  gap: 8px;
-
-  .icon {
-    color: var(--success);
-  }
+  gap: 4px;
+  color: var(--success);
 }

@@ -94,7 +94,7 @@ const SendNftFields = () => {
   return (
     <form onSubmit={handleSubmit(() => mutate())}>
       <header className={styles.header}>
-        {nft.image && <NftThumbnail src={nft.image} size={80} />}
+        {nft.image && <NftThumbnail chain={srcChain} collection={collection} nft={nft} size={80} />}
         <div className={styles.name}>
           <div className={styles.collection}>{collection.name}</div>
           <div className={styles.nft}>{nft.name}</div>

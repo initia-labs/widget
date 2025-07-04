@@ -35,21 +35,8 @@ export const AddressUtils = {
     return checksummed
   },
 
-  isAddress(address: string) {
-    if (isAddress(address)) {
-      return true
-    }
-
-    try {
-      fromBech32(address)
-      return true
-    } catch {
-      return false
-    }
-  },
-
   validate(address: string, prefix: string = "init") {
-    if (/^0x[0-9a-fA-F]{1,40}$/.test(address)) {
+    if (isAddress(address)) {
       return true
     }
 
