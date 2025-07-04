@@ -114,11 +114,13 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
           <button className={styles.toggle} onClick={toggleShowAll}>
             {showAll ? (
               <>
-                <IconMinus size={12} /> Hide detail
+                <IconMinus size={12} />
+                <span>Hide detail</span>
               </>
             ) : (
               <>
-                <IconList size={12} /> Show detail
+                <IconList size={12} />
+                <span>Show detail</span>
               </>
             )}
           </button>
@@ -140,7 +142,7 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
           ))}
         </Collapsible.Content>
 
-        <OperationItem {...lastOperationProps} onClick={showAll ? undefined : toggleShowAll} />
+        <OperationItem {...lastOperationProps} />
       </div>
     </Collapsible.Root>
   )

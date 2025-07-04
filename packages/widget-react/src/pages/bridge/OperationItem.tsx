@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { IconChevronDown } from "@initia/icons-react"
+import { IconArrowDown } from "@initia/icons-react"
 import { formatAmount, truncate } from "@/public/utils"
 import placeholder from "@/data/placeholder"
 import Image from "@/components/Image"
@@ -16,7 +16,7 @@ interface ComponentProps extends Props {
 }
 
 const OperationItemComponent = (props: ComponentProps) => {
-  const { source, type, onClick, amount, denom, chainId, address, walletIcon } = props
+  const { source, type, amount, denom, chainId, address, walletIcon } = props
   const { symbol = truncate(denom), decimals = 0, logo_uri = placeholder } = props
   const { chain_name, pretty_name } = useSkipChain(chainId)
 
@@ -27,15 +27,16 @@ const OperationItemComponent = (props: ComponentProps) => {
           <div className={styles.divider} />
           {type ? (
             <WidgetTooltip label={type}>
-              <span className={styles.type}>
-                <IconChevronDown size={16} />
-              </span>
+              <button className={styles.type}>
+                <IconArrowDown size={12} />
+              </button>
             </WidgetTooltip>
           ) : (
-            <button onClick={onClick} className={styles.type}>
-              <IconChevronDown size={16} />
-            </button>
+            <span className={styles.type}>
+              <IconArrowDown size={12} />
+            </span>
           )}
+          <div className={styles.divider} />
         </div>
       )}
 
@@ -75,7 +76,6 @@ const OperationItemComponent = (props: ComponentProps) => {
 interface Props {
   source?: boolean
   type?: string
-  onClick?: () => void
   amount: string
   denom: string
   chainId: string

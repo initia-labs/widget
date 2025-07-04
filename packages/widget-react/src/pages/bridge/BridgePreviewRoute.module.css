@@ -4,14 +4,18 @@
 }
 
 .toggle {
-  display: flex;
+  justify-content: flex-start;
   gap: 4px;
+
   background-color: var(--gray-6);
-  width: fit-content;
-  padding: 4px 12px;
-  border-radius: 16px;
+  border-radius: 13px;
+  height: 26px;
   font-size: 12px;
   font-weight: 600;
+  padding: 0 12px;
+  width: 114px; /* magic number to fit the icon and text */
+
+  transition: background-color var(--transition) ease;
 
   &:hover {
     background-color: var(--gray-5);
