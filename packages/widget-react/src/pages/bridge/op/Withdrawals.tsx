@@ -26,7 +26,7 @@ const Withdrawals = () => {
         chains={chains.filter(({ metadata }) => !metadata?.is_l1 && metadata?.op_denoms?.length)}
         value={chainId}
         onSelect={setChainId}
-        getReminder={(chainId) => reminders.some((reminder) => reminder.chainId === chainId)}
+        getShowIndicator={(chainId) => reminders.some((reminder) => reminder.chainId === chainId)}
       />
 
       <div className={styles.content}>

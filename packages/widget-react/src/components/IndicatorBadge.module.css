@@ -1,10 +1,8 @@
-.link {
+.container {
   position: relative;
 
   .badge {
     position: absolute;
-    top: -1px;
-    right: -1px;
 
     background-color: var(--error);
     border-radius: 4px;
