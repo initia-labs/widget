@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 import { IconChevronDown } from "@initia/icons-react"
 import { formatAmount, truncate } from "@/public/utils"
 import placeholder from "@/data/placeholder"
-import Image from "@/components/Image"
+import Images from "@/components/Images"
 import WidgetTooltip from "@/components/WidgetTooltip"
 import CopyButton from "@/components/CopyButton"
 import { useSkipAsset } from "./data/assets"
@@ -18,7 +18,7 @@ interface ComponentProps extends Props {
 const OperationItemComponent = (props: ComponentProps) => {
   const { source, type, amount, denom, chainId, address, walletIcon } = props
   const { symbol = truncate(denom), decimals = 0, logo_uri = placeholder } = props
-  const { chain_name, pretty_name, logo_uri: chain_logo_uri } = useSkipChain(chainId)
+  const { chain_name, pretty_name, ...chain } = useSkipChain(chainId)
 
   return (
     <div>
@@ -40,12 +40,7 @@ const OperationItemComponent = (props: ComponentProps) => {
       )}
 
       <div className={styles.content}>
-        <div className={styles.logoContainer}>
-          <Image src={logo_uri} width={32} height={32} />
-          {!!walletIcon && (
-            <Image src={chain_logo_uri!} width={16} height={16} className={styles.chainLogo} />
-          )}
-        </div>
+        <Images assetLogoUrl={logo_uri} chainLogoUrl={chain.logo_uri ?? undefined} />
 
         <div className={styles.info}>
           <div className={styles.asset}>

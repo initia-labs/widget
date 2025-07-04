@@ -1,6 +1,6 @@
-import { intlFormatDistance } from "date-fns"
-import { useEffect, useMemo } from "react"
 import { useAccount } from "wagmi"
+import { intlFormatDistance } from "date-fns"
+import { useEffect, useMemo, type ReactNode } from "react"
 import type { StatusResponseJson } from "@skip-go/client"
 import {
   IconArrowDown,
@@ -12,19 +12,14 @@ import {
 import { AddressUtils, formatAmount, truncate } from "@/public/utils"
 import Loader from "@/components/Loader"
 import Image from "@/components/Image"
+import Images from "@/components/Images"
 import ExplorerLink from "@/components/ExplorerLink"
 import { formatFees } from "./data/format"
 import type { RouterChainJson } from "./data/chains"
 import { useSkipChain } from "./data/chains"
 import type { RouterAsset } from "./data/assets"
 import { useSkipAsset } from "./data/assets"
-import {
-  BridgeType,
-  bridgeTypeExplorerName,
-  getBridgeType,
-  useTrackTxQuery,
-  useTxStatusQuery,
-} from "./data/tx"
+import { BridgeType, getBridgeType, useTrackTxQuery, useTxStatusQuery } from "./data/tx"
 import type { TxIdentifier } from "./data/history"
 import { useBridgeHistoryDetails } from "./data/history"
 import { useCosmosWallets } from "./data/cosmos"
@@ -91,7 +86,6 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
     source_asset_denom: srcDenom,
     dest_asset_chain_id: dstChainId,
     dest_asset_denom: dstDenom,
-    operations,
     estimated_fees = [],
   } = route
 
@@ -100,41 +94,29 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
   const srcAsset = useSkipAsset(srcDenom, srcChainId)
   const dstAsset = useSkipAsset(dstDenom, dstChainId)
 
-  const getWalletIcon = (address: string, isSource: boolean) => {
-    if (values.cosmosWalletName && isSource) {
-      return (
-        <Image
-          src={find(values.cosmosWalletName)?.image}
-          width={12}
-          height={12}
-          className={styles.walletIcon}
-        />
-      )
+  const getWalletIcon = (address: string, image?: string) => {
+    if (image) {
+      return <Image src={image} width={12} height={12} />
     }
 
-    if (AddressUtils.equals(address, connectedAddress))
-      return <Image src={connector?.icon} width={12} height={12} className={styles.walletIcon} />
+    if (AddressUtils.equals(address, connectedAddress)) {
+      return <Image src={connector?.icon} width={12} height={12} />
+    }
 
-    return <IconWallet size={12} className={styles.walletIcon} />
+    return <IconWallet size={12} />
   }
 
   const renderRow = (
     amount: string,
     { symbol, decimals, logo_uri }: RouterAsset,
-    { chain_name, pretty_name, logo_uri: chain_logo_uri }: RouterChainJson,
+    { chain_name, pretty_name, ...chain }: RouterChainJson,
     address: string,
-    isSource: boolean,
+    walletIcon: ReactNode,
   ) => {
     return (
       <div className={styles.row}>
         <div className={styles.logoContainer}>
-          <Image src={logo_uri} width={32} height={32} />
-          <Image
-            src={chain_logo_uri || undefined}
-            width={16}
-            height={16}
-            className={styles.chainLogo}
-          />
+          <Images assetLogoUrl={logo_uri} chainLogoUrl={chain.logo_uri ?? undefined} />
         </div>
         <div>
           <div className={styles.asset}>
@@ -142,8 +124,11 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
             <span>{symbol}</span>
           </div>
           <div className={styles.chain}>
-            on {pretty_name || chain_name} {getWalletIcon(address, isSource)}{" "}
-            <span className="monospace">{truncate(address)}</span>
+            <span>on {pretty_name || chain_name}</span>
+            <div className={styles.account}>
+              {walletIcon}
+              <span className="monospace">{truncate(address)}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -151,60 +136,59 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
   }
 
   const type = getBridgeType(route)
+  const linkLabel = useMemo(() => {
+    switch (type) {
+      case BridgeType.SKIP:
+        return "Skip Explorer"
+      case BridgeType.OP_WITHDRAW:
+        return "Initia Scan"
+    }
+  }, [type])
 
   const content = (
     <>
       <header className={styles.header}>
         <div className={styles.title}>
           {renderIcon()}
-          <div className={styles.meta}>
-            <div>{intlFormatDistance(new Date(timestamp), new Date(), { locale: "en-US" })}</div>
-            {estimated_fees.length > 0 && (
-              <>
-                <div className={styles.divider} />
-                <div className={styles.item}>
-                  <span>Fees</span>
-                  <span>{formatFees(estimated_fees)}</span>
-                </div>
-              </>
-            )}
-            {operations.some((operation) => "swap" in operation) && (
-              <>
-                <div className={styles.divider} />
-                <div className={styles.item}>
-                  <span>Slippage</span>
-                  <span>{values.slippagePercent}%</span>
-                </div>
-              </>
-            )}
+          <div className={styles.date}>
+            {intlFormatDistance(new Date(timestamp), new Date(), { locale: "en-US" })}
           </div>
         </div>
         <div className={styles.explorer}>
-          {bridgeTypeExplorerName[type]} <IconArrowUpRight size={12} />
+          {linkLabel} <IconArrowUpRight size={12} />
         </div>
       </header>
 
       <div className={styles.route}>
-        {renderRow(amount_in, srcAsset, srcChain, values.sender, true)}
+        {renderRow(
+          amount_in,
+          srcAsset,
+          srcChain,
+          values.sender,
+          getWalletIcon(values.sender, find(values.cosmosWalletName)?.image),
+        )}
+
         <div className={styles.arrow}>
           <IconArrowDown size={12} />
         </div>
-        {renderRow(amount_out, dstAsset, dstChain, values.recipient, false)}
+
+        {renderRow(
+          amount_out,
+          dstAsset,
+          dstChain,
+          values.recipient,
+          getWalletIcon(values.recipient),
+        )}
       </div>
+
+      {estimated_fees.length > 0 && (
+        <div className={styles.fees}>
+          <span className={styles.label}>Fees</span>
+          <span className={styles.content}>{formatFees(estimated_fees)}</span>
+        </div>
+      )}
     </>
   )
-
-  const explorerLink = useMemo(() => {
-    switch (type) {
-      case BridgeType.LZ: {
-        return new URL(`/tx/${txHash.toLowerCase()}`, "https://layerzeroscan.com").toString()
-      }
-      case BridgeType.SKIP: {
-        const searchParams = new URLSearchParams({ tx_hash: txHash, chain_id: chainId })
-        return new URL(`?${searchParams.toString()}`, "https://explorer.skip.build").toString()
-      }
-    }
-  }, [chainId, txHash, type])
 
   if (type === BridgeType.OP_WITHDRAW) {
     return (
@@ -214,8 +198,11 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
     )
   }
 
+  const searchParams = new URLSearchParams({ tx_hash: txHash, chain_id: chainId })
+  const skipExplorerUrl = new URL(`?${searchParams.toString()}`, "https://explorer.skip.build")
+
   return (
-    <a href={explorerLink} className={styles.link} target="_blank">
+    <a href={skipExplorerUrl.toString()} className={styles.link} target="_blank">
       {content}
     </a>
   )

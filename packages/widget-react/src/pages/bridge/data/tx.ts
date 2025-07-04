@@ -315,12 +315,6 @@ export enum BridgeType {
   SKIP = "Skip",
 }
 
-export const bridgeTypeExplorerName: Record<BridgeType, string> = {
-  [BridgeType.OP_WITHDRAW]: "Initia Scan",
-  [BridgeType.LZ]: "LayerZero Scan",
-  [BridgeType.SKIP]: "Skip Explorer",
-}
-
 export function getBridgeType(route: RouterRouteResponseJson) {
   const { operations, dest_asset_denom } = route
   if (has("op_init_transfer", head(operations)) && dest_asset_denom === "uinit") {
