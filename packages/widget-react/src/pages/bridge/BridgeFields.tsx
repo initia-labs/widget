@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js"
+import { isAddress } from "ethers"
 import { sentenceCase } from "change-case"
 import { useEffect, useMemo, useState } from "react"
 import { useDebounce, useLocalStorage } from "react-use"
@@ -13,6 +14,7 @@ import { useNavigate } from "@/lib/router"
 import { formatAmount, formatNumber, toQuantity } from "@/public/utils"
 import { useModal } from "@/public/app/ModalContext"
 import { LocalStorageKey } from "@/data/constants"
+import { useFindChain } from "@/data/chains"
 import Button from "@/components/Button"
 import ChainAssetQuantityLayout from "@/components/form/ChainAssetQuantityLayout"
 import BalanceButton from "@/components/form/BalanceButton"
@@ -56,6 +58,7 @@ const BridgeFields = () => {
   const values = watch()
   const { srcChainId, srcDenom, dstChainId, dstDenom, quantity, sender, slippagePercent } = values
 
+  const findChain = useFindChain()
   const srcChain = useSkipChain(srcChainId)
   const srcChainType = useChainType(srcChain)
   const dstChain = useSkipChain(dstChainId)
@@ -186,6 +189,21 @@ const BridgeFields = () => {
     BigNumber(quantity).gt(0) &&
     BigNumber(quantity).isEqualTo(toQuantity(srcBalance?.amount, srcBalance?.decimals ?? 0))
 
+  const getIsFeeToken = () => {
+    switch (srcChainType) {
+      case "initia":
+        return findChain(srcChainId).fees.fee_tokens.some(({ denom }) => denom === srcDenom)
+      case "cosmos":
+        return srcChain.fee_assets.some(({ denom }) => denom === srcDenom)
+      case "evm":
+        return !isAddress(srcDenom)
+      default:
+        return false
+    }
+  }
+
+  const isFeeToken = getIsFeeToken()
+
   const renderFees = (fees: FeeJson[], tooltip: string) => {
     if (!fees.length) return null
     return (
@@ -265,8 +283,8 @@ const BridgeFields = () => {
                 </FormHelp>
               ))}
               {routeErrorInfo && <FormHelp level="info">{routeErrorInfo}</FormHelp>}
-              {isMaxAmount && (
-                <FormHelp level="warning">Make sure to leave enough for fees</FormHelp>
+              {isMaxAmount && isFeeToken && (
+                <FormHelp level="warning">Make sure to leave enough funds to cover fees</FormHelp>
               )}
               {route?.warning && <FormHelp level="warning">{route.warning.message}</FormHelp>}
               {route?.extra_warnings?.map((warning) => (

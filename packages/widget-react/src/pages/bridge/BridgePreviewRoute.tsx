@@ -2,17 +2,17 @@ import { zipObj } from "ramda"
 import { useToggle } from "react-use"
 import { Collapsible } from "radix-ui"
 import { useAccount } from "wagmi"
+import type { OperationJson } from "@skip-go/client"
 import { IconList, IconMinus, IconWallet } from "@initia/icons-react"
 import { AddressUtils } from "@/public/utils"
 import AsyncBoundary from "@/components/AsyncBoundary"
 import Image from "@/components/Image"
-import type { RouterOperationJson } from "./data/simulate"
 import { useBridgePreviewState } from "./data/tx"
 import { useCosmosWallets } from "./data/cosmos"
 import OperationItem from "./OperationItem"
 import styles from "./BridgePreviewRoute.module.css"
 
-function normalizeOperation(operation: RouterOperationJson) {
+function normalizeOperation(operation: OperationJson) {
   if ("transfer" in operation) {
     return { type: "transfer", ...operation, ...operation.transfer }
   }
@@ -46,8 +46,8 @@ function normalizeOperation(operation: RouterOperationJson) {
   if ("stargate_transfer" in operation) {
     return { type: "stargate_transfer", ...operation, ...operation.stargate_transfer }
   }
-  if ("lz_transfer" in operation) {
-    return { type: "lz_transfer", ...operation, ...operation.lz_transfer }
+  if ("layer_zero_transfer" in operation) {
+    return { type: "layer_zero_transfer", ...operation, ...operation.layer_zero_transfer }
   }
   throw new Error("Unknown operation type")
 }
@@ -91,7 +91,7 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
   const toProps = (normalizedOperation: ReturnType<typeof normalizeOperation>, index: number) => {
     // prettier-ignore
     // @ts-expect-error Skip API's response structure is too complicated
-    const { type, amount_out, denom, denom_out = denom, chain_id, to_chain_id = chain_id } = normalizedOperation
+    const { type, amount_out, denom, denom_out = denom, chain_id, from_chain_id, to_chain_id = chain_id ?? from_chain_id } = normalizedOperation
     const address = addressMap[to_chain_id]
     return {
       type: canToggleShowAll && !showAll ? undefined : type,
