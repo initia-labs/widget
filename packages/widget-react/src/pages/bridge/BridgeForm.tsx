@@ -15,7 +15,7 @@ import Page from "@/components/Page"
 import Button from "@/components/Button"
 import Status from "@/components/Status"
 import Footer from "@/components/Footer"
-import IndicatorBadge from "@/components/IndicatorBadge"
+import Indicator from "@/components/Indicator"
 import type { FormValues } from "./data/form"
 import { FormValuesSchema, useDefaultValues } from "./data/form"
 import { useGetDefaultAddress, useValidateAddress } from "./data/address"
@@ -145,11 +145,11 @@ const BridgeForm = () => {
               <path d="M9 5.5 H7.5 v3.75 h3.75 v-1.5 H9 V5.5 Z" />
             </svg>
           </Button.Small>
-          <IndicatorBadge offset={0} hidden={reminders.length === 0}>
+          <Indicator offset={0} disabled={reminders.length === 0}>
             <Button.Small onClick={() => navigate("/op/withdrawals")} disabled={!address}>
               <span>Withdrawal status</span>
             </Button.Small>
-          </IndicatorBadge>
+          </Indicator>
         </>
       }
     >

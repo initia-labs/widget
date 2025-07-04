@@ -20,28 +20,28 @@
 
 .item {
   aspect-ratio: 1 / 1;
+}
 
-  .button {
-    width: 100%;
-    height: 100%;
+.button {
+  width: 100%;
+  height: 100%;
 
-    background-color: var(--gray-7);
-    border: 1px solid transparent;
-    border-radius: 6px;
+  background-color: var(--gray-7);
+  border: 1px solid transparent;
+  border-radius: 6px;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-    transition: background-color var(--transition) ease;
+  transition: background-color var(--transition) ease;
 
-    &:hover {
-      background-color: var(--gray-6);
-    }
+  &:hover {
+    background-color: var(--gray-6);
+  }
 
-    &.active {
-      background-color: var(--gray-6);
-      border-color: var(--gray-3);
-    }
+  &.active {
+    background-color: var(--gray-6);
+    border-color: var(--gray-3);
   }
 }

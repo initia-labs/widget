@@ -1,10 +1,10 @@
 import clsx from "clsx"
 import type { PropsWithChildren } from "react"
+import Indicator from "../Indicator"
 import WidgetTooltip from "../WidgetTooltip"
 import Image from "../Image"
 import type { BaseChain } from "./types"
 import styles from "./ChainOptions.module.css"
-import IndicatorBadge from "../IndicatorBadge"
 
 interface Props {
   label?: string
@@ -20,8 +20,13 @@ const ChainOptions = ({ label, chains, value, onSelect, getShowIndicator }: Prop
       {label && <h2 className={styles.title}>{label}</h2>}
       <div className={styles.grid}>
         {chains.map(({ chainId, name, logoUrl }) => (
-          <IndicatorBadge hidden={!getShowIndicator?.(chainId)} className={styles.item}>
-            <WidgetTooltip label={name} key={chainId} disableHoverableContent>
+          <Indicator
+            offset={-2}
+            disabled={!getShowIndicator?.(chainId)}
+            className={styles.item}
+            key={chainId}
+          >
+            <WidgetTooltip label={name} disableHoverableContent>
               <button
                 type="button"
                 className={clsx(styles.button, { [styles.active]: chainId === value })}
@@ -30,7 +35,7 @@ const ChainOptions = ({ label, chains, value, onSelect, getShowIndicator }: Prop
                 <Image src={logoUrl} width={28} height={28} circle />
               </button>
             </WidgetTooltip>
-          </IndicatorBadge>
+          </Indicator>
         ))}
       </div>
     </div>
