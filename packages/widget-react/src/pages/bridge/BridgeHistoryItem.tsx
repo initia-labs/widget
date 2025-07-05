@@ -4,8 +4,8 @@ import { useEffect, useMemo, type ReactNode } from "react"
 import type { StatusResponseJson } from "@skip-go/client"
 import {
   IconArrowDown,
-  IconArrowUpRight,
   IconCheckCircleFilled,
+  IconExternalLink,
   IconWallet,
   IconWarningFilled,
 } from "@initia/icons-react"
@@ -115,9 +115,7 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
   ) => {
     return (
       <div className={styles.row}>
-        <div className={styles.logoContainer}>
-          <Images assetLogoUrl={logo_uri} chainLogoUrl={chain.logo_uri ?? undefined} />
-        </div>
+        <Images assetLogoUrl={logo_uri} chainLogoUrl={chain.logo_uri ?? undefined} />
         <div>
           <div className={styles.asset}>
             <span className={styles.amount}>{formatAmount(amount, { decimals })}</span>
@@ -155,7 +153,8 @@ const BridgeHistoryItem = ({ tx }: { tx: TxIdentifier }) => {
           </div>
         </div>
         <div className={styles.explorer}>
-          {linkLabel} <IconArrowUpRight size={12} />
+          <span>{linkLabel}</span>
+          <IconExternalLink size={12} />
         </div>
       </header>
 
