@@ -3,7 +3,6 @@
 
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: 20px;
 
   color: inherit;
@@ -20,8 +19,12 @@
 }
 
 .header {
-  display: grid;
-  gap: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  font-size: 12px;
+  font-weight: 500;
 
   .title {
     display: flex;
@@ -37,42 +40,40 @@
     color: var(--error);
   }
 
-  .badge {
-    background-color: var(--gray-6);
-    border-radius: 4px;
-    color: var(--gray-0);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 8px;
-  }
-
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px;
-
+  .date {
     color: var(--gray-2);
-    font-size: 12px;
-    font-weight: 500;
-    white-space: nowrap;
   }
 
-  .item {
+  .explorer {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
 
-    :last-of-type {
-      color: var(--gray-1);
-      font-family: var(--monospace);
-    }
+    color: var(--gray-3);
   }
 
   .divider {
     background-color: var(--gray-5);
     width: 1px;
     height: 8px;
+  }
+}
+
+.fees {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  .label {
+    color: var(--gray-2);
+  }
+
+  .content {
+    color: var(--gray-1);
+    font-family: var(--monospace);
   }
 }
 
@@ -84,7 +85,7 @@
 .row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .asset {
@@ -101,9 +102,19 @@
 }
 
 .chain {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
   color: var(--gray-2);
   font-size: 12px;
   font-weight: 500;
+
+  .account {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 }
 
 .arrow {

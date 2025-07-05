@@ -23,6 +23,7 @@ const Image = ({ src, alt, placeholder, classNames, circle, ...attrs }: Props) =
     <Img
       {...attrs}
       className={clsx(attrs.className, { [styles.circle]: circle })}
+      style={{ width, height }}
       src={src}
       alt={alt}
       unloader={unloader}

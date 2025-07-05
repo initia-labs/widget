@@ -1,5 +1,5 @@
 import { IconChevronDown } from "@initia/icons-react"
-import Image from "../Image"
+import Images from "../Images"
 import type { BaseAsset, BaseChain } from "./types"
 import styles from "./AssetOnChainButton.module.css"
 
@@ -12,10 +12,7 @@ interface Props {
 const AssetOnChainButton = ({ asset, chain, readOnly }: Props) => {
   const content = (
     <div className={styles.content}>
-      <div className={styles.logo}>
-        <Image src={asset.logoUrl} width={36} height={36} />
-        <Image src={chain.logoUrl} width={18} height={18} className={styles.chain} />
-      </div>
+      <Images assetLogoUrl={asset.logoUrl} chainLogoUrl={chain.logoUrl} />
 
       <div className={styles.details}>
         <div className={styles.symbol}>{asset.symbol}</div>
