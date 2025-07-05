@@ -120,7 +120,7 @@ const TxRequest = () => {
         <div className={styles.meta}>
           <TxMetaItem title="Chain" content={chainId} />
           <TxMetaItem
-            title="Fee"
+            title="Tx fee"
             content={<TxFee options={feeOptions} value={feeDenom} onChange={setFeeDenom} />}
           />
           {memo && <TxMetaItem title="Memo" content={memo} />}
