@@ -20,6 +20,11 @@
 
 .item {
   aspect-ratio: 1 / 1;
+}
+
+.button {
+  width: 100%;
+  height: 100%;
 
   background-color: var(--gray-7);
   border: 1px solid transparent;
