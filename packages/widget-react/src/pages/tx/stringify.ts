@@ -1,4 +1,5 @@
 import { last } from "ramda"
+import { BigNumber } from "bignumber.js"
 import { toBase64, toHex } from "@cosmjs/encoding"
 import type { BcsType, BcsTypeOptions } from "@mysten/bcs"
 import { bcs as mystenBcs } from "@mysten/bcs"
@@ -33,6 +34,7 @@ const bcs = {
   ...mystenBcs,
   address: addressSerializer,
   object: addressSerializer,
+  bigdecimal: bigdecimalSerializer,
 }
 
 /** Recursively resolves a Move-style type string into a bcs.*() call */
@@ -61,4 +63,35 @@ function addressSerializer(options?: BcsTypeOptions<Uint8Array, Iterable<number>
     input: (value: string) => AddressUtils.toBytes(value, 32),
     output: (value: Uint8Array) => `0x${toHex(value)}`,
   })
+}
+
+function bigdecimalSerializer(options?: BcsTypeOptions<string, string | number>) {
+  return bcs.vector(bcs.u8(options)).transform({
+    input: (val: number | string) => {
+      const n = new BigNumber(val).times(new BigNumber("1000000000000000000"))
+      const biguint = n.toFixed(0, BigNumber.ROUND_DOWN)
+      return toLittleEndian(BigInt(biguint))
+    },
+    output: (val) => {
+      const biguint = fromLittleEndian(val).toString()
+      return new BigNumber(biguint).div(new BigNumber("1000000000000000000")).toNumber()
+    },
+  })
+}
+
+function toLittleEndian(bigint: bigint): Uint8Array {
+  const result: number[] = []
+  while (bigint > 0) {
+    result.push(Number(bigint % BigInt(256)))
+    bigint = bigint / BigInt(256)
+  }
+  return new Uint8Array(result)
+}
+
+function fromLittleEndian(bytes: number[]): bigint {
+  let result = 0n
+  while (bytes.length > 0) {
+    result = result * 256n + BigInt(bytes.pop() as number)
+  }
+  return result
 }

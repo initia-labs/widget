@@ -52,4 +52,11 @@ describe("resolveBcsType", () => {
     expect(parse("AA==")).toBeNull()
     expect(parse("Af8=")).toBe(255)
   })
+
+  it("parses bigdecimals correctly", () => {
+    const parse = (input: string) => resolveBcsType("bigdecimal").parse(fromBase64(input))
+
+    expect(parse("CU7zPBOdY66sBg==")).toBe(Number("123.123456789012345678"))
+    expect(parse("AWQ=")).toBe(Number("0.0000000000000001"))
+  })
 })
