@@ -89,7 +89,7 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
     return <IconWallet size={11} />
   }
 
-  const toProps = (normalizedOperation: ReturnType<typeof normalizeOperation>, index: number) => {
+  const toProps = (normalizedOperation: ReturnType<typeof normalizeOperation>) => {
     // prettier-ignore
     // @ts-expect-error Skip API's response structure is too complicated
     const { type, amount_out, denom, denom_out = denom, chain_id, from_chain_id, to_chain_id = chain_id ?? from_chain_id } = normalizedOperation
@@ -100,7 +100,7 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
       denom: denom_out,
       chainId: to_chain_id,
       address,
-      walletIcon: index === operations.length - 1 ? getWalletIcon(address) : null,
+      walletIcon: getWalletIcon(address),
     }
   }
 
