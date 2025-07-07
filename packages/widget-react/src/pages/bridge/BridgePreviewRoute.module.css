@@ -21,7 +21,7 @@
   }
 
   span {
-    width: 82px;
+    width: 82px; /* magic number to fit the text */
     text-align: center;
   }
 }
