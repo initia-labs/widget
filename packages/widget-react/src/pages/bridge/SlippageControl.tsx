@@ -5,7 +5,7 @@ import Scrollable from "@/components/Scrollable"
 import Footer from "@/components/Footer"
 import Button from "@/components/Button"
 import NumericInput from "@/components/form/NumericInput"
-import InputHelp from "@/components/form/InputHelp"
+import FormHelp from "@/components/form/FormHelp"
 import { useBridgeForm } from "./data/form"
 import styles from "./SlippageControl.module.css"
 
@@ -105,7 +105,7 @@ const SlippageControl = ({ afterConfirm }: { afterConfirm: () => void }) => {
         )}
       </div>
 
-      {message && <InputHelp level={message.type}>{message.text}</InputHelp>}
+      {message && <FormHelp level={message.type}>{message.text}</FormHelp>}
 
       <Footer>
         <Button.White type="button" onClick={() => onConfirm(getValues())} disabled={isError}>
