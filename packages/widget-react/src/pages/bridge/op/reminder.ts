@@ -75,8 +75,7 @@ export function useClaimableReminders() {
   const setReminder = useCallback(
     (tx: TxIdentifier, details: ReminderDetails) => {
       localStorage.setItem(detailKeyOf(tx), JSON.stringify(details))
-      // Update the list atom to trigger re-render
-      setList((prev = []) => [...prev])
+      setList((prev = []) => [...prev]) // to trigger re-render
     },
     [setList],
   )
