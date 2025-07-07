@@ -74,7 +74,10 @@ function bigdecimalSerializer(options?: BcsTypeOptions<string, string | number>)
     },
     output: (val) => {
       const biguint = fromLittleEndian(val).toString()
-      return new BigNumber(biguint).div(new BigNumber("1000000000000000000")).toNumber()
+      // since these values will be displayed to the user, avoid exponential notation (e.g. 1e-18)
+      BigNumber.config({ EXPONENTIAL_AT: 1e9 })
+      // convert to string instead of number, otherwise it might loose precision
+      return new BigNumber(biguint).div(new BigNumber("1000000000000000000")).toString()
     },
   })
 }
