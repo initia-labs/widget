@@ -6,6 +6,7 @@ import FormHelp from "@/components/form/FormHelp"
 import AsyncBoundary from "@/components/AsyncBoundary"
 import ChainOptions from "@/components/form/ChainOptions"
 import WithdrawalList from "./WithdrawalList"
+import { useClaimableReminders } from "./reminder"
 import styles from "./Withdrawals.module.css"
 
 const Withdrawals = () => {
@@ -16,6 +17,7 @@ const Withdrawals = () => {
     initialChainId ?? (defaultChain.metadata?.is_l1 ? "" : defaultChain.chainId),
   )
   const findChain = useFindChain()
+  const { reminders } = useClaimableReminders()
   const chain = chainId ? findChain(chainId) : undefined
 
   return (
@@ -24,6 +26,7 @@ const Withdrawals = () => {
         chains={chains.filter(({ metadata }) => !metadata?.is_l1 && metadata?.op_denoms?.length)}
         value={chainId}
         onSelect={setChainId}
+        getShowIndicator={(chainId) => reminders.some((reminder) => reminder.chainId === chainId)}
       />
 
       <div className={styles.content}>

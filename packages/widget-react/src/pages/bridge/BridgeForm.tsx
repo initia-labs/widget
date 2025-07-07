@@ -15,6 +15,7 @@ import Page from "@/components/Page"
 import Button from "@/components/Button"
 import Status from "@/components/Status"
 import Footer from "@/components/Footer"
+import Indicator from "@/components/Indicator"
 import type { FormValues } from "./data/form"
 import { FormValuesSchema, useDefaultValues } from "./data/form"
 import { useGetDefaultAddress, useValidateAddress } from "./data/address"
@@ -23,7 +24,6 @@ import { useSkipAssets } from "./data/assets"
 import { skipQueryKeys } from "./data/skip"
 import { useClaimableModal, useClaimableReminders } from "./op/reminder"
 import BridgeFields from "./BridgeFields"
-import styles from "./BridgeForm.module.css"
 
 const BridgeForm = () => {
   useClaimableModal()
@@ -145,14 +145,11 @@ const BridgeForm = () => {
               <path d="M9 5.5 H7.5 v3.75 h3.75 v-1.5 H9 V5.5 Z" />
             </svg>
           </Button.Small>
-          <Button.Small
-            className={styles.link}
-            onClick={() => navigate("/op/withdrawals")}
-            disabled={!address}
-          >
-            <span>Withdrawal status</span>
-            {reminders.length > 0 ? <div className={styles.badge} /> : null}
-          </Button.Small>
+          <Indicator offset={0} disabled={reminders.length === 0}>
+            <Button.Small onClick={() => navigate("/op/withdrawals")} disabled={!address}>
+              <span>Withdrawal status</span>
+            </Button.Small>
+          </Indicator>
         </>
       }
     >

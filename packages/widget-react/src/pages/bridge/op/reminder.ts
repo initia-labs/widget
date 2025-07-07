@@ -1,6 +1,7 @@
 import { isPast } from "date-fns"
 import { useEffect, useCallback, useMemo, createElement } from "react"
-import { useLocalStorage } from "react-use"
+import { useAtom } from "jotai"
+import { atomWithStorage } from "jotai/utils"
 import { useNavigate } from "@/lib/router"
 import { useInitiaAddress } from "@/public/data/hooks"
 import { useModal } from "@/public/app/ModalContext"
@@ -23,9 +24,11 @@ function isSameTx(a: TxIdentifier, b: TxIdentifier) {
 const detailKeyOf = ({ chainId, txHash }: TxIdentifier) =>
   `${LocalStorageKey.OP_REMINDER}:${chainId}:${txHash}`
 
+const opRemindersAtom = atomWithStorage<TxIdentifier[]>(LocalStorageKey.OP_REMINDER, [])
+
 export function useClaimableReminders() {
   const initiaAddress = useInitiaAddress()
-  const [list = [], setList] = useLocalStorage<TxIdentifier[]>(LocalStorageKey.OP_REMINDER, [])
+  const [list = [], setList] = useAtom(opRemindersAtom)
 
   const reminders = useMemo(() => {
     return list
@@ -69,9 +72,13 @@ export function useClaimableReminders() {
     [list, setList],
   )
 
-  const setReminder = useCallback((tx: TxIdentifier, details: ReminderDetails) => {
-    localStorage.setItem(detailKeyOf(tx), JSON.stringify(details))
-  }, [])
+  const setReminder = useCallback(
+    (tx: TxIdentifier, details: ReminderDetails) => {
+      localStorage.setItem(detailKeyOf(tx), JSON.stringify(details))
+      setList((prev = []) => [...prev]) // to trigger re-render
+    },
+    [setList],
+  )
 
   return { reminders, addReminder, removeReminder, syncReminders, setReminder }
 }
