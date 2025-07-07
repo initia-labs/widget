@@ -115,12 +115,12 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
             {showAll ? (
               <>
                 <IconMinus size={12} />
-                <span>Hide detail</span>
+                <span>Hide details</span>
               </>
             ) : (
               <>
                 <IconList size={12} />
-                <span>Show detail</span>
+                <span>Show details</span>
               </>
             )}
           </button>
