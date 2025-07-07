@@ -159,17 +159,17 @@ export function useBridgeTx(tx: TxJson) {
           })
           updateNotification({
             type: "info",
-            title: "Transaction sent",
+            title: "Transaction submitted",
             description: createElement(
               Fragment,
               null,
-              "Check ",
+              "Please check the status of your transaction in ",
               createElement(
                 Link,
                 { to: "/bridge/history", onClick: hideNotification },
-                "the activity page",
+                "the Activity page",
               ),
-              " for transaction status",
+              ".",
             ),
           })
           if (isOpWithdraw) {

@@ -284,7 +284,9 @@ const BridgeFields = () => {
               ))}
               {routeErrorInfo && <FormHelp level="info">{routeErrorInfo}</FormHelp>}
               {isMaxAmount && isFeeToken && (
-                <FormHelp level="warning">Make sure to leave enough funds to cover fees</FormHelp>
+                <FormHelp level="warning">
+                  Make sure to leave enough gas token to execute the transaction
+                </FormHelp>
               )}
               {route?.warning && <FormHelp level="warning">{route.warning.message}</FormHelp>}
               {route?.extra_warnings?.map((warning) => (
@@ -301,11 +303,8 @@ const BridgeFields = () => {
                     <div className={styles.row}>
                       <span className={styles.title}>Fees</span>
                       <div>
-                        {renderFees(deductedFees, "Fee deducted from the amount you receive")}
-                        {renderFees(
-                          additionalFees,
-                          "Fee charged in addition to the amount you enter",
-                        )}
+                        {renderFees(deductedFees, "Fee subtracted from the amount you receive")}
+                        {renderFees(additionalFees, "Fee charged at the time of execution")}
                       </div>
                     </div>
                   )}

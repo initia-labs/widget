@@ -41,11 +41,11 @@ const Connect = () => {
     return (
       <div className={styles.empty}>
         <IconWarningFilled size={36} className={styles.icon} />
-        <h1>No wallets detected</h1>
+        <h1>No wallet detected</h1>
         <p>
-          Compatible with most EVM wallets.
+          Initia Widget works with most EVM-compatible wallets.
           <br />
-          Here are some popular options we recommend.
+          Here are some popular options you can use.
         </p>
         <div className={styles.list}>
           {recommendedWallets.map(({ name, url }) => {

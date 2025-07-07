@@ -64,7 +64,7 @@ export const SendFields = () => {
           <ChainAssetQuantityLayout
             selectButton={
               <ModalTrigger
-                title="Select chain and asset"
+                title="Select asset"
                 content={(close) => <SelectChainAsset afterSelect={close} />}
               >
                 <AssetOnChainButton asset={asset} chain={chain} />
@@ -96,7 +96,9 @@ export const SendFields = () => {
 
           <FormHelp.Stack>
             {isMaxAmount && isFeeToken && (
-              <FormHelp level="warning">Make sure to leave enough funds to cover fees</FormHelp>
+              <FormHelp level="warning">
+                Make sure to leave enough gas token to execute the transaction
+              </FormHelp>
             )}
 
             {!memo && (
