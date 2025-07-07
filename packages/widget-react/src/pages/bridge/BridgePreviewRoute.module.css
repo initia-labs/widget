@@ -13,12 +13,16 @@
   font-size: 12px;
   font-weight: 600;
   padding: 0 12px;
-  width: 114px; /* magic number to fit the icon and text */
 
   transition: background-color var(--transition) ease;
 
   &:hover {
     background-color: var(--gray-5);
+  }
+
+  span {
+    width: 82px; /* magic number to fit the text */
+    text-align: center;
   }
 }
 
