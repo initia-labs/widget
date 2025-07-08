@@ -284,7 +284,7 @@ const BridgeFields = () => {
               ))}
               {routeErrorInfo && <FormHelp level="info">{routeErrorInfo}</FormHelp>}
               {isMaxAmount && isFeeToken && (
-                <FormHelp level="warning">Make sure to leave enough for Tx fee</FormHelp>
+                <FormHelp level="warning">Make sure to leave enough for transaction fee</FormHelp>
               )}
               {route?.warning && <FormHelp level="warning">{route.warning.message}</FormHelp>}
               {route?.extra_warnings?.map((warning) => (
