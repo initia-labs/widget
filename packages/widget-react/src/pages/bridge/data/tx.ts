@@ -159,7 +159,7 @@ export function useBridgeTx(tx: TxJson) {
           })
           updateNotification({
             type: "info",
-            title: "Transaction sent",
+            title: "Transaction submitted",
             description: createElement(
               Fragment,
               null,

@@ -41,7 +41,7 @@ const Connect = () => {
     return (
       <div className={styles.empty}>
         <IconWarningFilled size={36} className={styles.icon} />
-        <h1>No wallets detected</h1>
+        <h1>No wallet detected</h1>
         <p>
           Compatible with most EVM wallets.
           <br />

@@ -134,8 +134,8 @@ const RecipientInput = ({ mode = "onChange", myAddress, ...props }: Props) => {
           extra={
             (!myAddress || (!!resolvedAddress && !isMyAddress)) && (
               <FormHelp level="warning">
-                Do not enter an exchange address. Tokens lost during the transfer will not be
-                retrievable.
+                Do not enter an exchange address. Tokens sent to an address that does not support
+                bridge transfer will be irretrievable.
               </FormHelp>
             )
           }
