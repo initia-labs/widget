@@ -97,7 +97,7 @@ export const SendFields = () => {
 
           <FormHelp.Stack>
             {isMaxAmount && isFeeToken && (
-              <FormHelp level="warning">Make sure to leave enough for Tx fee</FormHelp>
+              <FormHelp level="warning">Make sure to leave enough for transaction fee</FormHelp>
             )}
 
             {!memo && (
