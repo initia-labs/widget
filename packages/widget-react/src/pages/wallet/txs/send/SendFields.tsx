@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js"
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 import { useMutation } from "@tanstack/react-query"
 import { useFormContext } from "react-hook-form"
-import { useChain, usePricesQuery } from "@/data/chains"
+import { useChain, useManageChains, usePricesQuery } from "@/data/chains"
 import { AddressUtils, formatAmount, formatNumber, toAmount, toQuantity } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { useAsset } from "@/data/assets"
@@ -28,6 +28,7 @@ export const SendFields = () => {
   const { register, watch, setValue, handleSubmit, formState } = useFormContext<FormValues>()
   const { chainId, denom, quantity, memo } = watch()
 
+  const { addedChains } = useManageChains()
   const chain = useChain(chainId)
   const balances = useBalances(chain)
   const asset = useAsset(denom, chain)
@@ -64,7 +65,7 @@ export const SendFields = () => {
           <ChainAssetQuantityLayout
             selectButton={
               <ModalTrigger
-                title="Select asset"
+                title={addedChains.length > 1 ? "Select chain and asset" : "Select asset"}
                 content={(close) => <SelectChainAsset afterSelect={close} />}
               >
                 <AssetOnChainButton asset={asset} chain={chain} />
@@ -96,9 +97,7 @@ export const SendFields = () => {
 
           <FormHelp.Stack>
             {isMaxAmount && isFeeToken && (
-              <FormHelp level="warning">
-                Make sure to leave enough gas token to execute the transaction
-              </FormHelp>
+              <FormHelp level="warning">Make sure to leave enough for Tx fee</FormHelp>
             )}
 
             {!memo && (

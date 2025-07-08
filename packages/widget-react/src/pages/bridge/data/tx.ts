@@ -160,17 +160,29 @@ export function useBridgeTx(tx: TxJson) {
           updateNotification({
             type: "info",
             title: "Transaction submitted",
-            description: createElement(
-              Fragment,
-              null,
-              "Please check the status of your transaction in ",
-              createElement(
-                Link,
-                { to: "/bridge/history", onClick: hideNotification },
-                "the Activity page",
-              ),
-              ".",
-            ),
+            description: isOpWithdraw
+              ? createElement(
+                  Fragment,
+                  null,
+                  `Please make sure to withdraw ${(route.estimated_route_duration_seconds / (60 * 60 * 24)).toFixed(0)} days later in the `,
+                  createElement(
+                    Link,
+                    { to: "/op/withdrawals", onClick: hideNotification },
+                    "Withdrawal status page",
+                  ),
+                  ".",
+                )
+              : createElement(
+                  Fragment,
+                  null,
+                  "Please check the status of your transaction in the ",
+                  createElement(
+                    Link,
+                    { to: "/bridge/history", onClick: hideNotification },
+                    "Activity page",
+                  ),
+                  ".",
+                ),
           })
           if (isOpWithdraw) {
             addReminder(tx, {
