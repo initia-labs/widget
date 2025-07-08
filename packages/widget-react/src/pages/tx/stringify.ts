@@ -65,24 +65,28 @@ function addressSerializer(options?: BcsTypeOptions<Uint8Array, Iterable<number>
   })
 }
 
+const Num = BigNumber.clone({ EXPONENTIAL_AT: 1e9 })
+
 function bigdecimalSerializer(options?: BcsTypeOptions<string, string | number>) {
   return bcs.vector(bcs.u8(options)).transform({
     input: (val: number | string) => {
-      const n = new BigNumber(val).times(new BigNumber("1000000000000000000"))
-      const biguint = n.toFixed(0, BigNumber.ROUND_DOWN)
+      const n = new Num(val).times(new Num("1000000000000000000"))
+      const biguint = n.toFixed(0, Num.ROUND_DOWN)
       return toLittleEndian(BigInt(biguint))
     },
     output: (val) => {
       const biguint = fromLittleEndian(val).toString()
-      // since these values will be displayed to the user, avoid exponential notation (e.g. 1e-18)
-      BigNumber.config({ EXPONENTIAL_AT: 1e9 })
       // convert to string instead of number, otherwise it might loose precision
-      return new BigNumber(biguint).div(new BigNumber("1000000000000000000")).toString()
+      return new Num(biguint).div(new Num("1000000000000000000")).toString()
     },
   })
 }
 
 function toLittleEndian(bigint: bigint): Uint8Array {
+  if (bigint === 0n) {
+    return new Uint8Array([0])
+  }
+
   const result: number[] = []
   while (bigint > 0) {
     result.push(Number(bigint % BigInt(256)))
@@ -93,8 +97,8 @@ function toLittleEndian(bigint: bigint): Uint8Array {
 
 function fromLittleEndian(bytes: number[]): bigint {
   let result = 0n
-  while (bytes.length > 0) {
-    result = result * 256n + BigInt(bytes.pop() as number)
+  for (let i = bytes.length - 1; i >= 0; i--) {
+    result = result * 256n + BigInt(bytes[i])
   }
   return result
 }
