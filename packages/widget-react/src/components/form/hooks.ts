@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import useMedia from "react-use/lib/useMedia"
+import { useMedia } from "react-use"
 
 export function useAutoFocus<T extends HTMLInputElement>() {
   const ref = useRef<T>(null)

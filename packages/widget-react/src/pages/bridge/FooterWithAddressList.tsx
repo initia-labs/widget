@@ -1,7 +1,7 @@
 import { encodeSecp256k1Pubkey, pubkeyToAddress } from "@cosmjs/amino"
 import { fromBech32, toBech32 } from "@cosmjs/encoding"
 import type { ReactNode } from "react"
-import useAsync from "react-use/lib/useAsync"
+import { useAsync } from "react-use"
 import { AddressUtils } from "@/public/utils"
 import { useInitiaWidget } from "@/public/data/hooks"
 import { normalizeError } from "@/data/http"

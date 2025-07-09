@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import useAsync from "react-use/lib/useAsync"
+import { useAsync } from "react-use"
 import type { MsgsResponseJson, TxJson } from "@skip-go/client"
 import Footer from "@/components/Footer"
 import Button from "@/components/Button"

@@ -2,8 +2,7 @@ import BigNumber from "bignumber.js"
 import { isAddress } from "ethers"
 import { sentenceCase } from "change-case"
 import { useEffect, useMemo, useState } from "react"
-import useDebounce from "react-use/lib/useDebounce"
-import useLocalStorage from "react-use/lib/useLocalStorage"
+import { useDebounce, useLocalStorage } from "react-use"
 import type { FeeJson } from "@skip-go/client"
 import {
   IconChevronDown,
