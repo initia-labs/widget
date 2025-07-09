@@ -10,6 +10,11 @@ export interface RouterChainJson extends ChainJson {
   rpc: string
   rest: string
   hidden?: boolean
+  evm_fee_asset?: {
+    decimals: number
+    name: string
+    symbol: string
+  }
 }
 
 export function useGetIsInitiaChain() {
