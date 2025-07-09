@@ -1,4 +1,5 @@
 import { last } from "ramda"
+import { BigNumber } from "bignumber.js"
 import { toBase64, toHex } from "@cosmjs/encoding"
 import type { BcsType, BcsTypeOptions } from "@mysten/bcs"
 import { bcs as mystenBcs } from "@mysten/bcs"
@@ -33,6 +34,7 @@ const bcs = {
   ...mystenBcs,
   address: addressSerializer,
   object: addressSerializer,
+  bigdecimal: bigdecimalSerializer,
 }
 
 /** Recursively resolves a Move-style type string into a bcs.*() call */
@@ -61,4 +63,43 @@ function addressSerializer(options?: BcsTypeOptions<Uint8Array, Iterable<number>
     input: (value: string) => AddressUtils.toBytes(value, 32),
     output: (value: Uint8Array) => `0x${toHex(value)}`,
   })
+}
+
+function bigdecimalSerializer(options?: BcsTypeOptions<string, string | number>) {
+  return bcs.vector(bcs.u8(options)).transform({
+    input: (value: string | number) => {
+      const number = BigNumber(value).times(BigNumber(10).pow(18)).toFixed(0, BigNumber.ROUND_DOWN)
+      return toLittleEndian(BigInt(number))
+    },
+    output: (val) => {
+      const number = fromLittleEndian(new Uint8Array(val))
+      return BigNumber(number).div(BigNumber(10).pow(18)).toFixed()
+    },
+  })
+}
+
+function toLittleEndian(value: bigint): Uint8Array {
+  if (value < 0n) {
+    throw new Error("negative values are not supported")
+  }
+
+  if (value === 0n) {
+    return new Uint8Array([0])
+  }
+
+  const bytes: number[] = []
+  let n = value
+  while (n > 0n) {
+    bytes.push(Number(n & 0xffn))
+    n >>= 8n
+  }
+  return new Uint8Array(bytes)
+}
+
+function fromLittleEndian(bytes: Uint8Array): bigint {
+  let result = 0n
+  for (let i = 0; i < bytes.length; i++) {
+    result += BigInt(bytes[i]) << BigInt(8 * i)
+  }
+  return result
 }
