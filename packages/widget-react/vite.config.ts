@@ -31,47 +31,12 @@ function emitCssAsJsString(): Plugin {
   }
 }
 
-function patchPeerDepsImportsPlugin(): Plugin {
-  const prefixesToFix = [
-    "@cosmjs/amino/build/signdoc",
-    "@initia/opinit.proto/opinit/ophost/v1/tx",
-    "cosmjs-types",
-    "react-use/lib/",
-  ]
-
-  return {
-    name: "patch-peer-deps-imports",
-    renderChunk(code) {
-      const importRegex = /(from\s+["'])([^"']+)(["'])/g
-      const fixedCode = code.replaceAll(importRegex, (match, p1, p2, p3) => {
-        // p1 = from '
-        // p2 = the actual path (e.g., cosmjs-types/cosmos/tx/v1beta1/tx)
-        // p3 = '
-
-        // Check if the import path starts with one of our prefixes
-        // and doesn't already have a file extension.
-        if (prefixesToFix.some((prefix) => p2.startsWith(prefix)) && !path.extname(p2)) {
-          return `${p1}${p2}.js${p3}`
-        }
-
-        // Otherwise, return the original import statement unchanged.
-        return match
-      })
-
-      return {
-        code: fixedCode,
-        map: null,
-      }
-    },
-  }
-}
-
 export default defineConfig(({ mode }) => {
   return {
     plugins: [
       dts({ rollupTypes: mode !== "fast" }),
       react(),
-      patchPeerDepsImportsPlugin(),
+      // patchPeerDepsImportsPlugin(),
       emitCssAsJsString(),
     ],
     resolve: {
@@ -82,8 +47,8 @@ export default defineConfig(({ mode }) => {
     build: {
       lib: {
         entry: path.resolve(__dirname, "src/index.ts"),
-        formats: ["es"],
-        fileName: "index",
+        formats: ["es", "cjs"],
+        fileName: (format) => `index.${format}.js`,
         cssFileName: "styles",
       },
       rollupOptions: {
