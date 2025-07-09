@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import fs from "fs"
 import path from "path"
 import type { Plugin } from "vite"
@@ -30,9 +31,48 @@ function emitCssAsJsString(): Plugin {
   }
 }
 
+function patchPeerDepsImportsPlugin(): Plugin {
+  const prefixesToFix = [
+    "cosmjs-types",
+    "@cosmjs/amino/build/signdoc",
+    "@initia/opinit.proto/opinit/ophost/v1/tx",
+  ]
+
+  return {
+    name: "patch-peer-deps-imports",
+    renderChunk(code) {
+      const importRegex = /(from\s+["'])([^"']+)(["'])/g
+      const fixedCode = code.replaceAll(importRegex, (match, p1, p2, p3) => {
+        // p1 = from '
+        // p2 = the actual path (e.g., cosmjs-types/cosmos/tx/v1beta1/tx)
+        // p3 = '
+
+        // Check if the import path starts with one of our prefixes
+        // and doesn't already have a file extension.
+        if (prefixesToFix.some((prefix) => p2.startsWith(prefix)) && !path.extname(p2)) {
+          return `${p1}${p2}.js${p3}`
+        }
+
+        // Otherwise, return the original import statement unchanged.
+        return match
+      })
+
+      return {
+        code: fixedCode,
+        map: null,
+      }
+    },
+  }
+}
+
 export default defineConfig(({ mode }) => {
   return {
-    plugins: [dts({ rollupTypes: mode !== "fast" }), react(), emitCssAsJsString()],
+    plugins: [
+      dts({ rollupTypes: mode !== "fast" }),
+      react(),
+      patchPeerDepsImportsPlugin(),
+      emitCssAsJsString(),
+    ],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
