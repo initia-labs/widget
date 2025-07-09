@@ -33,9 +33,10 @@ function emitCssAsJsString(): Plugin {
 
 function patchPeerDepsImportsPlugin(): Plugin {
   const prefixesToFix = [
-    "cosmjs-types",
     "@cosmjs/amino/build/signdoc",
     "@initia/opinit.proto/opinit/ophost/v1/tx",
+    "cosmjs-types",
+    "react-use/lib/",
   ]
 
   return {
