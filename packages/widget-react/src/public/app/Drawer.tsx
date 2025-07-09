@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import { useContext, useLayoutEffect, type PropsWithChildren } from "react"
 import { createPortal } from "react-dom"
-import { useMedia } from "react-use"
+import useMedia from "react-use/lib/useMedia"
 import type { FallbackProps } from "react-error-boundary"
 import { useTransition, animated } from "@react-spring/web"
 import { useQueryClient } from "@tanstack/react-query"

@@ -1,5 +1,5 @@
 import { useCallback } from "react"
-import { useLocalStorage } from "react-use"
+import useLocalStorage from "react-use/lib/useLocalStorage"
 import type { RouteResponseJson } from "@skip-go/client"
 import { LocalStorageKey } from "@/data/constants"
 import type { FormValues } from "./form"

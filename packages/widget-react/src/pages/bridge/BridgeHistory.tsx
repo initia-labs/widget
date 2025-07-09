@@ -1,4 +1,4 @@
-import { useToggle } from "react-use"
+import useToggle from "react-use/lib/useToggle"
 import { useInitiaWidget } from "@/public/data/hooks"
 import Page from "@/components/Page"
 import Status from "@/components/Status"

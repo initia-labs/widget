@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { useLocalStorage } from "react-use"
+import useLocalStorage from "react-use/lib/useLocalStorage"
 import { IconChevronUp, IconChevronDown, IconSettingFilled } from "@initia/icons-react"
 import { Link } from "@/lib/router"
 import { version } from "@/../package.json"
