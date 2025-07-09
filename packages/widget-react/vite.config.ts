@@ -33,12 +33,7 @@ function emitCssAsJsString(): Plugin {
 
 export default defineConfig(({ mode }) => {
   return {
-    plugins: [
-      dts({ rollupTypes: mode !== "fast" }),
-      react(),
-      // patchPeerDepsImportsPlugin(),
-      emitCssAsJsString(),
-    ],
+    plugins: [dts({ rollupTypes: mode !== "fast" }), react(), emitCssAsJsString()],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
