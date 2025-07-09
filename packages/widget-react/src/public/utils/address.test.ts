@@ -13,19 +13,24 @@ const cases = [
   },
   {
     description: "special address",
-    hex: "0x1",
+    hex: "0x1", // invalid address
     bech32: "init1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqpqr5e3d",
+    isSpecial: true,
   },
 ]
 
 describe("Address module", () => {
-  cases.forEach(({ description, hex, bech32 }) => {
+  cases.forEach(({ description, hex, bech32, isSpecial }) => {
     describe(description, () => {
       test("should recognize valid bech32 address", () => {
         expect(AddressUtils.validate(bech32)).toBe(true)
       })
 
       test("should recognize valid hex address", () => {
+        if (isSpecial) {
+          expect(AddressUtils.validate(hex)).toBe(false)
+          return
+        }
         expect(AddressUtils.validate(hex)).toBe(true)
       })
 
