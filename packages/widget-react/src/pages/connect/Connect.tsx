@@ -1,19 +1,21 @@
 import type { Connector } from "wagmi"
 import { useConnect } from "wagmi"
 import { useState } from "react"
+import clsx from "clsx"
 import { useMutation } from "@tanstack/react-query"
-import { IconExternalLink, IconWarningFilled } from "@initia/icons-react"
+import { IconExternalLink } from "@initia/icons-react"
+import { LocalStorageKey } from "@/data/constants"
 import { normalizeError } from "@/data/http"
 import { useWidgetVisibility } from "@/data/ui"
-import List from "@/components/List"
 import Image from "@/components/Image"
+import Loader from "@/components/Loader"
 import styles from "./Connect.module.css"
 
 const recommendedWallets = [
-  { name: "Rabby", url: "https://rabby.io" },
-  { name: "Phantom", url: "https://phantom.com" },
-  { name: "Keplr", url: "https://keplr.app" },
-  { name: "Leap", url: "https://leapwallet.io" },
+  { name: "Rabby", url: "https://rabby.io", id: "io.rabby" },
+  { name: "Phantom", url: "https://phantom.com", id: "app.phantom" },
+  { name: "Keplr", url: "https://keplr.app", id: "app.keplr" },
+  { name: "Leap", url: "https://leapwallet.io", id: "io.leapwallet.LeapWallet" },
 ]
 
 const Connect = () => {
@@ -23,6 +25,7 @@ const Connect = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: async (connector: Connector) => {
       setPendingConnectorId(connector.id)
+      localStorage.setItem(LocalStorageKey.RECENT_WALLET, connector.id)
       try {
         await connectAsync({ connector })
       } catch (error) {
@@ -37,18 +40,34 @@ const Connect = () => {
     },
   })
 
-  if (connectors.length === 0) {
-    return (
-      <div className={styles.empty}>
-        <IconWarningFilled size={36} className={styles.icon} />
-        <h1>No wallet detected</h1>
-        <p>
-          Compatible with most EVM wallets.
-          <br />
-          Here are some popular options we recommend.
-        </p>
-        <div className={styles.list}>
-          {recommendedWallets.map(({ name, url }) => {
+  return (
+    <div className={styles.page}>
+      <h1>Connect wallet</h1>
+      <div className={styles.list}>
+        {connectors.map((connector) => {
+          const { name, icon, id } = connector
+          return (
+            <button
+              onClick={() => mutate(connector)}
+              className={clsx(styles.item, styles.installed)}
+              key={id}
+              disabled={isPending}
+            >
+              <Image src={icon} width={24} height={24} />
+              <span className={styles.name}>{name}</span>
+              {pendingConnectorId === id ? (
+                <Loader size={12} />
+              ) : localStorage.getItem(LocalStorageKey.RECENT_WALLET) === id ? (
+                <span className={styles.recent}>Recent</span>
+              ) : (
+                <span className={styles.extra}>Installed</span>
+              )}
+            </button>
+          )
+        })}
+        {recommendedWallets
+          .filter(({ id }) => !connectors.some((c) => c.id === id))
+          .map(({ name, url }) => {
             const imageUrl = `https://assets.initia.xyz/images/wallets/${name}.webp`
             return (
               <a href={url} className={styles.item} target="_blank" key={name}>
@@ -58,24 +77,14 @@ const Connect = () => {
               </a>
             )
           })}
-        </div>
       </div>
-    )
-  }
 
-  return (
-    <>
-      <h1 className={styles.title}>Connect wallet</h1>
-      <List
-        list={[...connectors]}
-        onSelect={(connector) => mutate(connector)}
-        getImage={({ icon = "" }) => icon}
-        getName={({ name }) => name}
-        getKey={({ id }) => id}
-        getIsLoading={({ id }) => id === pendingConnectorId}
-        getDisabled={() => isPending}
-      />
-    </>
+      <div className={styles.footer}>
+        <a href="https://docs.initia.xyz/home/tools/wallet-widget" target="_blank" rel="noreferrer">
+          Learn more <IconExternalLink size={14} />
+        </a>
+      </div>
+    </div>
   )
 }
 
