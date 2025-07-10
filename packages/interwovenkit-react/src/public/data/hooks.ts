@@ -41,7 +41,7 @@ export function useUsernameQuery() {
   })
 }
 
-export function useInitiaWidget() {
+export function useInterwovenKit() {
   const address = useAddress()
   const initiaAddress = useInitiaAddress()
   const hexAddress = useHexAddress()

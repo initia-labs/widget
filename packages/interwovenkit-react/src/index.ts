@@ -8,7 +8,7 @@ export { injectStyles } from "./public/portal"
 // constants
 export * from "./public/data/constants"
 
-// useInitiaWidget()
+// useInterwovenKit()
 export * from "./public/data/hooks"
 
 // <InitiaWidgetProvider />

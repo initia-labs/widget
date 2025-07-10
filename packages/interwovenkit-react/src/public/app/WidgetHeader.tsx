@@ -2,7 +2,7 @@ import clsx from "clsx"
 import { useAccount, useDisconnect } from "wagmi"
 import { IconCopy, IconSignOut } from "@initia/icons-react"
 import { truncate } from "@/public/utils"
-import { useInitiaWidget } from "@/public/data/hooks"
+import { useInterwovenKit } from "@/public/data/hooks"
 import { useWidgetVisibility } from "@/data/ui"
 import CopyButton from "@/components/CopyButton"
 import Image from "@/components/Image"
@@ -11,7 +11,7 @@ import styles from "./WidgetHeader.module.css"
 const WidgetHeader = () => {
   const { connector } = useAccount()
   const { disconnect } = useDisconnect()
-  const { address, username } = useInitiaWidget()
+  const { address, username } = useInterwovenKit()
   const { closeWidget } = useWidgetVisibility()
   const name = username ?? address
 

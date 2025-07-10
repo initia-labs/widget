@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query"
 import { useFormContext } from "react-hook-form"
 import { useChain, useManageChains, usePricesQuery } from "@/data/chains"
 import { AddressUtils, formatAmount, formatNumber, toAmount, toQuantity } from "@/public/utils"
-import { useInitiaWidget } from "@/public/data/hooks"
+import { useInterwovenKit } from "@/public/data/hooks"
 import { useAsset } from "@/data/assets"
 import { useBalances } from "@/data/account"
 import Page from "@/components/Page"
@@ -23,7 +23,7 @@ import SelectChainAsset from "./SelectChainAsset"
 import styles from "./SendFields.module.css"
 
 export const SendFields = () => {
-  const { address, initiaAddress, requestTxSync } = useInitiaWidget()
+  const { address, initiaAddress, requestTxSync } = useInterwovenKit()
 
   const { register, watch, setValue, handleSubmit, formState } = useFormContext<FormValues>()
   const { chainId, denom, quantity, memo } = watch()

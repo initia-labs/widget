@@ -1,8 +1,8 @@
-import { truncate, useInitiaWidget } from "@initia/widget-react"
+import { truncate, useInterwovenKit } from "@initia/widget-react"
 import styles from "./Connection.module.css"
 
 const Connection = () => {
-  const { address, username, openConnect, openWallet } = useInitiaWidget()
+  const { address, username, openConnect, openWallet } = useInterwovenKit()
 
   if (!address) {
     return (

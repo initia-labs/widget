@@ -8,7 +8,7 @@ import type { AminoMsg } from "@cosmjs/amino"
 import { useFormContext } from "react-hook-form"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useLocationState } from "@/lib/router"
-import { useInitiaWidget } from "@/public/data/hooks"
+import { useInterwovenKit } from "@/public/data/hooks"
 import { useConfig } from "@/data/config"
 import { useChain, useLayer1 } from "@/data/chains"
 import { useAutoFocus } from "@/components/form/hooks"
@@ -34,7 +34,7 @@ const SendNftFields = () => {
   const { routerApiUrl } = useConfig()
   const aminoTypes = useAminoTypes()
   const layer1 = useLayer1()
-  const { address, initiaAddress: sender, requestTxSync } = useInitiaWidget()
+  const { address, initiaAddress: sender, requestTxSync } = useInterwovenKit()
 
   const { watch, setValue, handleSubmit, formState } = useFormContext<FormValues>()
   const values = watch()

@@ -2,7 +2,7 @@ import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { useMutation } from "@tanstack/react-query"
-import { useInitiaWidget } from "@initia/widget-react"
+import { useInterwovenKit } from "@initia/widget-react"
 import styles from "./Send.module.css"
 
 interface FormValues {
@@ -13,7 +13,7 @@ interface FormValues {
 }
 
 const Send = () => {
-  const { initiaAddress, requestTxSync, waitForTxConfirmation } = useInitiaWidget()
+  const { initiaAddress, requestTxSync, waitForTxConfirmation } = useInterwovenKit()
 
   const { register, setValue, handleSubmit } = useForm({
     defaultValues: { recipient: "", amount: "1000000", denom: "uinit", memo: "" },

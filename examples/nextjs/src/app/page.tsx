@@ -1,9 +1,9 @@
 "use client"
 
-import { truncate, useInitiaWidget } from "@initia/widget-react"
+import { truncate, useInterwovenKit } from "@initia/widget-react"
 
 export default function Home() {
-  const { address, username, openConnect, openWallet } = useInitiaWidget()
+  const { address, username, openConnect, openWallet } = useInterwovenKit()
 
   if (!address) {
     return <button onClick={openConnect}>Connect</button>

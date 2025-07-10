@@ -1,11 +1,11 @@
 import { isAddress } from "ethers"
 import { fromBech32 } from "@cosmjs/encoding"
 import { AddressUtils } from "@/public/utils"
-import { useInitiaWidget } from "@/public/data/hooks"
+import { useInterwovenKit } from "@/public/data/hooks"
 import { useFindSkipChain, useFindChainType } from "./chains"
 
 export function useGetDefaultAddress() {
-  const { initiaAddress, hexAddress } = useInitiaWidget()
+  const { initiaAddress, hexAddress } = useInterwovenKit()
   const findSkipChain = useFindSkipChain()
   const findChainType = useFindChainType()
   return (chainId: string) => {

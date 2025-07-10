@@ -11,7 +11,7 @@ import { Link, useLocationState, useNavigate } from "@/lib/router"
 import { DEFAULT_GAS_ADJUSTMENT } from "@/public/data/constants"
 import { AddressUtils } from "@/public/utils"
 import { useNotification } from "@/public/app/NotificationContext"
-import { useInitiaAddress, useInitiaWidget } from "@/public/data/hooks"
+import { useInitiaAddress, useInterwovenKit } from "@/public/data/hooks"
 import { normalizeError, STALE_TIMES } from "@/data/http"
 import { useAminoTypes, useGetProvider, useRegistry, useSignWithEthSecp256k1 } from "@/data/signer"
 import { waitForTxConfirmationWithClient } from "@/data/tx"
@@ -58,7 +58,7 @@ export function useBridgeTx(tx: TxJson) {
   const { srcChainId, sender, recipient, cosmosWalletName } = values
 
   const getProvider = useGetProvider()
-  const { requestTxSync, waitForTxConfirmation } = useInitiaWidget()
+  const { requestTxSync, waitForTxConfirmation } = useInterwovenKit()
   const { find } = useCosmosWallets()
   const registry = useRegistry()
   const aminoTypes = useAminoTypes()

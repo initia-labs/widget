@@ -2,7 +2,7 @@ import { fromBase64, toBase64 } from "@cosmjs/encoding"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { MsgFinalizeTokenWithdrawal } from "@initia/opinit.proto/opinit/ophost/v1/tx"
 import { IconCheckCircleFilled } from "@initia/icons-react"
-import { useInitiaAddress, useInitiaWidget } from "@/public/data/hooks"
+import { useInitiaAddress, useInterwovenKit } from "@/public/data/hooks"
 import { useLayer1 } from "@/data/chains"
 import { computeWithdrawalHash, opQueryKeys, useOutputResponse, useWithdrawalClaimed } from "./data"
 import { useOpWithdrawal } from "./context"
@@ -24,7 +24,7 @@ const ClaimButton = () => {
 
   const layer1 = useLayer1()
   const address = useInitiaAddress()
-  const { requestTxSync, waitForTxConfirmation } = useInitiaWidget()
+  const { requestTxSync, waitForTxConfirmation } = useInterwovenKit()
   const outputResponse = useOutputResponse(withdrawalTx)
   const withdrawalHash = toBase64(computeWithdrawalHash(withdrawalTx))
   const claimed = useWithdrawalClaimed(withdrawalTx, withdrawalHash)

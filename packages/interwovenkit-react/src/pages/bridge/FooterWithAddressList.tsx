@@ -3,7 +3,7 @@ import { fromBech32, toBech32 } from "@cosmjs/encoding"
 import type { ReactNode } from "react"
 import { useAsync } from "react-use"
 import { AddressUtils } from "@/public/utils"
-import { useInitiaWidget } from "@/public/data/hooks"
+import { useInterwovenKit } from "@/public/data/hooks"
 import { normalizeError } from "@/data/http"
 import { useOfflineSigner } from "@/data/signer"
 import Footer from "@/components/Footer"
@@ -22,7 +22,7 @@ const FooterWithAddressList = ({ children }: Props) => {
   const { required_chain_addresses } = route
   const { srcChainId, dstChainId, sender, recipient } = values
 
-  const { initiaAddress, hexAddress } = useInitiaWidget()
+  const { initiaAddress, hexAddress } = useInterwovenKit()
   const signer = useOfflineSigner()
 
   const findSkipChain = useFindSkipChain()

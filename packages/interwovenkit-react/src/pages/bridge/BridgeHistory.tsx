@@ -1,5 +1,5 @@
 import { useToggle } from "react-use"
-import { useInitiaWidget } from "@/public/data/hooks"
+import { useInterwovenKit } from "@/public/data/hooks"
 import Page from "@/components/Page"
 import Status from "@/components/Status"
 import AsyncBoundary from "@/components/AsyncBoundary"
@@ -9,7 +9,7 @@ import BridgeHistoryItem from "./BridgeHistoryItem"
 import styles from "./BridgeHistory.module.css"
 
 const BridgeHistory = () => {
-  const { initiaAddress, hexAddress } = useInitiaWidget()
+  const { initiaAddress, hexAddress } = useInterwovenKit()
   const { history, getHistoryDetails } = useBridgeHistoryList()
   const allHistory = history.filter((tx) => getHistoryDetails(tx))
   const myHistory = allHistory.filter((tx) => {
