@@ -17,7 +17,7 @@ interface MoveContractAbi {
   }[]
 }
 
-const moveQueryKeys = createQueryKeys("initia-widget:move", {
+const moveQueryKeys = createQueryKeys("interwovenkit:move", {
   abi: (restUrl: string, moduleAddress: string, moduleName: string, functionName: string) => {
     return [restUrl, moduleAddress, moduleName, functionName]
   },

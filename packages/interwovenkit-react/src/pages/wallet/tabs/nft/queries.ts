@@ -7,7 +7,7 @@ import type { Paginated } from "@/data/pagination"
 import { fetchAllPages, getNextPageParam } from "@/data/pagination"
 import type { NormalizedChain } from "@/data/chains"
 
-const nftQueryKeys = createQueryKeys("initia-widget:nft", {
+const nftQueryKeys = createQueryKeys("interwovenkit:nft", {
   collections: (indexerUrl: string, address: string) => [indexerUrl, address],
   collection: (indexerUrl: string, address: string, collectionAddress: string) => [
     indexerUrl,

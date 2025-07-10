@@ -1,4 +1,4 @@
-const NAMESPACE = "initia-widget"
+const NAMESPACE = "interwovenkit"
 
 export const LocalStorageKey = {
   // ui

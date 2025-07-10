@@ -9,7 +9,7 @@ import { LocalStorageKey } from "./constants"
 import { useConfig } from "./config"
 import { STALE_TIMES } from "./http"
 
-export const chainQueryKeys = createQueryKeys("initia-widget:chain", {
+export const chainQueryKeys = createQueryKeys("interwovenkit:chain", {
   list: (registryUrl: string) => [registryUrl],
   prices: (chainId: string) => [chainId],
   gasPrices: (chain: NormalizedChain) => [chain],

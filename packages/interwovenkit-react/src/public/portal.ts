@@ -3,7 +3,7 @@ import { useConfig } from "@/data/config"
 
 // A dedicated host element ensures the widget's Shadow DOM stays isolated even
 // if multiple instances are rendered.
-const WIDGET_ELEMENT_TAG = "initia-widget"
+const WIDGET_ELEMENT_TAG = "interwoven-kit"
 
 // Create or fetch the Shadow DOM root used by the widget. The Shadow DOM keeps
 // our styles from leaking out to the host page.

@@ -9,7 +9,7 @@ import { useInitiaAddress } from "@/public/data/hooks"
 import { STALE_TIMES } from "@/data/http"
 import { useFindChain, useInitiaRegistry, useLayer1 } from "@/data/chains"
 
-export const opQueryKeys = createQueryKeys("initia-widget:op", {
+export const opQueryKeys = createQueryKeys("interwovenkit:op", {
   bridge: (bridgeId: number) => [bridgeId],
   withdrawals: (executorUrl: string, address: string) => [executorUrl, address],
   latestOutput: (bridgeId: number) => [bridgeId],

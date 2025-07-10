@@ -11,7 +11,7 @@ import { STALE_TIMES } from "./http"
 import { useLayer1, usePricesQuery, type NormalizedChain } from "./chains"
 import { useAssets, useFindAsset, useGetLayer1Denom } from "./assets"
 
-export const accountQueryKeys = createQueryKeys("initia-widget:account", {
+export const accountQueryKeys = createQueryKeys("interwovenkit:account", {
   username: (restUrl: string, address: string) => [restUrl, address],
   address: (restUrl: string, username: string) => [restUrl, username],
   balances: (restUrl: string, address: string) => [restUrl, address],

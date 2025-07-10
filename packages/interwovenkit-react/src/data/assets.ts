@@ -14,7 +14,7 @@ import type { NormalizedChain } from "./chains"
 import { useLayer1 } from "./chains"
 import placeholder from "./placeholder"
 
-export const assetQueryKeys = createQueryKeys("initia-widget:asset", {
+export const assetQueryKeys = createQueryKeys("interwovenkit:asset", {
   list: (assetlistUrl?: string) => [assetlistUrl],
   item: (chainId: string, denom: string) => [chainId, denom],
   resource: (chain: NormalizedChain, asset: NormalizedAsset) => [chain.chainId, asset.denom],

@@ -4,7 +4,7 @@ import type { FormValues } from "@/pages/bridge/data/form"
 import { fullscreenContext } from "./fullscreen"
 import Routes from "./Routes"
 
-const Widget = ({ bridge }: { bridge?: Partial<FormValues> }) => {
+const InterwovenKit = ({ bridge }: { bridge?: Partial<FormValues> }) => {
   return (
     <MemoryRouter initialEntry={{ path: bridge ? "/bridge" : "/", state: bridge }}>
       <div className="body">
@@ -18,4 +18,4 @@ const Widget = ({ bridge }: { bridge?: Partial<FormValues> }) => {
   )
 }
 
-export default Widget
+export default InterwovenKit

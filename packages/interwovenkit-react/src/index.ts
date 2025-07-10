@@ -14,5 +14,5 @@ export * from "./public/data/hooks"
 // <InterwovenKitProvider />
 export { default as InterwovenKitProvider } from "./public/app/InterwovenKitProvider"
 
-// <Widget />
-export { default as Widget } from "./public/app/Widget"
+// <InterwovenKit />
+export { default as InterwovenKit } from "./public/app/InterwovenKit"

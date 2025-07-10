@@ -5,7 +5,7 @@ const Bridge = () => {
   const { openBridge } = useInterwovenKit()
   return (
     <button className={styles.button} onClick={() => openBridge()}>
-      Open bridge widget
+      Open bridge
     </button>
   )
 }

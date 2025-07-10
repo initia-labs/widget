@@ -4,7 +4,7 @@ import { createQueryKeys } from "@lukemorales/query-key-factory"
 import { useConfig } from "@/data/config"
 import type { FormValues } from "./form"
 
-export const skipQueryKeys = createQueryKeys("initia-widget:skip", {
+export const skipQueryKeys = createQueryKeys("interwovenkit:skip", {
   chains: null,
   assets: (chainId: string) => [chainId],
   asset: (chainId: string, denom: string) => [chainId, denom],

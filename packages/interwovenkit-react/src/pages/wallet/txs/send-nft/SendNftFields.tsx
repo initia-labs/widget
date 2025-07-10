@@ -24,7 +24,7 @@ import { createNftTransferParams } from "./tx"
 import type { FormValues } from "./SendNft"
 import styles from "./SendNftFields.module.css"
 
-const queryKeys = createQueryKeys("initia-widget:send-nft", {
+const queryKeys = createQueryKeys("interwovenkit:send-nft", {
   simulation: (params) => [params],
 })
 
