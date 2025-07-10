@@ -1,12 +1,18 @@
+import clsx from "clsx"
+import { descend } from "ramda"
 import type { Connector } from "wagmi"
 import { useConnect } from "wagmi"
 import { useState } from "react"
+import { useLocalStorage } from "react-use"
 import { useMutation } from "@tanstack/react-query"
-import { IconExternalLink, IconWarningFilled } from "@initia/icons-react"
+import { IconExternalLink } from "@initia/icons-react"
+import { LocalStorageKey } from "@/data/constants"
 import { normalizeError } from "@/data/http"
 import { useWidgetVisibility } from "@/data/ui"
-import List from "@/components/List"
+import Scrollable from "@/components/Scrollable"
 import Image from "@/components/Image"
+import Loader from "@/components/Loader"
+import Footer from "@/components/Footer"
 import styles from "./Connect.module.css"
 
 const recommendedWallets = [
@@ -19,12 +25,16 @@ const recommendedWallets = [
 const Connect = () => {
   const { closeWidget } = useWidgetVisibility()
   const { connectors, connectAsync } = useConnect()
+  const [latestConnectorId, setLatestConnectorId] = useLocalStorage<string | null>(
+    LocalStorageKey.LATEST_CONNECTOR_ID,
+  )
   const [pendingConnectorId, setPendingConnectorId] = useState<string | null>(null)
   const { mutate, isPending } = useMutation({
     mutationFn: async (connector: Connector) => {
       setPendingConnectorId(connector.id)
       try {
         await connectAsync({ connector })
+        return connector
       } catch (error) {
         throw new Error(await normalizeError(error))
       }
@@ -32,50 +42,64 @@ const Connect = () => {
     onSettled: () => {
       setPendingConnectorId(null)
     },
-    onSuccess: () => {
+    onSuccess: (connector) => {
+      setLatestConnectorId(connector.id)
       closeWidget()
     },
   })
 
-  if (connectors.length === 0) {
-    return (
-      <div className={styles.empty}>
-        <IconWarningFilled size={36} className={styles.icon} />
-        <h1>No wallet detected</h1>
-        <p>
-          Compatible with most EVM wallets.
-          <br />
-          Here are some popular options we recommend.
-        </p>
-        <div className={styles.list}>
-          {recommendedWallets.map(({ name, url }) => {
-            const imageUrl = `https://assets.initia.xyz/images/wallets/${name}.webp`
-            return (
-              <a href={url} className={styles.item} target="_blank" key={name}>
-                <Image src={imageUrl} width={24} height={24} />
-                <span className={styles.name}>{name}</span>
-                <IconExternalLink size={10} />
-              </a>
-            )
-          })}
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <>
+    <div className={styles.page}>
       <h1 className={styles.title}>Connect wallet</h1>
-      <List
-        list={[...connectors]}
-        onSelect={(connector) => mutate(connector)}
-        getImage={({ icon = "" }) => icon}
-        getName={({ name }) => name}
-        getKey={({ id }) => id}
-        getIsLoading={({ id }) => id === pendingConnectorId}
-        getDisabled={() => isPending}
-      />
-    </>
+
+      <Scrollable className={styles.scrollable}>
+        <div className={styles.list}>
+          {connectors
+            .toSorted(descend((connector) => connector.id === latestConnectorId))
+            .map((connector) => {
+              const { name, icon, id } = connector
+              return (
+                <button
+                  className={styles.item}
+                  onClick={() => mutate(connector)}
+                  disabled={isPending}
+                  key={id}
+                >
+                  <Image src={icon} width={24} height={24} />
+                  <span className={styles.name}>{name}</span>
+                  {pendingConnectorId === id ? (
+                    <Loader size={16} />
+                  ) : latestConnectorId === id ? (
+                    <span className={styles.recent}>Recent</span>
+                  ) : (
+                    <span className={styles.installed}>Installed</span>
+                  )}
+                </button>
+              )
+            })}
+
+          {recommendedWallets
+            .filter(({ name }) => !connectors.some((connector) => connector.name.includes(name)))
+            .map(({ name, url }) => {
+              const imageUrl = `https://assets.initia.xyz/images/wallets/${name}.webp`
+              return (
+                <a href={url} className={styles.item} target="_blank" key={name}>
+                  <Image src={imageUrl} width={24} height={24} />
+                  <span className={clsx(styles.name, styles.dimmed)}>{name}</span>
+                  <IconExternalLink size={10} />
+                </a>
+              )
+            })}
+        </div>
+      </Scrollable>
+
+      <Footer>
+        <a href="https://docs.initia.xyz" target="_blank" className={styles.docs}>
+          <span>Learn more</span>
+          <IconExternalLink size={14} />
+        </a>
+      </Footer>
+    </div>
   )
 }
 
