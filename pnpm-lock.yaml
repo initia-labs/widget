@@ -28,7 +28,7 @@ importers:
     dependencies:
       '@initia/widget-react':
         specifier: workspace:^
-        version: link:../../packages/widget-react
+        version: link:../../packages/interwovenkit-react
       '@tanstack/react-query':
         specifier: ^5
         version: 5.81.5(react@19.1.0)
@@ -71,7 +71,7 @@ importers:
     dependencies:
       '@initia/widget-react':
         specifier: workspace:^
-        version: link:../../packages/widget-react
+        version: link:../../packages/interwovenkit-react
       '@tanstack/react-query':
         specifier: ^5
         version: 5.81.5(react@19.1.0)
@@ -122,7 +122,7 @@ importers:
         specifier: ^6
         version: 6.3.5(@types/node@22.15.34)(terser@5.43.1)(yaml@2.8.0)
 
-  packages/widget-react:
+  packages/interwovenkit-react:
     devDependencies:
       '@cosmjs/amino':
         specifier: ^0

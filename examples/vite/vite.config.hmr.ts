@@ -2,7 +2,7 @@ import path from "path"
 import { mergeConfig } from "vite"
 import baseConfig from "./vite.config"
 
-const widgetPath = path.resolve(__dirname, "../../packages/widget-react")
+const widgetPath = path.resolve(__dirname, "../../packages/interwovenkit-react")
 
 export default mergeConfig(baseConfig, {
   resolve: {

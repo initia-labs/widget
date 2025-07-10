@@ -3,8 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@initia/widget-react": ["../../packages/widget-react/src"],
-      "@/*": ["../../packages/widget-react/src/*"]
+      "@initia/widget-react": ["../../packages/interwovenkit-react/src"],
+      "@/*": ["../../packages/interwovenkit-react/src/*"]
     }
   }
 }
