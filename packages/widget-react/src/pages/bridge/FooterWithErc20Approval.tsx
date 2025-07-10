@@ -7,9 +7,12 @@ import { useGetProvider } from "@/data/signer"
 import Footer from "@/components/Footer"
 import FormHelp from "@/components/form/FormHelp"
 import Button from "@/components/Button"
+import { useFindSkipChain } from "./data/chains"
+import { switchEthereumChain } from "./data/evm"
 
 const FooterWithErc20Approval = ({ tx, children }: PropsWithChildren<{ tx: TxJson }>) => {
   const getProvider = useGetProvider()
+  const findSkipChain = useFindSkipChain()
 
   const { mutate, data, isPending, error } = useMutation({
     mutationFn: async () => {
@@ -20,9 +23,7 @@ const FooterWithErc20Approval = ({ tx, children }: PropsWithChildren<{ tx: TxJso
         const { chain_id: chainId } = tx.evm_tx
         const provider = await getProvider()
         const signer = await provider.getSigner()
-        await provider.send("wallet_switchEthereumChain", [
-          { chainId: `0x${Number(chainId).toString(16)}` },
-        ])
+        await switchEthereumChain(provider, findSkipChain(chainId))
 
         for (const approval of tx.evm_tx.required_erc20_approvals) {
           const { token_contract, spender, amount } = approval
