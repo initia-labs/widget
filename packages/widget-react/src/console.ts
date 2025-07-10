@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 /**
  * Temporary workaround for Radix UI Shadow DOM:
  * Radix UI incorrectly logs a console.error when using <DialogContent> inside a Shadow DOM.
