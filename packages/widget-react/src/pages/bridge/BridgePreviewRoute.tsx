@@ -15,40 +15,40 @@ import styles from "./BridgePreviewRoute.module.css"
 
 function normalizeOperation(operation: OperationJson) {
   if ("transfer" in operation) {
-    return { type: "transfer", ...operation, ...operation.transfer }
+    return { label: "Bridge", ...operation, ...operation.transfer }
   }
   if ("bank_send" in operation) {
-    return { type: "bank_send", ...operation, ...operation.bank_send }
+    return { label: "Send", ...operation, ...operation.bank_send }
   }
   if ("swap" in operation) {
-    return { type: "swap", ...operation, ...operation.swap }
+    return { label: "Swap", ...operation, ...operation.swap }
   }
   if ("axelar_transfer" in operation) {
-    return { type: "axelar_transfer", ...operation, ...operation.axelar_transfer }
+    return { label: "Axelar", ...operation, ...operation.axelar_transfer }
   }
   if ("cctp_transfer" in operation) {
-    return { type: "cctp_transfer", ...operation, ...operation.cctp_transfer }
+    return { label: "CCTP", ...operation, ...operation.cctp_transfer }
   }
   if ("hyperlane_transfer" in operation) {
-    return { type: "hyperlane_transfer", ...operation, ...operation.hyperlane_transfer }
+    return { label: "Hyperlane", ...operation, ...operation.hyperlane_transfer }
   }
   if ("evm_swap" in operation) {
-    return { type: "evm_swap", ...operation, ...operation.evm_swap }
+    return { label: "Swap", ...operation, ...operation.evm_swap }
   }
   if ("op_init_transfer" in operation) {
-    return { type: "op_init_transfer", ...operation, ...operation.op_init_transfer }
+    return { label: "Op bridge", ...operation, ...operation.op_init_transfer }
   }
   if ("go_fast_transfer" in operation) {
-    return { type: "go_fast_transfer", ...operation, ...operation.go_fast_transfer }
+    return { label: "Go Fast", ...operation, ...operation.go_fast_transfer }
   }
   if ("eureka_transfer" in operation) {
-    return { type: "eureka_transfer", ...operation, ...operation.eureka_transfer }
+    return { label: "Eureka", ...operation, ...operation.eureka_transfer }
   }
   if ("stargate_transfer" in operation) {
-    return { type: "stargate_transfer", ...operation, ...operation.stargate_transfer }
+    return { label: "Stargate", ...operation, ...operation.stargate_transfer }
   }
   if ("layer_zero_transfer" in operation) {
-    return { type: "layer_zero_transfer", ...operation, ...operation.layer_zero_transfer }
+    return { label: "LayerZero", ...operation, ...operation.layer_zero_transfer }
   }
   throw new Error("Unknown operation type")
 }
@@ -92,10 +92,10 @@ const BridgePreviewRoute = ({ addressList }: Props) => {
   const toProps = (normalizedOperation: ReturnType<typeof normalizeOperation>) => {
     // prettier-ignore
     // @ts-expect-error Skip API's response structure is too complicated
-    const { type, amount_out, denom, denom_out = denom, chain_id, from_chain_id, to_chain_id = chain_id ?? from_chain_id } = normalizedOperation
+    const { label, amount_out, denom, denom_out = denom, chain_id, from_chain_id, to_chain_id = chain_id ?? from_chain_id } = normalizedOperation
     const address = addressMap[to_chain_id]
     return {
-      type: canToggleShowAll && !showAll ? undefined : type,
+      label: canToggleShowAll && !showAll ? undefined : label,
       amount: amount_out,
       denom: denom_out,
       chainId: to_chain_id,

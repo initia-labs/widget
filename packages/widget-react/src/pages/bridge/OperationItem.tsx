@@ -16,7 +16,7 @@ interface ComponentProps extends Props {
 }
 
 const OperationItemComponent = (props: ComponentProps) => {
-  const { source, type, amount, denom, chainId, address, walletIcon } = props
+  const { source, label, amount, denom, chainId, address, walletIcon } = props
   const { symbol = truncate(denom), decimals = 0, logo_uri = placeholder } = props
   const { chain_name, pretty_name, ...chain } = useSkipChain(chainId)
 
@@ -25,8 +25,8 @@ const OperationItemComponent = (props: ComponentProps) => {
       {!source && (
         <div className={styles.arrow}>
           <div className={styles.divider} />
-          {type ? (
-            <WidgetTooltip label={type}>
+          {label ? (
+            <WidgetTooltip label={label}>
               <button className={styles.type}>
                 <IconArrowDown size={12} />
               </button>
@@ -75,7 +75,7 @@ const OperationItemComponent = (props: ComponentProps) => {
 
 interface Props {
   source?: boolean
-  type?: string
+  label?: string
   amount: string
   denom: string
   chainId: string
