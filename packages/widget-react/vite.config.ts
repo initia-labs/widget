@@ -43,7 +43,7 @@ export default defineConfig(({ mode }) => {
       lib: {
         entry: path.resolve(__dirname, "src/index.ts"),
         formats: ["es", "cjs"],
-        fileName: (format) => `index.${format}.js`,
+        fileName: (format) => (format === "es" ? "index.js" : "index.cjs"),
         cssFileName: "styles",
       },
       rollupOptions: {

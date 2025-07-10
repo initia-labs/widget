@@ -2,19 +2,15 @@
   "name": "@initia/widget-react",
   "version": "2.0.0-rc.0",
   "repository": "github:initia-labs/widget",
-  "main": "./dist/index.cjs.js",
-  "module": "./dist/index.es.js",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.es.js"
-      },
-      "require": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.cjs.js"
-      }
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     },
     "./styles.css": "./dist/styles.css",
     "./styles.js": "./dist/styles.js"
