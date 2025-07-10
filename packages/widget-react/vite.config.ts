@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import fs from "fs"
 import path from "path"
 import type { Plugin } from "vite"
@@ -41,8 +42,8 @@ export default defineConfig(({ mode }) => {
     build: {
       lib: {
         entry: path.resolve(__dirname, "src/index.ts"),
-        formats: ["es"],
-        fileName: "index",
+        formats: ["es", "cjs"],
+        fileName: (format) => (format === "es" ? "index.js" : "index.cjs"),
         cssFileName: "styles",
       },
       rollupOptions: {
