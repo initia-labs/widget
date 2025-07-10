@@ -2,7 +2,7 @@ import type { PropsWithChildren } from "react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createConfig, http, WagmiProvider } from "wagmi"
 import { mainnet } from "wagmi/chains"
-import { InitiaWidgetProvider, injectStyles, TESTNET } from "@initia/widget-react"
+import { InterwovenKitProvider, injectStyles, TESTNET } from "@initia/widget-react"
 import css from "@initia/widget-react/styles.css?inline"
 import { isTestnet, useTheme } from "./data"
 
@@ -14,9 +14,9 @@ const WithInitiaWidget = ({ children }: PropsWithChildren) => {
   const theme = useTheme()
 
   return (
-    <InitiaWidgetProvider {...(isTestnet ? TESTNET : {})} theme={theme}>
+    <InterwovenKitProvider {...(isTestnet ? TESTNET : {})} theme={theme}>
       {children}
-    </InitiaWidgetProvider>
+    </InterwovenKitProvider>
   )
 }
 

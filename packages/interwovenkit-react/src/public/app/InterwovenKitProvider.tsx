@@ -43,7 +43,7 @@ const Prefetch = () => {
   return null
 }
 
-const InitiaWidgetProvider = ({ children, ...config }: PropsWithChildren<Partial<Config>>) => {
+const InterwovenKitProvider = ({ children, ...config }: PropsWithChildren<Partial<Config>>) => {
   if (typeof document === "undefined") {
     return null
   }
@@ -81,4 +81,4 @@ const InitiaWidgetProvider = ({ children, ...config }: PropsWithChildren<Partial
   )
 }
 
-export default InitiaWidgetProvider
+export default InterwovenKitProvider

@@ -5,7 +5,7 @@ import { useEffect } from "react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createConfig, http, WagmiProvider } from "wagmi"
 import { mainnet } from "wagmi/chains"
-import { injectStyles, InitiaWidgetProvider } from "@initia/widget-react"
+import { injectStyles, InterwovenKitProvider } from "@initia/widget-react"
 import initiaWidgetStyles from "@initia/widget-react/styles.js"
 
 const wagmiConfig = createConfig({ chains: [mainnet], transports: { [mainnet.id]: http() } })
@@ -16,7 +16,7 @@ const WithInitiaWidget = ({ children }: PropsWithChildren) => {
     injectStyles(initiaWidgetStyles)
   }, [])
 
-  return <InitiaWidgetProvider>{children}</InitiaWidgetProvider>
+  return <InterwovenKitProvider>{children}</InterwovenKitProvider>
 }
 
 export default function Providers({ children }: PropsWithChildren) {

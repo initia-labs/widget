@@ -11,8 +11,8 @@ export * from "./public/data/constants"
 // useInterwovenKit()
 export * from "./public/data/hooks"
 
-// <InitiaWidgetProvider />
-export { default as InitiaWidgetProvider } from "./public/app/InitiaWidgetProvider"
+// <InterwovenKitProvider />
+export { default as InterwovenKitProvider } from "./public/app/InterwovenKitProvider"
 
 // <Widget />
 export { default as Widget } from "./public/app/Widget"
