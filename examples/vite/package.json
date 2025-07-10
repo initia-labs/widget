@@ -21,12 +21,12 @@
     "wagmi": "^2"
   },
   "devDependencies": {
-    "@tsconfig/vite-react": "^7",
+    "@tsconfig/vite-react": "^6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react-swc": "^3",
     "eslint": "^9",
     "typescript": "^5",
-    "vite": "^7"
+    "vite": "^6"
   }
 }
