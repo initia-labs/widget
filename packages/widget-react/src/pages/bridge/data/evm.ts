@@ -1,29 +1,27 @@
+import { path } from "ramda"
 import type { BrowserProvider } from "ethers"
 import type { RouterChainJson } from "./chains"
 
-interface ProviderError extends Error {
-  code?: number
-}
+export async function switchEthereumChain(provider: BrowserProvider, chain: RouterChainJson) {
+  const { chain_type, chain_id, chain_name, evm_fee_asset, rpc } = chain
 
-export async function switchEvmChain(provider: BrowserProvider, chain: RouterChainJson) {
-  const { chain_id, chain_name, evm_fee_asset, rpc, chain_type } = chain
-
-  if (chain_type !== "evm")
-    throw new Error(`Unable to switch to ${chain_name} [${chain_id}], it is not an EVM chain`)
+  if (chain_type !== "evm") {
+    throw new Error(`Chain is not an EVM chain: ${chain_name}`)
+  }
 
   try {
     await provider.send("wallet_switchEthereumChain", [
       { chainId: `0x${Number(chain_id).toString(16)}` },
     ])
-  } catch (_e) {
-    const e = _e as ProviderError
-    // ensure wallet_switchEthereumChain failed due to chain not being added
-    if (e.code !== 4902) throw e
+  } catch (error) {
+    if (path(["error", "code"], error) !== 4902) {
+      throw error
+    }
 
-    if (!evm_fee_asset)
-      throw new Error(`Unable to add ${chain_name} [${chain_id}], no 'evm_fee_asset' provided`)
+    if (!evm_fee_asset) {
+      throw new Error(`Fee asset is not defined for chain: ${chain_name}`)
+    }
 
-    // request wallet to add the chain
     await provider.send("wallet_addEthereumChain", [
       {
         chainId: `0x${Number(chain_id).toString(16)}`,

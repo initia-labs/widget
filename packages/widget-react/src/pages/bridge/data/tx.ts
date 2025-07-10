@@ -25,7 +25,7 @@ import { useFindSkipAsset } from "./assets"
 import type { RouterRouteResponseJson } from "./simulate"
 import type { HistoryDetails } from "./history"
 import { useBridgeHistoryList } from "./history"
-import { switchEvmChain } from "./evm"
+import { switchEthereumChain } from "./evm"
 
 export interface BridgePreviewState {
   route: RouterRouteResponseJson
@@ -126,7 +126,7 @@ export function useBridgeTx(tx: TxJson) {
           const { chain_id: chainId, to, value, data } = tx.evm_tx
           const provider = await getProvider()
           const signer = await provider.getSigner()
-          await switchEvmChain(provider, srcChain)
+          await switchEthereumChain(provider, srcChain)
           const response = await signer.sendTransaction({ chainId, to, value, data: `0x${data}` })
           // `wait()` is a getter on the response object. Destructuring breaks
           // its internal binding, so keep the original object intact.

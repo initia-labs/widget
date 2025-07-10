@@ -11,9 +11,9 @@ export interface RouterChainJson extends ChainJson {
   rest: string
   hidden?: boolean
   evm_fee_asset?: {
-    decimals: number
     name: string
     symbol: string
+    decimals: number
   }
 }
 
