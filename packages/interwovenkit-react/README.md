@@ -1,6 +1,6 @@
-# @initia/widget-react
+# @initia/interwovenkit-react
 
-`@initia/widget-react` is a React SDK that provides hooks and components to integrate Initia blockchain wallet connection, bridge functionality, and transaction signing into your React applications.
+`@initia/interwovenkit-react` is a React SDK that provides hooks and components to integrate Initia blockchain wallet connection, bridge functionality, and transaction signing into your React applications.
 
 ## Simple Example
 
@@ -8,11 +8,11 @@ Below is a minimal example to demonstrate core capabilities: connecting a wallet
 
 ```tsx
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
-import { truncate, useAddress, useInitiaWidget } from "@initia/widget-react"
+import { truncate, useAddress, useInterwovenKit } from "@initia/interwovenkit-react"
 
 const Example = () => {
   const address = useAddress()
-  const { username, openConnect, openWallet, openBridge, requestTxBlock } = useInitiaWidget()
+  const { username, openConnect, openWallet, openBridge, requestTxBlock } = useInterwovenKit()
 
   if (!address) {
     return <button onClick={openConnect}>Connect</button>
@@ -65,10 +65,10 @@ const Example = () => {
 
 ### Install Dependencies
 
-Install the core widget and required peer dependencies:
+Install the core package and required peer dependencies:
 
 ```bash
-pnpm add @initia/widget-react
+pnpm add @initia/interwovenkit-react
 ```
 
 ### Provider Setup
@@ -81,18 +81,14 @@ pnpm add @tanstack/react-query wagmi
 
 ⚠️ Refer to the examples below.
 
-- **Vite**: [examples/vite/src/Providers.tsx](https://github.com/initia-labs/widget/blob/main/examples/vite/src/Providers.tsx)
-- **Next.js**: [examples/nextjs/src/app/providers.tsx](https://github.com/initia-labs/widget/blob/main/examples/nextjs/src/app/providers.tsx)
+- **Vite**: [examples/vite/src/Providers.tsx](https://github.com/initia-labs/interwovenkit/blob/main/examples/vite/src/Providers.tsx)
+- **Next.js**: [examples/nextjs/src/app/providers.tsx](https://github.com/initia-labs/interwovenkit/blob/main/examples/nextjs/src/app/providers.tsx)
 
 ```tsx
-import { InitiaWidgetProvider } from "@initia/widget-react"
+import { InterwovenKit } from "@initia/interwovenkit-react"
 
 const App = () => {
-  return (
-    <InitiaWidgetProvider defaultChainId="YOUR_CHAIN_ID">
-      {/* YOUR APP HERE */}
-    </InitiaWidgetProvider>
-  )
+  return <InterwovenKit defaultChainId="YOUR_CHAIN_ID">{/* YOUR APP HERE */}</InterwovenKit>
 }
 ```
 
@@ -100,7 +96,7 @@ const App = () => {
 
 ```tsx
 import { ChainSchema } from "@initia/initia-registry-types/zod"
-import { InitiaWidgetProvider } from "@initia/widget-react"
+import { InterwovenKit } from "@initia/interwovenkit-react"
 
 const customChain = ChainSchema.parse({
   chain_id: "YOUR_CHAIN_ID",
@@ -118,9 +114,9 @@ const customChain = ChainSchema.parse({
 
 const App = () => {
   return (
-    <InitiaWidgetProvider defaultChainId="YOUR_CHAIN_ID" customChain={customChain}>
+    <InterwovenKit defaultChainId="YOUR_CHAIN_ID" customChain={customChain}>
       {/* YOUR APP HERE */}
-    </InitiaWidgetProvider>
+    </InterwovenKit>
   )
 }
 ```
@@ -157,12 +153,12 @@ interface Config {
 
 ## React Hooks API
 
-### `useInitiaWidget()`
+### `useInterwovenKit()`
 
-Provides core widget state and actions:
+Provides core package state and actions:
 
 ```ts
-interface UseInitiaWidgetResult {
+interface UseInterwovenKitResult {
   /** Resolves to either the bech32 or hex address based on the current `minitia` type. */
   address: string
 
@@ -212,15 +208,15 @@ interface TxRequest {
 ## Usage on Testnet
 
 ```tsx
-import { InitiaWidgetProvider, TESTNET } from "@initia/widget-react"
+import { InterwovenKit, TESTNET } from "@initia/interwovenkit-react"
 
 const App = () => {
-  return <InitiaWidgetProvider {...TESTNET}>{/* YOUR APP HERE */}</InitiaWidgetProvider>
+  return <InterwovenKit {...TESTNET}>{/* YOUR APP HERE */}</InterwovenKit>
 }
 ```
 
 ## Migrating From v1
 
-To migrate from `@initia/react-wallet-widget` v1.x to `@initia/widget-react`, see our official migration guide:
+To migrate from `@initia/react-wallet-widget` v1.x to `@initia/interwovenkit-react`, see our official migration guide:
 
-[https://github.com/initia-labs/widget/blob/main/packages/widget-react/MIGRATION.md](https://github.com/initia-labs/widget/blob/main/packages/widget-react/MIGRATION.md)
+[https://github.com/initia-labs/interwovenkit/blob/main/packages/interwovenkit-react/MIGRATION.md](https://github.com/initia-labs/interwovenkit/blob/main/packages/interwovenkit-react/MIGRATION.md)

@@ -1,6 +1,6 @@
 # Migrating from v1 to v2
 
-This guide walks you through the steps to migrate from **@initia/react-wallet-widget** (v1) to **@initia/widget-react** (v2).
+This guide walks you through the steps to migrate from **@initia/react-wallet-widget** (v1) to **@initia/interwovenkit-react** (v2).
 
 ## 1. Package & Import Changes
 
@@ -10,10 +10,10 @@ The package name has changed:
 
 ```diff
 - pnpm add @initia/react-wallet-widget
-+ pnpm add @initia/widget-react
++ pnpm add @initia/interwovenkit-react
 ```
 
-All imports from `@initia/react-wallet-widget` should now come from `@initia/widget-react`.
+All imports from `@initia/react-wallet-widget` should now come from `@initia/interwovenkit-react`.
 
 ### Provider Setup
 
@@ -25,8 +25,8 @@ pnpm add @tanstack/react-query wagmi
 
 ⚠️ Refer to the examples below.
 
-- **Vite**: [examples/vite/src/Providers.tsx](https://github.com/initia-labs/widget/blob/main/examples/vite/src/Providers.tsx)
-- **Next.js**: [examples/nextjs/src/app/providers.tsx](https://github.com/initia-labs/widget/blob/main/examples/nextjs/src/app/providers.tsx)
+- **Vite**: [examples/vite/src/Providers.tsx](https://github.com/initia-labs/interwovenkit/blob/main/examples/vite/src/Providers.tsx)
+- **Next.js**: [examples/nextjs/src/app/providers.tsx](https://github.com/initia-labs/interwovenkit/blob/main/examples/nextjs/src/app/providers.tsx)
 
 ## 2. SSR Support
 
@@ -37,16 +37,16 @@ You no longer need to import any SSR helpers:
 
 ## 3. Provider API Changes
 
-### Renamed Props on `<InitiaWidgetProvider />`
+### Renamed Props on `<InterwovenKitProvider />`
 
 ```diff
 - <WalletWidgetProvider chainId="interwoven-1" />
-+ <InitiaWidgetProvider defaultChainId="interwoven-1" />
++ <InterwovenKitProvider defaultChainId="interwoven-1" />
 ```
 
 ```diff
 - <WalletWidgetProvider customLayer={chain} />
-+ <InitiaWidgetProvider customChain={chain} />
++ <InterwovenKitProvider customChain={chain} />
 ```
 
 ### Moving Bridge Defaults into `openBridge()`
@@ -68,10 +68,10 @@ Now you pass them when opening the bridge:
 
 ```tsx
 // v2
-import { InitiaWidgetProvider, useInitiaWidget } from "@initia/widget-react"
+import { InterwovenKitProvider, useInterwovenKit } from "@initia/interwovenkit-react"
 
 const App = () => {
-  const { openBridge } = useInitiaWidget()
+  const { openBridge } = useInterwovenKit()
 
   return (
     <button onClick={() => openBridge({ dstChainId: "interwoven-1", dstDenom: "uinit" })}>
@@ -83,7 +83,7 @@ const App = () => {
 
 ### Removed Props
 
-These props are no longer supported on `<InitiaWidgetProvider />`:
+These props are no longer supported on `<InterwovenKitProvider />`:
 
 ```diff
 - <WalletWidgetProvider additionalWallets />
@@ -121,11 +121,11 @@ const App = () => {
 
 ```tsx
 // v2
-import { truncate } from "@initia/widget-react"
-import { InitiaWidgetProvider, useInitiaWidget } from "@initia/widget-react"
+import { truncate } from "@initia/interwovenkit-react"
+import { InterwovenKitProvider, useInterwovenKit } from "@initia/interwovenkit-react"
 
 const App = () => {
-  const { address, openConnect, openWallet, openBridge } = useInitiaWidget()
+  const { address, openConnect, openWallet, openBridge } = useInterwovenKit()
 
   if (!address) {
     return <button onClick={openConnect}>Connect</button>
@@ -140,7 +140,7 @@ const App = () => {
 }
 ```
 
-> Wrap your app in `<InitiaWidgetProvider>` at the root to enable these hooks.
+> Wrap your app in `<InterwovenKitProvider>` at the root to enable these hooks.
 
 ### Requesting a Transaction
 
@@ -162,10 +162,10 @@ const App = () => {
 
 ```tsx
 // v2
-import { useInitiaWidget } from "@initia/widget-react"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
 
 const App = () => {
-  const { requestTxBlock } = useInitiaWidget()
+  const { requestTxBlock } = useInterwovenKit()
 
   const mutate = async () => {
     const { transactionHash } = await requestTxBlock({ messages: [], chainId: "interwoven-1" })
@@ -193,7 +193,7 @@ function toEncodeObject(msg: Msg) {
 
 // Example usage
 const App = () => {
-  const { initiaAddress, requestTxBlock } = useInitiaWidget()
+  const { initiaAddress, requestTxBlock } = useInterwovenKit()
 
   const mutate = async () => {
     const msgs = [

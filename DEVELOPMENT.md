@@ -1,12 +1,12 @@
-# Initia Wallet Widget
+# InterwovenKit
 
 ## Setup
 
 Clone the repository, install dependencies, and build the package:
 
 ```bash
-git clone https://github.com/initia-labs/widget.git
-cd widget
+git clone https://github.com/initia-labs/interwovenkit.git
+cd interwovenkit
 pnpm install
 pnpm build:fast  # Build the package at least once before running in development mode.
 ```
@@ -26,17 +26,17 @@ Run the demo site directly from your local source with hot module replacement (H
 pnpm dev
 ```
 
-- The widget source files will be injected into the portal element in the document body.
+- The package source files will be injected into the portal element in the document body.
 - The demo site will be available at: [http://localhost:5173](http://localhost:5173)
 
 ## Production Mode
 
-After making changes to the widget package, rebuild and run the demo using the compiled output:
+After making changes to the package, rebuild and run the demo using the compiled output:
 
 ```bash
 pnpm build  # Rebuild the package after any changes.
-pnpm watch  # Serve the demo using the built widget and styles.
+pnpm watch  # Serve the demo using the built package and styles.
 ```
 
-- In production mode, the widget and its styles will be injected into a Shadow DOM.
+- In production mode, the package and its styles will be injected into a Shadow DOM.
 - The demo site will be available at: [http://localhost:5173](http://localhost:5173)
