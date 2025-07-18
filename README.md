@@ -1,4 +1,3 @@
-# InterwovenKit
+# Initia Widget
 
-- See the detailed docs in [README.md](packages/interwovenkit-react/README.md).
-- For developer setup and contributing guidelines, please refer to [DEVELOPMENT.md](DEVELOPMENT.md).
+This repository has now moved to [intiia-labs/interwovenkit](https://github.com/initia-labs/interwovenkit). Please see the new repository for details.
